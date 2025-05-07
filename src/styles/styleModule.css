@@ -5,3 +5,46 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+/* 지혜 */
+.themaColor1 {
+    color: #a4acb7;
+}
+.themaBgColor1 {
+    background-color: #a4acb7;
+}
+/* 회복 */
+.themaColor2 {
+    color: #cc8a94;
+}
+.themaBgColor22 {
+    background-color: #cc8a94;
+}
+/* 왕족 */
+.themaColor3 {
+    color: #604b6e;
+}
+.themaBgColor3 {
+    background-color: #604b6e;
+}
+/* 영성 */
+.themaColor4 {
+    color: #857496;
+}
+.themaBgColor4 {
+    background-color: #857496;
+}
+/* 창의성 */
+.themaColor5 {
+    color: #ac9cc0;
+}
+.themaBgColor5 {
+    background-color: #ac9cc0;
+}
+/* 여성스러움 */
+.themaColor6 {
+    color: #e8e8f0;
+}
+.themaBgColor6 {
+    background-color: #e8e8f0;
+}

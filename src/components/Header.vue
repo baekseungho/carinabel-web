@@ -1,7 +1,7 @@
 <template>
     <header class="header-container">
         <div class="logoContainer">
-            <img src="/img/logo.jpg" alt="Logo" class="logo" />
+            <img src="/img/logo2.png" alt="Logo" class="logo" />
         </div>
         <nav class="navContainer">
             <ul class="navList">
