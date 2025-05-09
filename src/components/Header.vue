@@ -1,15 +1,35 @@
 <template>
-    <header class="header-container">
+    <header class="headerContainer">
         <div class="logoContainer">
-            <img src="/img/logo2.png" alt="Logo" class="logo" />
+            <img src="/img/logo.jpg" alt="Logo" class="logo" />
         </div>
         <nav class="navContainer">
             <ul class="navList">
-                <li><a href="#">제품</a></li>
-                <li><a href="#">회사소개</a></li>
-                <li><a href="#">비즈니스</a></li>
-                <li><a href="#">공지사항</a></li>
-                <li><a href="#">QnA</a></li>
+                <li class="menuItem">
+                    <a href="#">제품</a>
+                    <ul class="subMenu">
+                        <li><a href="/products/type1">제품종류1</a></li>
+                        <li><a href="/products/type2">제품종류2</a></li>
+                        <li><a href="/products/type3">제품종류3</a></li>
+                    </ul>
+                </li>
+                <li class="menuItem">
+                    <a href="#">회사소개</a>
+                    <ul class="subMenu">
+                        <li><a href="/about/greeting">인사말</a></li>
+                        <li><a href="/about/executives">경영진</a></li>
+                        <li><a href="/about/brand-story">브랜드 스토리</a></li>
+                    </ul>
+                </li>
+                <li class="menuItem">
+                    <a href="#">비즈니스</a>
+                    <ul class="subMenu">
+                        <li><a href="/business/events">행사/이벤트</a></li>
+                        <li><a href="/business/lectures">강의</a></li>
+                    </ul>
+                </li>
+                <li class="menuItem"><a href="/notices">공지사항</a></li>
+                <li class="menuItem"><a href="/qna">QnA</a></li>
             </ul>
         </nav>
         <div class="authContainer">
@@ -23,14 +43,16 @@
 </script>
 
 <style scoped>
-.header-container {
+.headerContainer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 2rem;
+    padding: 0 2rem;
     background-color: #ffffff;
     border-bottom: 1px solid #e5e7eb;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    position: relative;
+    z-index: 1000;
 }
 
 .logoContainer .logo {
@@ -43,19 +65,61 @@
     gap: 2rem;
 }
 
-.navContainer .navList li {
+.menuItem {
+    position: relative;
     list-style: none;
+    padding: 1rem 0;
 }
 
-.navContainer .navList li a {
+.menuItem a {
     font-weight: 600;
     color: #333;
     text-decoration: none;
     transition: color 0.2s ease-in-out;
+    padding: 1rem 1.5rem;
+    display: block;
 }
 
-.navContainer .navList li a:hover {
+.menuItem a:hover {
     color: #8a2be2;
+}
+
+.menuItem:hover .subMenu,
+.subMenu:hover {
+    visibility: visible;
+    opacity: 1;
+}
+
+.subMenu {
+    position: absolute;
+    background-color: #ffffff;
+    border-radius: 0.25rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    margin-top: 0.5rem;
+    padding: 0.5rem 0;
+    min-width: 160px;
+    z-index: 999;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.2s ease-in-out;
+}
+
+.subMenu li {
+    list-style: none;
+}
+
+.subMenu li a {
+    padding: 0.5rem 1.5rem;
+    color: #333;
+    display: block;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.subMenu li a:hover {
+    background-color: #f0f0f0;
+    color: #8a2be2;
+    border-left: 3px solid #8a2be2;
 }
 
 .authContainer .authButton {

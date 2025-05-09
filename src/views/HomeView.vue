@@ -2,7 +2,6 @@
     <section class="home">
         <Banner />
         <div class="container">
-            <h1 style="color: #fff; font-size: 120px">찢</h1>
             <div class="product-grid">
                 <ProductCard
                     v-for="product in products"
