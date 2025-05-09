@@ -35,12 +35,12 @@ export default [
         imagePath: "/banner/6.png",
         role: "ROLE_USER",
     },
-    {
-        id: 7,
-        name: "배너 7",
-        imagePath: "/banner/7.png",
-        role: "ROLE_USER",
-    },
+    // {
+    //     id: 7,
+    //     name: "배너 7",
+    //     imagePath: "/banner/7.png",
+    //     role: "ROLE_USER",
+    // },
     {
         id: 8,
         name: "배너 8",

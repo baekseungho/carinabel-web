@@ -1,16 +1,16 @@
 <template>
     <header class="headerContainer">
         <div class="logoContainer">
-            <img src="/img/logo.jpg" alt="Logo" class="logo" />
+            <img src="/img/logo.jpg" alt="Logo" class="logo" @click="goHome" />
         </div>
         <nav class="navContainer">
             <ul class="navList">
                 <li class="menuItem">
                     <a href="#">제품</a>
                     <ul class="subMenu">
-                        <li><a href="/products/type1">제품종류1</a></li>
-                        <li><a href="/products/type2">제품종류2</a></li>
-                        <li><a href="/products/type3">제품종류3</a></li>
+                        <li><a href="/products">제품종류1</a></li>
+                        <li><a href="/products">제품종류2</a></li>
+                        <li><a href="/products">제품종류3</a></li>
                     </ul>
                 </li>
                 <li class="menuItem">
@@ -39,7 +39,11 @@
 </template>
 
 <script setup>
-// 추후 로직 추가 예정
+import router from "@/router";
+
+const goHome = () => {
+    router.push({ path: "/" });
+};
 </script>
 
 <style scoped>
