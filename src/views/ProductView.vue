@@ -1,5 +1,6 @@
 <template>
   <div class="product-container">
+    <h1 class="product-title">{{ productCategory }}</h1>
     <div class="product-grid">
       <Card
         v-for="product in products"
@@ -28,10 +29,13 @@ import CardContent from "@/components/ui/CardContent.vue";
 import CardImage from "@/components/ui/CardImage.vue";
 
 const products = ref([]);
+const productCategory = ref("");
 const router = useRouter();
 
 onMounted(() => {
-  products.value = essentialOils;
+  // 데이터 로드
+  productCategory.value = essentialOils.category;
+  products.value = essentialOils.items;
 });
 
 function goToDetail(productId) {
@@ -43,7 +47,15 @@ function goToDetail(productId) {
 .product-container {
   padding: 40px 20px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.product-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #444;
 }
 
 .product-grid {

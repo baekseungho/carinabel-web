@@ -19,7 +19,7 @@ defineProps({
 .card-image {
   width: 100%;
   height: 200px;
-  object-fit: cover;
+  object-fit: contain; /* 이미지를 비율에 맞게 전체 표시 */
   border-radius: 12px;
   background-color: #f7f7f7;
 }
