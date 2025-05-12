@@ -3,16 +3,13 @@
         <Swiper
             :modules="[Autoplay, Navigation, Pagination]"
             :loop="true"
-            :autoplay="{ delay: 1000, disableOnInteraction: false }"
+            :autoplay="{ delay: 3000, disableOnInteraction: false }"
             :navigation="true"
             :pagination="{ clickable: true }"
             class="swiper"
         >
             <SwiperSlide v-for="banner in filteredBanners" :key="banner.id">
-                <div
-                    class="slide-content"
-                    :style="{ backgroundImage: `url(${banner.imagePath})` }"
-                >
+                <div class="slide-content" :style="{ backgroundImage: `url(${banner.imagePath})` }">
                     <h5 class="banner-title">{{ banner.name }}</h5>
                 </div>
             </SwiperSlide>
@@ -33,9 +30,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import banners from "@/assets/data/banners.js";
 
-const filteredBanners = computed(() =>
-    banners.filter((banner) => banner.role === "ROLE_USER")
-);
+const filteredBanners = computed(() => banners.filter((banner) => banner.role === "ROLE_USER"));
 </script>
 
 <style scoped>

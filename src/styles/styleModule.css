@@ -48,3 +48,30 @@
 .themaBgColor6 {
     background-color: #e8e8f0;
 }
+
+/* 아이콘 */
+.smallIcon {
+    width: 12px;
+    height: 12px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.normalIcon {
+    width: 24px;
+    height: 24px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.bigIcon {
+    width: 36px;
+    height: 36px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.login {
+    background-image: url("/img/icon_login.png");
+}
