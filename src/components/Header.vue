@@ -9,8 +9,8 @@
                     <a href="#">제품</a>
                     <ul class="subMenu">
                         <li><a href="/products">에센션 오일</a></li>
-                        <li><a href="/products">제품종류2</a></li>
-                        <li><a href="/products">제품종류3</a></li>
+                        <!-- <li><a href="/products">제품종류2</a></li> -->
+                        <!-- <li><a href="/products">제품종류3</a></li> -->
                     </ul>
                 </li>
                 <li class="menuItem">
