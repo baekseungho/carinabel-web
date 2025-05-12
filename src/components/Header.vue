@@ -33,12 +33,11 @@
             </ul>
         </nav>
         <div class="authContainer" @click="toggleAuthMenu">
-            <!-- <img src="/img/icon_login.png" alt="Login" class="loginIcon" /> -->
             <div class="normalIcon login"></div>
             <span class="loginText">로그인</span>
             <div v-show="showAuthMenu" class="authMenu">
                 <p class="authWelcome">카리나라벨에 오신 것을 환영합니다!</p>
-                <button class="authLoginButton">로그인</button>
+                <button class="authLoginButton" @click="goLogin">로그인</button>
                 <button class="authSignupButton">회원가입</button>
             </div>
         </div>
@@ -54,7 +53,9 @@ const showAuthMenu = ref(false);
 const goHome = () => {
     router.push({ path: "/" });
 };
-
+const goLogin = () => {
+    router.push({ path: "/login" });
+};
 const toggleAuthMenu = () => {
     showAuthMenu.value = !showAuthMenu.value;
 };

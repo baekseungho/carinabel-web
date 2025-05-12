@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
+import Login from "@/views/LoginView.vue";
 import ProductView from "@/views/ProductView.vue";
 import ProductDetail from "@/views/ProductDetail.vue";
 import AboutView from "@/views/AboutView.vue";
@@ -13,6 +14,7 @@ import Notices from "@/views/NoticesView.vue";
 
 const routes = [
     { path: "/", name: "Home", component: HomeView },
+    { path: "/login", name: "Login", component: Login },
     { path: "/products", name: "Products", component: ProductView },
     { path: "/products/:id", name: "ProductDetail", component: ProductDetail },
     { path: "/about/greeting", name: "Greeting", component: Greeting },
@@ -51,7 +53,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     if (to.meta.maintenance) {
         alert("서비스 준비중입니다.");
-        next(false);
+        // next(false);
         router.push({ path: "/" }); // 접근 차단
     } else {
         next(); // 접근 허용
