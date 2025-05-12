@@ -17,10 +17,6 @@
                 </div>
             </SwiperSlide>
         </Swiper>
-
-        <!-- <div class="swiper-button-next"></div>
-        <div class="swiper-button-prev"></div> -->
-        <div class="swiper-pagination"></div>
     </div>
 </template>
 
@@ -44,6 +40,8 @@ const filteredBanners = computed(() =>
     height: 600px;
     overflow: hidden;
     position: relative;
+    --swiper-navigation-color: #cc8a94; /* 네비게이션 버튼 색상 */
+    --swiper-pagination-color: #cc8a94; /* 페이지네이션 색상 */
 }
 
 .swiper {
@@ -54,7 +52,7 @@ const filteredBanners = computed(() =>
 .slide-content {
     width: 100%;
     height: 100%;
-    background-size: contain;
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     display: flex;
@@ -64,39 +62,5 @@ const filteredBanners = computed(() =>
     font-size: 48px;
     font-weight: bold;
     text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
-}
-
-.swiper-button-next,
-.swiper-button-prev {
-    color: #fff;
-    font-size: 24px;
-    z-index: 10;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.swiper-button-next {
-    right: 10px;
-}
-
-.swiper-button-prev {
-    left: 10px;
-}
-
-.swiper-pagination {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
 }
 </style>
