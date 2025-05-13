@@ -1,7 +1,7 @@
 <template>
     <header class="headerContainer">
         <div class="logoContainer">
-            <img src="/img/logo.jpg" alt="Logo" class="logo" @click="goHome" />
+            <img src="/img/logo2.png" alt="Logo" class="logo" @click="goHome" />
         </div>
         <nav class="navContainer">
             <ul class="navList">
@@ -75,7 +75,8 @@ const toggleAuthMenu = () => {
 }
 
 .logoContainer .logo {
-    height: 40px;
+    height: 80px;
+    width: 180px;
     cursor: pointer;
 }
 

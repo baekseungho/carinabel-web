@@ -1,21 +1,12 @@
 <template>
     <div class="loginPageContainer">
         <div class="loginBackground">
-            <img
-                src="/img/background_login.png"
-                alt="Login Background"
-                class="backgroundImage"
-            />
+            <img src="/img/background_login.png" alt="Login Background" class="backgroundImage" />
             <div class="loginOverlay"></div>
         </div>
         <div class="loginContent">
             <div class="loginHeader">
-                <img
-                    src="/img/logo.jpg"
-                    alt="Logo"
-                    class="loginLogo"
-                    @click="goHome"
-                />
+                <img src="/img/logo2.png" alt="Logo" class="loginLogo" @click="goHome" />
             </div>
             <div class="loginFormContainer">
                 <h2 class="loginTitle">로그인</h2>
@@ -38,29 +29,17 @@
                                 v-model="password"
                                 placeholder="비밀번호를 입력하세요."
                             />
-                            <span
-                                class="passwordToggle"
-                                @click="togglePassword"
-                                >{{
-                                    showPassword
-                                        ? "비밀번호 숨기기"
-                                        : "비밀번호 보기"
-                                }}</span
-                            >
+                            <span class="passwordToggle" @click="togglePassword">{{
+                                showPassword ? "비밀번호 숨기기" : "비밀번호 보기"
+                            }}</span>
                         </div>
                     </div>
                     <div class="optionsContainer">
                         <label class="rememberMeLabel">
-                            <input
-                                type="checkbox"
-                                v-model="rememberMe"
-                                class="customCheckbox"
-                            />
+                            <input type="checkbox" v-model="rememberMe" class="customCheckbox" />
                             <span class="customCheckboxLabel">아이디 저장</span>
                         </label>
-                        <a href="#" class="forgotPasswordLink"
-                            >비밀번호 설정/찾기</a
-                        >
+                        <a href="#" class="forgotPasswordLink">비밀번호 설정/찾기</a>
                     </div>
                     <button type="submit" class="loginButton">로그인</button>
                 </form>
