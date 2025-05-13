@@ -9,6 +9,7 @@ import AboutView from "@/views/AboutView.vue";
 import ContactView from "@/views/ContactView.vue";
 import Greeting from "@/views/GreetingView.vue";
 import Story from "@/views/StoryView.vue";
+import Navigate from "@/views/NavigateView.vue";
 import Events from "@/views/EventsView.vue";
 import Lectures from "@/views/LecturesView.vue";
 import QnA from "@/views/QnAView.vue";
@@ -20,7 +21,11 @@ const routes = [
     { path: "/login", name: "Login", component: Login },
     { path: "/signup", name: "Signup", component: Signup },
     { path: "/products/essential", name: "Products", component: ProductView },
-    { path: "/products/essential/:id", name: "ProductDetail", component: ProductDetail },
+    {
+        path: "/products/essential/:id",
+        name: "ProductDetail",
+        component: ProductDetail,
+    },
     {
         path: "/products/onlymember",
         name: "Onlymember",
@@ -31,6 +36,7 @@ const routes = [
     },
     { path: "/about/greeting", name: "Greeting", component: Greeting },
     { path: "/about/story", name: "Story", component: Story },
+    { path: "/about/navigate", name: "Navigate", component: Navigate },
     { path: "/about", name: "About", component: AboutView },
     { path: "/contact", name: "Contact", component: ContactView },
 
