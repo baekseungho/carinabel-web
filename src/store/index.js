@@ -1,4 +1,5 @@
 import { createStore } from "vuex";
+import AuthService from "@/api/AuthService";
 
 const store = createStore({
     state: {
@@ -26,9 +27,18 @@ const store = createStore({
         logout({ commit }) {
             commit("clearUser");
         },
+        async fetchUserProfile({ commit }) {
+            try {
+                const response = await AuthService.getUserProfile(localStorage.getItem("token"));
+                commit("setUser", response.data);
+            } catch (error) {
+                console.error("사용자 정보 불러오기 실패:", error);
+                commit("clearUser");
+            }
+        },
     },
     getters: {
-        isAuthenticated: (state) => !!state.user,
+        isAuthenticated: (state) => !!state.token,
         userName: (state) => (state.user ? state.user.fullName : ""),
     },
 });

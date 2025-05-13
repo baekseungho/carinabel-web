@@ -6,11 +6,7 @@
 
         <div class="productDetailWrapper">
             <div class="productImageWrapper">
-                <img
-                    :src="product.imagePath || '/img/default.jpg'"
-                    :alt="product.koreanName"
-                    class="productImage"
-                />
+                <img :src="product.imagePath || '/img/default.jpg'" :alt="product.koreanName" class="productImage" />
             </div>
 
             <div class="productInfoWrapper">
@@ -19,16 +15,14 @@
                     <span class="productName">{{ product.productName }}</span>
                 </h1>
                 <p class="productVolume">용량: {{ product.volume || 0 }}ml</p>
-                <p class="productPrice">
-                    <span class="consumerPrice"
-                        >소비자가:
-                        {{ formatPrice(product.consumerPrice) }}원</span
-                    >
-                    <span class="memberPrice"
-                        >회원가: {{ formatPrice(product.memberPrice) }}원</span
-                    >
+                <p v-if="isAuthenticated" class="productPrice">
+                    <span class="consumerPrice">소비자가: {{ formatPrice(product.consumerPrice) }}원</span>
+                    <span class="memberPrice">회원가: {{ formatPrice(product.memberPrice) }}원</span>
                 </p>
-
+                <p v-else class="productPrice">
+                    <span class="memberPrice">소비자가: {{ formatPrice(product.consumerPrice) }}원</span>
+                    <span class="consumerPrice">회원가: {{ formatPrice(product.memberPrice) }}원</span>
+                </p>
                 <div class="productDescription">
                     <h2>제품 설명</h2>
                     <p>
@@ -36,27 +30,27 @@
                     </p>
                 </div>
 
-                <button class="addToCartButton" @click="addToCart(product)">
-                    구매하기
-                </button>
+                <button class="addToCartButton" @click="addToCart(product)">구매하기</button>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import essentialOils from "../assets/data/essentialoils.js";
+import { useStore } from "vuex";
 
+const store = useStore();
 const route = useRoute();
 const router = useRouter();
 const product = ref({});
+const isAuthenticated = computed(() => store.getters.isAuthenticated);
 
 onMounted(() => {
     const productId = Number(route.params.id);
-    product.value =
-        essentialOils.items.find((item) => item.id === productId) || {};
+    product.value = essentialOils.items.find((item) => item.id === productId) || {};
 });
 
 function formatPrice(price) {
@@ -70,7 +64,7 @@ function addToCart(product) {
 }
 
 function goBack() {
-    router.push("/products");
+    router.push("/products/essential");
 }
 </script>
 
@@ -153,7 +147,7 @@ function goBack() {
 }
 .productPrice {
     margin-bottom: 20px;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: bold;
     color: #444;
 }
@@ -163,6 +157,7 @@ function goBack() {
     margin-right: 10px;
 }
 .memberPrice {
+    margin-right: 10px;
     color: #cc8a94;
 }
 .productDescription {

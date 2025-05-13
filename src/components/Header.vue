@@ -8,7 +8,8 @@
                 <li class="menuItem">
                     <a href="#">제품</a>
                     <ul class="subMenu">
-                        <li><a href="/products">에센셜 오일</a></li>
+                        <li><a href="/products/essential">에센셜 오일</a></li>
+                        <li><a href="/products/onlymember">회원전용 상품</a></li>
                     </ul>
                 </li>
                 <li class="menuItem">
@@ -84,6 +85,11 @@ onMounted(() => {
 </script>
 <style scoped>
 .headerContainer {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -91,7 +97,6 @@ onMounted(() => {
     background-color: #ffffff;
     border-bottom: 1px solid #e5e7eb;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    position: relative;
     z-index: 1000;
 }
 
