@@ -16,8 +16,9 @@
                         <input
                             type="text"
                             id="email"
-                            v-model="email"
+                            v-model="emailOrId"
                             placeholder="이메일 또는 카리나라벨 ID를 입력하세요."
+                            @keydown.enter="userLogin"
                         />
                     </div>
                     <div class="inputGroup passwordGroup">
@@ -28,6 +29,7 @@
                                 id="password"
                                 v-model="password"
                                 placeholder="비밀번호를 입력하세요."
+                                @keydown.enter="userLogin"
                             />
                             <span class="passwordToggle" @click="togglePassword">{{
                                 showPassword ? "비밀번호 숨기기" : "비밀번호 보기"
@@ -52,8 +54,10 @@
 <script setup>
 import { ref } from "vue";
 import router from "@/router";
-
-const email = ref("");
+import { useStore } from "vuex";
+import AuthService from "@/api/AuthService";
+const store = useStore();
+const emailOrId = ref("");
 const password = ref("");
 const rememberMe = ref(false);
 const showPassword = ref(false);
@@ -67,17 +71,38 @@ const goSignup = () => {
 };
 
 const handleLogin = () => {
-    console.log("Email:", email.value);
-    console.log("Password:", password.value);
-    console.log("Remember Me:", rememberMe.value);
-    // Add your authentication logic here
-    alert("로그인 기능은 아직 구현되지 않았습니다.");
+    if (!emailOrId.value.trim()) {
+        alert("이메일 또는 아이디를 입력해주세요.");
+        return;
+    }
+    if (!password.value.trim()) {
+        alert("비밀번호를 입력해주세요.");
+        return;
+    }
+
+    const data = {
+        emailOrId: emailOrId.value.trim(),
+        password: password.value.trim(),
+    };
+
+    AuthService.login(data)
+        .then((response) => {
+            console.log("로그인 성공:", response.data);
+            store.dispatch("login", response.data);
+
+            router.push("/");
+        })
+        .catch((error) => {
+            console.error(error);
+            alert("이메일 또는 비밀번호를 확인해주세요.");
+        });
 };
 
 const togglePassword = () => {
     showPassword.value = !showPassword.value;
 };
 </script>
+
 <style scoped>
 .loginPageContainer {
     display: flex;

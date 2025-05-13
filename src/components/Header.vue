@@ -8,16 +8,13 @@
                 <li class="menuItem">
                     <a href="#">제품</a>
                     <ul class="subMenu">
-                        <li><a href="/products">에센션 오일</a></li>
-                        <!-- <li><a href="/products">제품종류2</a></li> -->
-                        <!-- <li><a href="/products">제품종류3</a></li> -->
+                        <li><a href="/products">에센셜 오일</a></li>
                     </ul>
                 </li>
                 <li class="menuItem">
                     <a href="#">회사소개</a>
                     <ul class="subMenu">
                         <li><a href="/about/greeting">인사말</a></li>
-                        <!-- <li><a href="/about/executives">경영진</a></li> -->
                         <li><a href="/about/story">브랜드 스토리</a></li>
                     </ul>
                 </li>
@@ -32,23 +29,35 @@
                 <li class="menuItem"><a href="/qna">QnA</a></li>
             </ul>
         </nav>
+
         <div class="authContainer" @click="toggleAuthMenu">
             <div class="normalIcon login"></div>
-            <span class="loginText">로그인</span>
+            <span class="loginText">
+                {{ isAuthenticated ? userName + "님" : "로그인" }}
+            </span>
             <div v-show="showAuthMenu" class="authMenu">
-                <p class="authWelcome">카리나라벨에 오신 것을 환영합니다!</p>
-                <button class="authLoginButton" @click="goLogin">로그인</button>
-                <button class="authSignupButton">회원가입</button>
+                <p class="authWelcome">
+                    {{ isAuthenticated ? userName + "님, 환영합니다!" : "카리나라벨에 오신 것을 환영합니다!" }}
+                </p>
+                <button v-if="!isAuthenticated" class="authLoginButton" @click="goLogin">로그인</button>
+                <button v-if="!isAuthenticated" class="authSignupButton" @click="goSignup">회원가입</button>
+                <button v-else class="authLogoutButton" @click="handleLogout">로그아웃</button>
             </div>
         </div>
     </header>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useStore } from "vuex";
 import router from "@/router";
+import { onMounted } from "vue";
 
 const showAuthMenu = ref(false);
+const store = useStore();
+
+const isAuthenticated = computed(() => store.getters.isAuthenticated);
+const userName = computed(() => store.getters.userName);
 
 const goHome = () => {
     router.push({ path: "/" });
@@ -56,11 +65,23 @@ const goHome = () => {
 const goLogin = () => {
     router.push({ path: "/login" });
 };
+const goSignup = () => {
+    router.push({ path: "/signup" });
+};
 const toggleAuthMenu = () => {
     showAuthMenu.value = !showAuthMenu.value;
 };
-</script>
+const handleLogout = () => {
+    store.dispatch("logout");
+    alert("로그아웃 되었습니다.");
+    router.push("/");
+    toggleAuthMenu();
+};
 
+onMounted(() => {
+    console.log(store.getters);
+});
+</script>
 <style scoped>
 .headerContainer {
     display: flex;
@@ -212,5 +233,20 @@ const toggleAuthMenu = () => {
 
 .authSignupButton:hover {
     background-color: #cc8a94;
+}
+.authLogoutButton {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #ffffff;
+    color: #cc8a94;
+    border: 2px solid #cc8a94;
+    border-radius: 30px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.authLogoutButton:hover {
+    background-color: #f4f4f4;
 }
 </style>

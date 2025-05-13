@@ -4,11 +4,7 @@
         <div class="">
             <div class="product-grid">
                 상품및 홍보할 공간
-                <ProductCard
-                    v-for="product in products"
-                    :key="product.id"
-                    :product="product"
-                />
+                <ProductCard v-for="product in products" :key="product.id" :product="product" />
             </div>
         </div>
         <Testimonial />
@@ -26,7 +22,7 @@ const store = useStore();
 const products = computed(() => store.getters.products);
 
 onMounted(() => {
-    store.dispatch("fetchProducts");
+    // store.dispatch("fetchProducts");
 });
 </script>
 

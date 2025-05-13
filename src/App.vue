@@ -19,7 +19,7 @@ const isLoginPage = ref(route.path === "/login");
 
 // 라우트 변경 시 헤더/푸터 상태 업데이트
 watch(route, (newRoute) => {
-    isLoginPage.value = newRoute.path === "/login";
+    isLoginPage.value = newRoute.path === "/login" || newRoute.path === "/signup";
 });
 </script>
 

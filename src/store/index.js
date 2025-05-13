@@ -2,33 +2,34 @@ import { createStore } from "vuex";
 
 const store = createStore({
     state: {
-        products: [],
-        cart: [],
+        user: JSON.parse(localStorage.getItem("user")) || null,
+        token: localStorage.getItem("token") || null,
     },
     mutations: {
-        setProducts(state, products) {
-            state.products = products;
+        setUser(state, userData) {
+            state.user = userData;
+            state.token = userData.token;
+            localStorage.setItem("user", JSON.stringify(userData));
+            localStorage.setItem("token", userData.token);
         },
-        addToCart(state, product) {
-            state.cart.push(product);
-        },
-        removeFromCart(state, productId) {
-            state.cart = state.cart.filter((item) => item.id !== productId);
+        clearUser(state) {
+            state.user = null;
+            state.token = null;
+            localStorage.removeItem("user");
+            localStorage.removeItem("token");
         },
     },
     actions: {
-        fetchProducts({ commit }) {
-            // 예시 - 실제 API로 교체 필요
-            const sampleProducts = [
-                { id: 1, name: "Lavender Oil", price: 25, image: "/assets/lavender.jpg" },
-                { id: 2, name: "Peppermint Oil", price: 20, image: "/assets/peppermint.jpg" },
-            ];
-            commit("setProducts", sampleProducts);
+        login({ commit }, userData) {
+            commit("setUser", userData);
+        },
+        logout({ commit }) {
+            commit("clearUser");
         },
     },
     getters: {
-        products: (state) => state.products,
-        cart: (state) => state.cart,
+        isAuthenticated: (state) => !!state.user,
+        userName: (state) => (state.user ? state.user.fullName : ""),
     },
 });
 

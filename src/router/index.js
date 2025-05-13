@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import Login from "@/views/LoginView.vue";
+import Signup from "@/views/SignupView.vue";
 import ProductView from "@/views/ProductView.vue";
 import ProductDetail from "@/views/ProductDetail.vue";
 import AboutView from "@/views/AboutView.vue";
@@ -15,6 +16,7 @@ import Notices from "@/views/NoticesView.vue";
 const routes = [
     { path: "/", name: "Home", component: HomeView },
     { path: "/login", name: "Login", component: Login },
+    { path: "/signup", name: "Signup", component: Signup },
     { path: "/products", name: "Products", component: ProductView },
     { path: "/products/:id", name: "ProductDetail", component: ProductDetail },
     { path: "/about/greeting", name: "Greeting", component: Greeting },
