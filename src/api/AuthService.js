@@ -13,6 +13,7 @@ class AuthService {
 
     logout() {
         localStorage.removeItem("token");
+        localStorage.removeItem("user");
     }
 
     getUserProfile(token) {
@@ -23,12 +24,21 @@ class AuthService {
         });
     }
 
-    updateUserProfile(data, token) {
-        return axios.put(`${API_URL_AUTH}/profile`, data, {
-            headers: {
-                Authorization: `Bearer ${token}`,
+    updateUserProfile(userId, additionalAmount, token) {
+        console.log("📦 업데이트 요청:", { userId, additionalAmount });
+
+        // 🔄 PUT 요청 수정
+        return axios.put(
+            `${API_URL_AUTH}/update-profile/${userId}`,
+            {
+                additionalAmount: additionalAmount,
             },
-        });
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
     }
 }
 

@@ -29,7 +29,10 @@ const store = createStore({
         },
         async fetchUserProfile({ commit }) {
             try {
-                const response = await AuthService.getUserProfile(localStorage.getItem("token"));
+                const token = localStorage.getItem("token");
+                const response = await AuthService.getUserProfile(token);
+
+                // 🔄 업데이트된 user 정보 저장
                 commit("setUser", response.data);
             } catch (error) {
                 console.error("사용자 정보 불러오기 실패:", error);
@@ -40,6 +43,7 @@ const store = createStore({
     getters: {
         isAuthenticated: (state) => !!state.token,
         userName: (state) => (state.user ? state.user.fullName : ""),
+        membershipLevel: (state) => (state.user ? state.user.membershipLevel : "일반회원"),
     },
 });
 

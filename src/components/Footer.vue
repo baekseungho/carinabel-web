@@ -16,48 +16,33 @@
                 <h3>고객센터</h3>
                 <ul>
                     <li>카리나벨 코리아</li>
-                    <li>대전광역시 은구비남로7번길 73, 3층</li>
+                    <li>대전광역시 은구비남로7번길 73, 3층 301호</li>
                     <li>고객상담: 000-0000</li>
                     <li>이메일 주소: email@karinabel.com</li>
-                    <li>대표이사: 주재현 / 사업자등록번호: 000-00-00000</li>
+                    <li>대표이사: 주재현 / 사업자등록번호: 443-19-01421</li>
                     <li>통신판매 등록번호: 0000-대전유성-0000</li>
                 </ul>
             </div>
             <div class="footerSection basicInfo">
                 <h3>카리나벨 베이직</h3>
                 <ul>
-                    <li @click="navigateTo('/notices')" class="clickable">
-                        공지사항
-                    </li>
+                    <li @click="navigateTo('/notices')" class="clickable">공지사항</li>
                 </ul>
             </div>
             <div class="footerSection essentialOils">
                 <h3>최고의 품질 카리나벨 에센셜 오일</h3>
                 <ul>
-                    <li
-                        @click="navigateTo('/about/greeting')"
-                        class="clickable"
-                    >
-                        인사말
-                    </li>
-                    <li @click="navigateTo('/about/story')" class="clickable">
-                        브랜드 스토리
-                    </li>
+                    <li @click="navigateTo('/about/greeting')" class="clickable">인사말</li>
+                    <li @click="navigateTo('/about/story')" class="clickable">브랜드 스토리</li>
                 </ul>
             </div>
         </div>
         <div class="footerLinks">
             <ul>
-                <li @click="navigateTo('/privacy')" class="clickable">
-                    개인정보처리방침
-                </li>
+                <li @click="navigateTo('/privacy')" class="clickable">개인정보처리방침</li>
                 <li @click="navigateTo('/law')" class="clickable">관련법령</li>
-                <li @click="navigateTo('/terms')" class="clickable">
-                    이용 약관
-                </li>
-                <li @click="navigateTo('/member')" class="clickable">
-                    회원조회
-                </li>
+                <li @click="navigateTo('/terms')" class="clickable">이용 약관</li>
+                <li @click="navigateTo('/member')" class="clickable">회원조회</li>
             </ul>
         </div>
         <div class="footerCopyright">

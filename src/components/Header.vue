@@ -41,29 +41,15 @@
             </span>
             <div v-show="showAuthMenu" class="authMenu">
                 <p class="authWelcome">
-                    {{
-                        isAuthenticated
-                            ? userName + "님, 환영합니다!"
-                            : "카리나벨에 오신 것을 환영합니다!"
-                    }}
+                    {{ isAuthenticated ? userName + "님, 환영합니다." : "카리나벨에 오신 것을 환영합니다!" }}
                 </p>
-                <button
-                    v-if="!isAuthenticated"
-                    class="authLoginButton"
-                    @click="goLogin"
-                >
-                    로그인
-                </button>
-                <button
-                    v-if="!isAuthenticated"
-                    class="authSignupButton"
-                    @click="goSignup"
-                >
-                    회원가입
-                </button>
-                <button v-else class="authLogoutButton" @click="handleLogout">
-                    로그아웃
-                </button>
+                <p v-if="isAuthenticated" class="authWelcome">
+                    {{ "회원등급 : " + userMembershipLevel }}
+                </p>
+                <button v-if="!isAuthenticated" class="authLoginButton" @click="goLogin">로그인</button>
+                <button v-if="!isAuthenticated" class="authSignupButton" @click="goSignup">회원가입</button>
+                <button v-if="isAuthenticated" class="myPageButton" @click="handleLogout">마이페이지</button>
+                <button v-if="isAuthenticated" class="authLogoutButton" @click="handleLogout">로그아웃</button>
             </div>
         </div>
     </header>
@@ -80,6 +66,7 @@ const store = useStore();
 
 const isAuthenticated = computed(() => store.getters.isAuthenticated);
 const userName = computed(() => store.getters.userName);
+const userMembershipLevel = computed(() => store.getters.membershipLevel);
 
 const goHome = () => {
     router.push({ path: "/" });
@@ -228,6 +215,10 @@ onMounted(() => {
     font-size: 1rem;
 }
 
+.authWelcome:first-child {
+    margin-bottom: 0.4rem;
+}
+
 .authLoginButton {
     width: 100%;
     padding: 0.75rem;
@@ -260,7 +251,8 @@ onMounted(() => {
 .authSignupButton:hover {
     background-color: #cc8a94;
 }
-.authLogoutButton {
+.authLogoutButton,
+.myPageButton {
     width: 100%;
     padding: 0.75rem;
     background-color: #ffffff;
@@ -272,7 +264,12 @@ onMounted(() => {
     transition: all 0.3s ease-in-out;
 }
 
-.authLogoutButton:hover {
+.authLogoutButton:hover,
+.myPageButton:hover {
     background-color: #f4f4f4;
+}
+
+.myPageButton {
+    margin-bottom: 0.8rem;
 }
 </style>
