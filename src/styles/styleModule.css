@@ -82,3 +82,15 @@
 .back {
     background-image: url("/img/icon_back.png");
 }
+.cart {
+    background-image: url("/img/icon_cart.png");
+}
+.x {
+    background-image: url("/img/icon_x.png");
+}
+.plus {
+    background-image: url("/img/icon_plus.png");
+}
+.minus {
+    background-image: url("/img/icon_minus.png");
+}

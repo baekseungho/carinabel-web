@@ -34,22 +34,56 @@
             </ul>
         </nav>
 
-        <div class="authContainer" @click="toggleAuthMenu">
-            <div class="normalIcon login"></div>
-            <span class="loginText">
-                {{ isAuthenticated ? userName + "님" : "로그인" }}
-            </span>
-            <div v-show="showAuthMenu" class="authMenu">
-                <p class="authWelcome">
-                    {{ isAuthenticated ? userName + "님, 환영합니다." : "카리나벨에 오신 것을 환영합니다!" }}
-                </p>
-                <p v-if="isAuthenticated" class="authWelcome">
-                    {{ "회원등급 : " + userMembershipLevel }}
-                </p>
-                <button v-if="!isAuthenticated" class="authLoginButton" @click="goLogin">로그인</button>
-                <button v-if="!isAuthenticated" class="authSignupButton" @click="goSignup">회원가입</button>
-                <button v-if="isAuthenticated" class="myPageButton" @click="handleLogout">마이페이지</button>
-                <button v-if="isAuthenticated" class="authLogoutButton" @click="handleLogout">로그아웃</button>
+        <div class="authMenuContainer">
+            <div class="authContainer" @click="goCart">
+                <div class="normalIcon cart"></div>
+                <span class="cartText">장바구니 </span>
+            </div>
+            <div class="authContainer" @click="toggleAuthMenu">
+                <div class="normalIcon login"></div>
+                <span class="loginText">
+                    {{ isAuthenticated ? userName + "님" : "로그인" }}
+                </span>
+                <div v-show="showAuthMenu" class="authMenu">
+                    <p class="authWelcome">
+                        {{
+                            isAuthenticated
+                                ? userName + "님, 환영합니다."
+                                : "카리나벨에 오신 것을 환영합니다!"
+                        }}
+                    </p>
+                    <p v-if="isAuthenticated" class="authWelcome">
+                        {{ "회원등급 : " + userMembershipLevel }}
+                    </p>
+                    <button
+                        v-if="!isAuthenticated"
+                        class="authLoginButton"
+                        @click="goLogin"
+                    >
+                        로그인
+                    </button>
+                    <button
+                        v-if="!isAuthenticated"
+                        class="authSignupButton"
+                        @click="goSignup"
+                    >
+                        회원가입
+                    </button>
+                    <button
+                        v-if="isAuthenticated"
+                        class="myPageButton"
+                        @click="handleLogout"
+                    >
+                        마이페이지
+                    </button>
+                    <button
+                        v-if="isAuthenticated"
+                        class="authLogoutButton"
+                        @click="handleLogout"
+                    >
+                        로그아웃
+                    </button>
+                </div>
             </div>
         </div>
     </header>
@@ -76,6 +110,9 @@ const goLogin = () => {
 };
 const goSignup = () => {
     router.push({ path: "/signup" });
+};
+const goCart = () => {
+    router.push({ path: "/cart" });
 };
 const toggleAuthMenu = () => {
     showAuthMenu.value = !showAuthMenu.value;
@@ -175,7 +212,11 @@ onMounted(() => {
     color: #cc8a94;
     border-left: 3px solid #cc8a94;
 }
-
+.authMenuContainer {
+    width: 160px;
+    display: flex;
+    justify-content: space-between;
+}
 .authContainer {
     position: relative;
     cursor: pointer;
@@ -192,6 +233,15 @@ onMounted(() => {
 
 .loginText {
     font-weight: 600;
+    color: #cc8a94;
+    margin-top: 0.4rem;
+}
+
+.cartText {
+    font-weight: 600;
+    margin-top: 0.4rem;
+}
+.authContainer:hover .cartText {
     color: #cc8a94;
 }
 

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import Login from "@/views/LoginView.vue";
 import Signup from "@/views/SignupView.vue";
+import Cart from "@/views/CartView.vue";
 import ProductView from "@/views/ProductView.vue";
 import ProductDetail from "@/views/ProductDetail.vue";
 import Onlymember from "@/views/OnlyMemberView.vue";
@@ -34,6 +35,7 @@ const routes = [
             requiresAuth: true,
         },
     },
+    { path: "/cart", name: "Cart", component: Cart },
     { path: "/about/greeting", name: "Greeting", component: Greeting },
     { path: "/about/story", name: "Story", component: Story },
     { path: "/about/navigate", name: "Navigate", component: Navigate },
