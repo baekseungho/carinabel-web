@@ -46,43 +46,15 @@
                 </span>
                 <div v-show="showAuthMenu" class="authMenu">
                     <p class="authWelcome">
-                        {{
-                            isAuthenticated
-                                ? userName + "님, 환영합니다."
-                                : "카리나벨에 오신 것을 환영합니다!"
-                        }}
+                        {{ isAuthenticated ? userName + "님, 환영합니다." : "카리나벨에 오신 것을 환영합니다!" }}
                     </p>
                     <p v-if="isAuthenticated" class="authWelcome">
                         {{ "회원등급 : " + userMembershipLevel }}
                     </p>
-                    <button
-                        v-if="!isAuthenticated"
-                        class="authLoginButton"
-                        @click="goLogin"
-                    >
-                        로그인
-                    </button>
-                    <button
-                        v-if="!isAuthenticated"
-                        class="authSignupButton"
-                        @click="goSignup"
-                    >
-                        회원가입
-                    </button>
-                    <button
-                        v-if="isAuthenticated"
-                        class="myPageButton"
-                        @click="handleLogout"
-                    >
-                        마이페이지
-                    </button>
-                    <button
-                        v-if="isAuthenticated"
-                        class="authLogoutButton"
-                        @click="handleLogout"
-                    >
-                        로그아웃
-                    </button>
+                    <button v-if="!isAuthenticated" class="authLoginButton" @click="goLogin">로그인</button>
+                    <button v-if="!isAuthenticated" class="authSignupButton" @click="goSignup">회원가입</button>
+                    <button v-if="isAuthenticated" class="myPageButton" @click="goMypage">마이페이지</button>
+                    <button v-if="isAuthenticated" class="authLogoutButton" @click="handleLogout">로그아웃</button>
                 </div>
             </div>
         </div>
@@ -114,6 +86,10 @@ const goSignup = () => {
 const goCart = () => {
     router.push({ path: "/cart" });
 };
+const goMypage = () => {
+    router.push({ path: "/myPage" });
+};
+
 const toggleAuthMenu = () => {
     showAuthMenu.value = !showAuthMenu.value;
 };

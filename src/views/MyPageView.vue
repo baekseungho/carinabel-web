@@ -1,0 +1,187 @@
+<template>
+    <div class="myPageContainer">
+        <h1 class="myPageTitle">👤 마이페이지</h1>
+
+        <div class="profileCard">
+            <div class="profileHeader">
+                <img src="/img/icon_login.png" alt="Profile Image" class="profileImage" />
+                <div class="profileInfo">
+                    <h2 class="fullName">{{ user.fullName }}</h2>
+                    <p class="membershipLevel">{{ user.membershipLevel }}</p>
+                </div>
+            </div>
+
+            <div class="profileDetails">
+                <div class="profileDetail">
+                    <label>이름</label>
+                    <span>{{ user.fullName }}</span>
+                </div>
+                <div class="profileDetail">
+                    <label>이메일</label>
+                    <span>{{ user.email }}</span>
+                </div>
+                <div class="profileDetail">
+                    <label>전화번호</label>
+                    <span>{{ formatPhone(user.phone) }}</span>
+                </div>
+                <div class="profileDetail">
+                    <label>생년월일</label>
+                    <span>{{ formatDate(user.birthday) }}</span>
+                </div>
+                <div class="profileDetail">
+                    <label>총 구매 금액</label>
+                    <span>{{ formatPrice(user.totalPurchaseAmount) }}원</span>
+                </div>
+                <div class="profileDetail">
+                    <label>가입일</label>
+                    <span>{{ formatDate(user.createdAt) }}</span>
+                </div>
+            </div>
+
+            <button class="editButton">정보 수정</button>
+            <button class="logoutButton">로그아웃</button>
+        </div>
+    </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from "vue";
+
+const user = ref({
+    fullName: "백승호",
+    email: "vudrkd1580@naver.com",
+    phone: "01020457967",
+    birthday: "1996-04-15T00:00:00.000+00:00",
+    membershipLevel: "대리점",
+    totalPurchaseAmount: 3527000,
+    createdAt: "2025-05-13T07:42:12.417+00:00",
+});
+
+function formatPrice(price) {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date
+        .getDate()
+        .toString()
+        .padStart(2, "0")}`;
+}
+
+function formatPhone(phone) {
+    return phone.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+}
+</script>
+
+<style scoped>
+.myPageContainer {
+    padding: 40px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.myPageTitle {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: #444;
+    text-align: center;
+}
+
+.profileCard {
+    background-color: #f7f7f7;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
+}
+
+.profileHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 20px;
+}
+
+.profileImage {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-right: 20px;
+    border: 2px solid #cc8a94;
+}
+
+.profileInfo {
+    flex: 1;
+}
+
+.fullName {
+    font-size: 28px;
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 5px;
+}
+
+.membershipLevel {
+    font-size: 18px;
+    color: #cc8a94;
+}
+
+.profileDetails {
+    margin-bottom: 30px;
+}
+
+.profileDetail {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.profileDetail label {
+    font-size: 18px;
+    color: #777;
+    font-weight: bold;
+}
+
+.profileDetail span {
+    font-size: 18px;
+    color: #444;
+}
+
+.editButton {
+    background-color: #cc8a94;
+    color: #fff;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 15px;
+    transition: background-color 0.2s;
+}
+
+.editButton:hover {
+    background-color: #ca717f;
+}
+
+.logoutButton {
+    background-color: #ff4d4d;
+    color: #fff;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.2s;
+}
+
+.logoutButton:hover {
+    background-color: #cc0000;
+}
+</style>
