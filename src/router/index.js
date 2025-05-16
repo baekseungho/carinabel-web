@@ -7,6 +7,7 @@ import Mypage from "@/views/MyPageView.vue";
 import ProductView from "@/views/ProductView.vue";
 import ProductDetail from "@/views/ProductDetail.vue";
 import Onlymember from "@/views/OnlyMemberView.vue";
+import OnlymemberDetail from "@/views/OnlyMemberDetailView.vue";
 import AboutView from "@/views/AboutView.vue";
 import ContactView from "@/views/ContactView.vue";
 import Greeting from "@/views/GreetingView.vue";
@@ -35,6 +36,14 @@ const routes = [
         path: "/products/onlymember",
         name: "Onlymember",
         component: Onlymember,
+        meta: {
+            requiresAuth: true,
+        },
+    },
+    {
+        path: "/products/onlymember/:id",
+        name: "OnlymemberDetail",
+        component: OnlymemberDetail,
         meta: {
             requiresAuth: true,
         },
@@ -69,7 +78,11 @@ const routes = [
     },
 
     // 관리자 페이지
-    { path: "/admin/products", name: "ProductManageView", component: ProductManageView },
+    {
+        path: "/admin/products",
+        name: "ProductManageView",
+        component: ProductManageView,
+    },
 ];
 
 const router = createRouter({
