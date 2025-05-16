@@ -16,6 +16,9 @@ import Events from "@/views/EventsView.vue";
 import Lectures from "@/views/LecturesView.vue";
 import QnA from "@/views/QnAView.vue";
 import Notices from "@/views/NoticesView.vue";
+
+import ProductManageView from "@/adminViews/ProductManagerView.vue";
+
 import store from "@/store";
 
 const routes = [
@@ -64,6 +67,9 @@ const routes = [
         component: Notices,
         meta: { maintenance: true },
     },
+
+    // 관리자 페이지
+    { path: "/admin/products", name: "ProductManageView", component: ProductManageView },
 ];
 
 const router = createRouter({
