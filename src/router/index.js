@@ -17,6 +17,7 @@ import Events from "@/views/EventsView.vue";
 import Lectures from "@/views/LecturesView.vue";
 import QnA from "@/views/QnAView.vue";
 import Notices from "@/views/NoticesView.vue";
+import NoticeDetail from "@/views/NoticeDetailView.vue";
 
 import ProductManageView from "@/adminViews/ProductManagerView.vue";
 
@@ -74,7 +75,13 @@ const routes = [
         path: "/notices",
         name: "Notices",
         component: Notices,
-        meta: { maintenance: true },
+        // meta: { maintenance: true },
+    },
+    {
+        path: "/notice/:id",
+        name: "NoticeDetail",
+        component: NoticeDetail,
+        // meta: { maintenance: true },
     },
 
     // 관리자 페이지

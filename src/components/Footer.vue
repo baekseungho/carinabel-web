@@ -15,7 +15,7 @@
             <div class="footerSection customerCenter">
                 <h3>고객센터</h3>
                 <ul>
-                    <li>카리나벨 코리아</li>
+                    <li>(주)카리나벨</li>
                     <li>대전광역시 은구비남로7번길 73, 3층 301호</li>
                     <li>고객상담: 000-0000</li>
                     <li>이메일 주소: email@karinabel.com</li>

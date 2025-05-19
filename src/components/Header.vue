@@ -209,7 +209,7 @@ onMounted(() => {
 
 .loginText {
     font-weight: 600;
-    color: #cc8a94;
+    /* color: #cc8a94; */
     margin-top: 0.4rem;
 }
 
@@ -217,7 +217,8 @@ onMounted(() => {
     font-weight: 600;
     margin-top: 0.4rem;
 }
-.authContainer:hover .cartText {
+.authContainer:hover .cartText,
+.authContainer:hover .loginText {
     color: #cc8a94;
 }
 
