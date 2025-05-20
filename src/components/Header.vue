@@ -101,7 +101,7 @@ const handleLogout = () => {
 };
 
 onMounted(() => {
-    console.log(store.getters);
+    console.log("회원등급 :", store.getters.membershipLevel);
 });
 </script>
 <style scoped>

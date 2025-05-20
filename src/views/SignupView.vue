@@ -1,93 +1,94 @@
 <template>
     <div class="signupPageContainer">
         <div class="signupBackground">
-            <img
-                src="/img/background_login.png"
-                alt="Signup Background"
-                class="backgroundImage"
-            />
+            <img src="/img/background_login.png" alt="Signup Background" class="backgroundImage" />
             <div class="signupOverlay"></div>
         </div>
         <div class="signupContent">
             <div class="signupHeader">
-                <img
-                    src="/img/logo2.png"
-                    alt="Logo"
-                    class="signupLogo"
-                    @click="goHome"
-                />
+                <img src="/img/logo2.png" alt="Logo" class="signupLogo" @click="goHome" />
             </div>
             <div class="signupFormContainer">
                 <h2 class="signupTitle">회원가입</h2>
-                <form @submit.prevent="handleSignup">
-                    <div class="inputGroup">
-                        <label for="fullName">이름</label>
-                        <input
-                            type="text"
-                            id="fullName"
-                            v-model="fullName"
-                            placeholder="이름을 입력하세요."
-                        />
-                    </div>
-                    <div class="inputGroup">
-                        <label for="email">이메일</label>
-                        <input
-                            type="email"
-                            id="email"
-                            v-model="email"
-                            placeholder="이메일 주소를 입력하세요."
-                        />
-                    </div>
-                    <div class="inputGroup">
-                        <label for="phone">휴대폰 번호</label>
-                        <input
-                            type="text"
-                            id="phone"
-                            v-model="phone"
-                            placeholder="휴대폰 번호를 입력하세요."
-                        />
-                    </div>
-                    <div class="inputGroup">
-                        <label for="birthday">생년월일</label>
-                        <input
-                            type="date"
-                            id="birthday"
-                            v-model="birthday"
-                            placeholder="생년월일을 입력하세요."
-                        />
-                    </div>
-                    <div class="inputGroup">
-                        <label for="password">비밀번호</label>
-                        <input
-                            type="password"
-                            id="password"
-                            v-model="password"
-                            placeholder="비밀번호를 입력하세요."
-                        />
-                    </div>
-                    <div class="inputGroup">
-                        <label for="confirmPassword">비밀번호 확인</label>
-                        <input
-                            type="password"
-                            id="confirmPassword"
-                            v-model="confirmPassword"
-                            placeholder="비밀번호를 다시 입력하세요."
-                        />
-                    </div>
-                    <div class="optionsContainer">
-                        <label class="termsLabel">
+                <form @submit.prevent="handleSubmit">
+                    <div v-if="step === 1">
+                        <div class="inputGroup">
+                            <label for="fullName">이름</label>
+                            <input type="text" id="fullName" v-model="fullName" placeholder="이름을 입력하세요." />
+                        </div>
+                        <div class="inputGroup">
+                            <label for="email">이메일</label>
+                            <input type="email" id="email" v-model="email" placeholder="이메일 주소를 입력하세요." />
+                        </div>
+                        <div class="inputGroup">
+                            <label for="phone">휴대폰 번호</label>
+                            <input type="text" id="phone" v-model="phone" placeholder="휴대폰 번호를 입력하세요." />
+                        </div>
+                        <div class="inputGroup">
+                            <label for="birthday">생년월일</label>
+                            <input type="date" id="birthday" v-model="birthday" placeholder="생년월일을 입력하세요." />
+                        </div>
+                        <div class="inputGroup">
+                            <label for="password">비밀번호</label>
                             <input
-                                type="checkbox"
-                                v-model="agreedToTerms"
-                                class="customCheckbox"
+                                type="password"
+                                id="password"
+                                v-model="password"
+                                placeholder="비밀번호를 입력하세요."
                             />
-                            <span class="customCheckboxLabel"
-                                >이용약관 및 개인정보 처리방침에
-                                동의합니다.</span
-                            >
-                        </label>
+                        </div>
+                        <div class="inputGroup">
+                            <label for="confirmPassword">비밀번호 확인</label>
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                v-model="confirmPassword"
+                                placeholder="비밀번호를 다시 입력하세요."
+                            />
+                        </div>
+                        <div class="optionsContainer">
+                            <label class="termsLabel">
+                                <input type="checkbox" v-model="agreedToTerms" class="customCheckbox" />
+                                <span class="customCheckboxLabel">이용약관 및 개인정보 처리방침에 동의합니다.</span>
+                            </label>
+                        </div>
+                        <button type="button" class="signupButton" @click="nextStep">다음으로</button>
                     </div>
-                    <button type="submit" class="signupButton">회원가입</button>
+
+                    <div v-if="step === 2">
+                        <div class="inputGroup">
+                            <label for="accountNumber">계좌번호</label>
+                            <input
+                                type="text"
+                                id="accountNumber"
+                                v-model="accountNumber"
+                                placeholder="계좌번호를 입력하세요."
+                            />
+                        </div>
+                        <div class="inputGroup">
+                            <label for="bank">은행</label>
+                            <input type="text" id="bank" v-model="bank" placeholder="은행명을 입력하세요." />
+                        </div>
+                        <div class="inputGroup">
+                            <label for="socialSecurityNumber">주민등록번호</label>
+                            <input
+                                type="text"
+                                id="socialSecurityNumber"
+                                v-model="socialSecurityNumber"
+                                placeholder="주민등록번호를 입력하세요."
+                            />
+                        </div>
+                        <div class="inputGroup">
+                            <label for="referrerEmail">추천인</label>
+                            <input
+                                type="text"
+                                id="referrerEmail"
+                                v-model="referrerEmail"
+                                placeholder="추천인 ID를 입력하세요."
+                            />
+                        </div>
+                        <button type="submit" class="signupButton">회원가입</button>
+                    </div>
                 </form>
                 <p class="loginPrompt">
                     이미 계정이 있으신가요?
@@ -103,6 +104,7 @@ import { ref } from "vue";
 import router from "@/router";
 import AuthService from "@/api/AuthService";
 
+const step = ref(1);
 const fullName = ref("");
 const email = ref("");
 const phone = ref("");
@@ -111,32 +113,25 @@ const password = ref("");
 const confirmPassword = ref("");
 const agreedToTerms = ref(false);
 
+const accountNumber = ref("");
+const bank = ref("");
+const socialSecurityNumber = ref("");
+const referrerEmail = ref("");
+
 const goHome = () => {
     router.push("/");
 };
 
-const handleSignup = () => {
-    if (!fullName.value.trim()) {
-        alert("이름을 입력해주세요.");
-        return;
-    }
+const nextStep = () => {
     if (
+        !fullName.value.trim() ||
         !email.value.trim() ||
-        !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email.value.trim())
+        !phone.value.trim() ||
+        !birthday.value.trim() ||
+        !password.value.trim() ||
+        !confirmPassword.value.trim()
     ) {
-        alert("유효한 이메일 주소를 입력해주세요.");
-        return;
-    }
-    if (!phone.value.trim() || !/^01[0-9]{8,9}$/.test(phone.value.trim())) {
-        alert("유효한 휴대폰 번호를 입력해주세요. (예: 01012345678)");
-        return;
-    }
-    if (!birthday.value.trim()) {
-        alert("생년월일을 입력해주세요.");
-        return;
-    }
-    if (password.value.length < 6) {
-        alert("비밀번호는 최소6자리여야 합니다.");
+        alert("모든 필드를 입력해주세요.");
         return;
     }
     if (password.value !== confirmPassword.value) {
@@ -147,14 +142,25 @@ const handleSignup = () => {
         alert("이용약관 및 개인정보 처리방침에 동의해주세요.");
         return;
     }
+    step.value = 2;
+};
 
-    // 회원가입 요청
+const handleSubmit = () => {
+    if (!accountNumber.value.trim() || !bank.value.trim() || !socialSecurityNumber.value.trim()) {
+        alert("계좌번호, 은행, 주민등록번호를 입력해주세요.");
+        return;
+    }
+
     const data = {
         fullName: fullName.value.trim(),
         email: email.value.trim(),
         phone: phone.value.trim(),
         birthday: birthday.value.trim(),
         password: password.value.trim(),
+        accountNumber: accountNumber.value.trim(),
+        bank: bank.value.trim(),
+        socialSecurityNumber: socialSecurityNumber.value.trim(),
+        referrerEmail: referrerEmail.value.trim(),
         agreedToTerms: agreedToTerms.value,
     };
 
