@@ -5,7 +5,11 @@
         </div>
         <nav>
             <ul>
-                <li v-for="menu in menus" :key="menu.name" @click="navigate(menu.link)">
+                <li
+                    v-for="menu in menus"
+                    :key="menu.name"
+                    @click="navigate(menu.link)"
+                >
                     <i :class="menu.icon"></i>
                     <span v-if="!collapsed">{{ menu.name }}</span>
                 </li>
@@ -26,8 +30,16 @@ const menus = [
     { name: "주문 관리", link: "/mypage/orders", icon: "fa-solid fa-box" },
     { name: "수당 관리", link: "/mypage/referral", icon: "fa-solid fa-coins" },
     { name: "배송지 관리", link: "/mypage/address", icon: "fa-solid fa-truck" },
-    { name: "주문 내역", link: "/mypage/order-history", icon: "fa-solid fa-receipt" },
-    { name: "문의 내역", link: "/mypage/inquiries", icon: "fa-solid fa-question-circle" },
+    {
+        name: "주문 내역",
+        link: "/mypage/order-history",
+        icon: "fa-solid fa-receipt",
+    },
+    {
+        name: "문의 내역",
+        link: "/mypage/inquiries",
+        icon: "fa-solid fa-question-circle",
+    },
 ];
 </script>
 
@@ -79,6 +91,7 @@ const menus = [
 }
 
 nav li {
+    height: 48px;
     font-size: 16px;
     color: #444;
     padding: 12px 10px;

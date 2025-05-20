@@ -1,67 +1,75 @@
 <template>
-  <div class="loginPageContainer">
-    <div class="loginBackground">
-      <img
-        src="/img/background_login.png"
-        alt="Login Background"
-        class="backgroundImage"
-      />
-      <div class="loginOverlay"></div>
-    </div>
-    <div class="loginContent">
-      <div class="loginHeader">
-        <img
-          src="/img/logo2.png"
-          alt="Logo"
-          class="loginLogo"
-          @click="goHome"
-        />
-      </div>
-      <div class="loginFormContainer">
-        <h2 class="loginTitle">로그인</h2>
-        <form @submit.prevent="handleLogin">
-          <div class="inputGroup">
-            <label for="email">이메일 또는 카리나벨 ID</label>
-            <input
-              type="text"
-              id="email"
-              v-model="emailOrId"
-              placeholder="이메일 또는 카리나벨 ID를 입력하세요."
-              @keydown.enter="userLogin"
+    <div class="loginPageContainer">
+        <div class="loginBackground">
+            <img
+                src="/img/background_login.png"
+                alt="Login Background"
+                class="backgroundImage"
             />
-          </div>
-          <div class="inputGroup passwordGroup">
-            <label for="password">비밀번호</label>
-            <div class="passwordWrapper">
-              <input
-                :type="showPassword ? 'text' : 'password'"
-                id="password"
-                v-model="password"
-                placeholder="비밀번호를 입력하세요."
-                @keydown.enter="userLogin"
-              />
-              <span class="passwordToggle" @click="togglePassword">{{
-                showPassword ? "비밀번호 숨기기" : "비밀번호 보기"
-              }}</span>
+            <div class="loginOverlay"></div>
+        </div>
+        <div class="loginContent">
+            <div class="loginHeader">
+                <img
+                    src="/img/logo2.png"
+                    alt="Logo"
+                    class="loginLogo"
+                    @click="goHome"
+                />
             </div>
-          </div>
-          <div class="optionsContainer">
-            <label class="rememberMeLabel">
-              <input
-                type="checkbox"
-                v-model="rememberMe"
-                class="customCheckbox"
-              />
-              <span class="customCheckboxLabel">아이디 저장</span>
-            </label>
-            <a href="#" class="forgotPasswordLink">비밀번호 설정/찾기</a>
-          </div>
-          <button type="submit" class="loginButton">로그인</button>
-        </form>
-        <button class="signupButton" @click="goSignup">회원가입</button>
-      </div>
+            <div class="loginFormContainer">
+                <h2 class="loginTitle">로그인</h2>
+                <form @submit.prevent="handleLogin">
+                    <div class="inputGroup">
+                        <label for="email">이메일 또는 카리나벨 ID</label>
+                        <input
+                            type="text"
+                            id="email"
+                            v-model="emailOrId"
+                            placeholder="이메일 또는 카리나벨 ID를 입력하세요."
+                            @keydown.enter="userLogin"
+                        />
+                    </div>
+                    <div class="inputGroup passwordGroup">
+                        <label for="password">비밀번호</label>
+                        <div class="passwordWrapper">
+                            <input
+                                :type="showPassword ? 'text' : 'password'"
+                                id="password"
+                                v-model="password"
+                                placeholder="비밀번호를 입력하세요."
+                                @keydown.enter="userLogin"
+                            />
+                            <span
+                                class="passwordToggle"
+                                @click="togglePassword"
+                                >{{
+                                    showPassword
+                                        ? "비밀번호 숨기기"
+                                        : "비밀번호 보기"
+                                }}</span
+                            >
+                        </div>
+                    </div>
+                    <div class="optionsContainer">
+                        <label class="rememberMeLabel">
+                            <input
+                                type="checkbox"
+                                v-model="rememberMe"
+                                class="customCheckbox"
+                            />
+                            <span class="customCheckboxLabel">아이디 저장</span>
+                        </label>
+                        <a href="#" class="forgotPasswordLink"
+                            >비밀번호 설정/찾기</a
+                        >
+                    </div>
+                    <button type="submit" class="loginButton">로그인</button>
+                </form>
+                <button class="signupButton" @click="goSignup">회원가입</button>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script setup>
@@ -76,217 +84,217 @@ const rememberMe = ref(false);
 const showPassword = ref(false);
 
 const goHome = () => {
-  router.push("/");
+    router.push("/");
 };
 
 const goSignup = () => {
-  router.push("/signup");
+    router.push("/signup");
 };
 
 const handleLogin = () => {
-  if (!emailOrId.value.trim()) {
-    alert("이메일 또는 아이디를 입력해주세요.");
-    return;
-  }
-  if (!password.value.trim()) {
-    alert("비밀번호를 입력해주세요.");
-    return;
-  }
+    if (!emailOrId.value.trim()) {
+        alert("이메일 또는 아이디를 입력해주세요.");
+        return;
+    }
+    if (!password.value.trim()) {
+        alert("비밀번호를 입력해주세요.");
+        return;
+    }
 
-  const data = {
-    emailOrId: emailOrId.value.trim(),
-    password: password.value.trim(),
-  };
+    const data = {
+        emailOrId: emailOrId.value.trim(),
+        password: password.value.trim(),
+    };
 
-  AuthService.login(data)
-    .then((response) => {
-      console.log("로그인 성공:", response.data);
-      store.dispatch("login", response.data);
-
-      router.push("/");
-    })
-    .catch((error) => {
-      console.error(error);
-      alert("이메일 또는 비밀번호를 확인해주세요.");
-    });
+    AuthService.login(data)
+        .then((response) => {
+            console.log("로그인 성공:", response.data);
+            store.dispatch("login", response.data);
+            localStorage.setItem("user", JSON.stringify(response.data));
+            router.push("/");
+        })
+        .catch((error) => {
+            console.error(error);
+            alert("이메일 또는 비밀번호를 확인해주세요.");
+        });
 };
 
 const togglePassword = () => {
-  showPassword.value = !showPassword.value;
+    showPassword.value = !showPassword.value;
 };
 </script>
 
 <style scoped>
 .loginPageContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background-color: #f9f9f9;
-  position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f9f9f9;
+    position: relative;
 }
 
 .loginBackground {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
 }
 
 .backgroundImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(70%);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(70%);
 }
 
 .loginOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.3);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
 }
 
 .loginContent {
-  width: 400px;
-  padding: 2rem;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  text-align: center;
+    width: 400px;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    text-align: center;
 }
 
 .loginLogo {
-  height: 50px;
-  margin-bottom: 1.5rem;
-  cursor: pointer;
+    height: 50px;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
 }
 
 .loginTitle {
-  margin-bottom: 2rem;
-  font-size: 1.8rem;
-  color: #cc8a94;
-  font-weight: 700;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    color: #cc8a94;
+    font-weight: 700;
 }
 
 .inputGroup {
-  margin-bottom: 1.5rem;
-  text-align: left;
+    margin-bottom: 1.5rem;
+    text-align: left;
 }
 
 .inputGroup label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #333;
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
 }
 
 .inputGroup input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 1rem;
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
 }
 .passwordWrapper {
-  position: relative;
-  font-size: 0.8rem;
-  font-weight: 700;
+    position: relative;
+    font-size: 0.8rem;
+    font-weight: 700;
 }
 .passwordToggle {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: 20px;
-  cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 20px;
+    cursor: pointer;
 }
 .optionsContainer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
 }
 
 .customCheckbox {
-  display: none;
+    display: none;
 }
 
 .customCheckboxLabel {
-  position: relative;
-  padding-left: 1.6rem;
-  cursor: pointer;
-  font-weight: 600;
-  color: #333;
+    position: relative;
+    padding-left: 1.6rem;
+    cursor: pointer;
+    font-weight: 600;
+    color: #333;
 }
 
 .customCheckboxLabel::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  background-color: #fff;
-  border: 2px solid #cc8a94;
-  transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    background-color: #fff;
+    border: 2px solid #cc8a94;
+    transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
 }
 
 .customCheckbox:checked + .customCheckboxLabel::before {
-  background-color: #cc8a94;
-  border-color: #cc8a94;
-  background-image: url("/img/check-icon.svg");
-  background-size: 12px 12px;
-  background-repeat: no-repeat;
-  background-position: center;
+    background-color: #cc8a94;
+    border-color: #cc8a94;
+    background-image: url("/img/check-icon.svg");
+    background-size: 12px 12px;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .forgotPasswordLink {
-  color: #cc8a94;
-  text-decoration: none;
+    color: #cc8a94;
+    text-decoration: none;
 }
 
 .forgotPasswordLink:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 
 .loginButton {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #cc8a94;
-  color: #ffffff;
-  border: none;
-  border-radius: 30px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #cc8a94;
+    color: #ffffff;
+    border: none;
+    border-radius: 30px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
 }
 
 .loginButton:hover {
-  background-color: #b97a83;
+    background-color: #b97a83;
 }
 
 .signupButton {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #ffffff;
-  color: #cc8a94;
-  border: 2px solid #cc8a94;
-  border-radius: 30px;
-  font-weight: 700;
-  margin-top: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #ffffff;
+    color: #cc8a94;
+    border: 2px solid #cc8a94;
+    border-radius: 30px;
+    font-weight: 700;
+    margin-top: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
 }
 
 .signupButton:hover {
-  background-color: #f4f4f4;
+    background-color: #f4f4f4;
 }
 </style>
