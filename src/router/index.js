@@ -3,7 +3,7 @@ import HomeView from "@/views/HomeView.vue";
 import Login from "@/views/LoginView.vue";
 import Signup from "@/views/SignupView.vue";
 import Cart from "@/views/CartView.vue";
-import Mypage from "@/views/MyPageView.vue";
+import MyPageView from "@/views/MyPageView.vue";
 import ProductView from "@/views/ProductView.vue";
 import ProductDetail from "@/views/ProductDetail.vue";
 import Onlymember from "@/views/OnlyMemberView.vue";
@@ -18,7 +18,6 @@ import Lectures from "@/views/LecturesView.vue";
 import QnA from "@/views/QnAView.vue";
 import Notices from "@/views/NoticesView.vue";
 import NoticeDetail from "@/views/NoticeDetailView.vue";
-
 import ProductManageView from "@/adminViews/ProductManagerView.vue";
 
 import store from "@/store";
@@ -50,7 +49,21 @@ const routes = [
         },
     },
     { path: "/cart", name: "Cart", component: Cart },
-    { path: "/mypage", name: "Mypage", component: Mypage },
+    {
+        path: "/mypage",
+        component: MyPageView, // 여기에 SideMenu 항상 존재
+        children: [
+            {
+                path: "",
+                name: "MyPageMain",
+                component: () => import("@/views/myPage/MyPageMain.vue"), // 바로 위에 만든 컴포넌트
+            },
+            // { path: "info", component: InfoView },
+            // { path: "members", component: MemberManageView },
+            // { path: "orders", component: OrderManageView },
+            // ...
+        ],
+    },
     { path: "/about/greeting", name: "Greeting", component: Greeting },
     { path: "/about/story", name: "Story", component: Story },
     { path: "/about/navigate", name: "Navigate", component: Navigate },
