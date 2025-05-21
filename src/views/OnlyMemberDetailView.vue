@@ -86,7 +86,7 @@ function buyProduct(product) {
     const userId = JSON.parse(localStorage.getItem("user"))._id;
     const data = {
         userId: userId,
-        additionalAmount: product.memberPrice * 2,
+        additionalAmount: product.memberPrice,
     };
     console.log(data, token);
     AuthService.updateUserProfile(data.userId, data.additionalAmount, token)
