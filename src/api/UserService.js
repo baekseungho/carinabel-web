@@ -18,6 +18,14 @@ class UserService {
             },
         });
     }
+
+    getUserNetwork(token, userId, period) {
+        return axios.get(`${API_URL}/network/${userId}?period=${period}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    }
 }
 
 export default new UserService();
