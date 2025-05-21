@@ -57,6 +57,10 @@
 
                     <div v-if="step === 2">
                         <div class="inputGroup">
+                            <label for="accountNumber">주소</label>
+                            <input type="text" id="address" v-model="address" placeholder="주소를 입력하세요." />
+                        </div>
+                        <div class="inputGroup">
                             <label for="accountNumber">계좌번호</label>
                             <input
                                 type="text"
@@ -66,8 +70,8 @@
                             />
                         </div>
                         <div class="inputGroup">
-                            <label for="bank">은행</label>
-                            <input type="text" id="bank" v-model="bank" placeholder="은행명을 입력하세요." />
+                            <label for="bankName">은행</label>
+                            <input type="text" id="bankName" v-model="bankName" placeholder="은행명을 입력하세요." />
                         </div>
                         <div class="inputGroup">
                             <label for="socialSecurityNumber">주민등록번호</label>
@@ -112,9 +116,9 @@ const birthday = ref("");
 const password = ref("");
 const confirmPassword = ref("");
 const agreedToTerms = ref(false);
-
+const address = ref("");
 const accountNumber = ref("");
-const bank = ref("");
+const bankName = ref("");
 const socialSecurityNumber = ref("");
 const referrerEmail = ref("");
 
@@ -146,7 +150,11 @@ const nextStep = () => {
 };
 
 const handleSubmit = () => {
-    if (!accountNumber.value.trim() || !bank.value.trim() || !socialSecurityNumber.value.trim()) {
+    if (!address.value) {
+        alert("주소를 입력해주세요.");
+        return;
+    }
+    if (!accountNumber.value.trim() || !bankName.value.trim() || !socialSecurityNumber.value.trim()) {
         alert("계좌번호, 은행, 주민등록번호를 입력해주세요.");
         return;
     }
@@ -158,7 +166,8 @@ const handleSubmit = () => {
         birthday: birthday.value.trim(),
         password: password.value.trim(),
         accountNumber: accountNumber.value.trim(),
-        bank: bank.value.trim(),
+        bankName: bankName.value.trim(),
+        address: address.value,
         socialSecurityNumber: socialSecurityNumber.value.trim(),
         referrerEmail: referrerEmail.value.trim(),
         agreedToTerms: agreedToTerms.value,

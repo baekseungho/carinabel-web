@@ -4,6 +4,7 @@ import Login from "@/views/LoginView.vue";
 import Signup from "@/views/SignupView.vue";
 import Cart from "@/views/CartView.vue";
 import MyPageView from "@/views/MyPageView.vue";
+import InfoView from "@/views/myPage/InfoView.vue";
 import ProductView from "@/views/ProductView.vue";
 import ProductDetail from "@/views/ProductDetail.vue";
 import Onlymember from "@/views/OnlyMemberView.vue";
@@ -58,7 +59,7 @@ const routes = [
                 name: "MyPageMain",
                 component: () => import("@/views/myPage/MyPageMain.vue"), // 바로 위에 만든 컴포넌트
             },
-            // { path: "info", component: InfoView },
+            { path: "info", component: InfoView },
             // { path: "members", component: MemberManageView },
             // { path: "orders", component: OrderManageView },
             // ...

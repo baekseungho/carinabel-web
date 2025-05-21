@@ -10,6 +10,14 @@ class UserService {
             },
         });
     }
+
+    getUserProfile(token) {
+        return axios.get(`${API_URL}/profile`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    }
 }
 
 export default new UserService();

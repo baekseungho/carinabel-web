@@ -23,12 +23,10 @@ const toggleCollapse = () => {
     min-height: 100vh;
     background-color: #f9f9f9;
     padding: 40px 20px;
-    transition: all 0.3s ease;
 }
 
 .myPageMain {
     flex: 1;
-    transition: all 0.3s ease;
     padding-left: 120px; /* 펼쳤을 때 사이드바 넓이만큼 */
 }
 

@@ -5,11 +5,7 @@
         </div>
         <nav>
             <ul>
-                <li
-                    v-for="menu in menus"
-                    :key="menu.name"
-                    @click="navigate(menu.link)"
-                >
+                <li v-for="menu in menus" :key="menu.name" @click="navigate(menu.link)">
                     <i :class="menu.icon"></i>
                     <span v-if="!collapsed">{{ menu.name }}</span>
                 </li>
@@ -51,7 +47,7 @@ const menus = [
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     padding: 30px 20px;
     position: sticky;
-    top: 30px;
+    top: 100px;
     height: fit-content;
     transition: all 0.3s ease;
 }
