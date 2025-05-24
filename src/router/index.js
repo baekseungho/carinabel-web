@@ -6,6 +6,7 @@ import Cart from "@/views/CartView.vue";
 import MyPageView from "@/views/MyPageView.vue";
 import InfoView from "@/views/myPage/InfoView.vue";
 import MemberManageView from "@/views/myPage/MemberManageView.vue";
+import EarningStatsView from "@/views/myPage/EarningStats.vue";
 import ProductView from "@/views/ProductView.vue";
 import ProductDetail from "@/views/ProductDetail.vue";
 import Onlymember from "@/views/OnlyMemberView.vue";
@@ -25,112 +26,113 @@ import ProductManageView from "@/adminViews/ProductManagerView.vue";
 import store from "@/store";
 
 const routes = [
-    { path: "/", name: "Home", component: HomeView },
-    { path: "/login", name: "Login", component: Login },
-    { path: "/signup", name: "Signup", component: Signup },
-    { path: "/products/essential", name: "Products", component: ProductView },
-    {
-        path: "/products/essential/:id",
-        name: "ProductDetail",
-        component: ProductDetail,
+  { path: "/", name: "Home", component: HomeView },
+  { path: "/login", name: "Login", component: Login },
+  { path: "/signup", name: "Signup", component: Signup },
+  { path: "/products/essential", name: "Products", component: ProductView },
+  {
+    path: "/products/essential/:id",
+    name: "ProductDetail",
+    component: ProductDetail,
+  },
+  {
+    path: "/products/onlymember",
+    name: "Onlymember",
+    component: Onlymember,
+    meta: {
+      requiresAuth: true,
     },
-    {
-        path: "/products/onlymember",
-        name: "Onlymember",
-        component: Onlymember,
-        meta: {
-            requiresAuth: true,
-        },
+  },
+  {
+    path: "/products/onlymember/:id",
+    name: "OnlymemberDetail",
+    component: OnlymemberDetail,
+    meta: {
+      requiresAuth: true,
     },
-    {
-        path: "/products/onlymember/:id",
-        name: "OnlymemberDetail",
-        component: OnlymemberDetail,
-        meta: {
-            requiresAuth: true,
-        },
-    },
-    { path: "/cart", name: "Cart", component: Cart },
-    {
-        path: "/mypage",
-        component: MyPageView, // 여기에 SideMenu 항상 존재
-        children: [
-            {
-                path: "",
-                name: "MyPageMain",
-                component: () => import("@/views/myPage/MyPageMain.vue"), // 바로 위에 만든 컴포넌트
-            },
-            { path: "info", component: InfoView },
-            { path: "members", component: MemberManageView },
-            // { path: "orders", component: OrderManageView },
-            // ...
-        ],
-    },
-    { path: "/about/greeting", name: "Greeting", component: Greeting },
-    { path: "/about/story", name: "Story", component: Story },
-    { path: "/about/navigate", name: "Navigate", component: Navigate },
-    { path: "/about", name: "About", component: AboutView },
-    { path: "/contact", name: "Contact", component: ContactView },
+  },
+  { path: "/cart", name: "Cart", component: Cart },
+  {
+    path: "/mypage",
+    component: MyPageView, // 여기에 SideMenu 항상 존재
+    children: [
+      {
+        path: "",
+        name: "MyPageMain",
+        component: () => import("@/views/myPage/MyPageMain.vue"), // 바로 위에 만든 컴포넌트
+      },
+      { path: "info", component: InfoView },
+      { path: "members", component: MemberManageView },
+      { path: "referral", component: EarningStatsView },
+      // { path: "orders", component: OrderManageView },
+      // ...
+    ],
+  },
+  { path: "/about/greeting", name: "Greeting", component: Greeting },
+  { path: "/about/story", name: "Story", component: Story },
+  { path: "/about/navigate", name: "Navigate", component: Navigate },
+  { path: "/about", name: "About", component: AboutView },
+  { path: "/contact", name: "Contact", component: ContactView },
 
-    // ⚠️ 서비스 준비중 페이지들
-    {
-        path: "/business/events",
-        name: "Events",
-        component: Events,
-        meta: { maintenance: true },
-    },
-    {
-        path: "/business/lectures",
-        name: "Lectures",
-        component: Lectures,
-        meta: { maintenance: true },
-    },
-    { path: "/qna", name: "QnA", component: QnA, meta: { maintenance: true } },
-    {
-        path: "/notices",
-        name: "Notices",
-        component: Notices,
-        // meta: { maintenance: true },
-    },
-    {
-        path: "/notice/:id",
-        name: "NoticeDetail",
-        component: NoticeDetail,
-        // meta: { maintenance: true },
-    },
+  // ⚠️ 서비스 준비중 페이지들
+  {
+    path: "/business/events",
+    name: "Events",
+    component: Events,
+    meta: { maintenance: true },
+  },
+  {
+    path: "/business/lectures",
+    name: "Lectures",
+    component: Lectures,
+    meta: { maintenance: true },
+  },
+  { path: "/qna", name: "QnA", component: QnA, meta: { maintenance: true } },
+  {
+    path: "/notices",
+    name: "Notices",
+    component: Notices,
+    // meta: { maintenance: true },
+  },
+  {
+    path: "/notice/:id",
+    name: "NoticeDetail",
+    component: NoticeDetail,
+    // meta: { maintenance: true },
+  },
 
-    // 관리자 페이지
-    {
-        path: "/admin/products",
-        name: "ProductManageView",
-        component: ProductManageView,
-    },
+  // 관리자 페이지
+  {
+    path: "/admin/products",
+    name: "ProductManageView",
+    component: ProductManageView,
+  },
 ];
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes,
+  history: createWebHistory(),
+  routes,
 });
 
 // ❗ 전역 네비게이션 가드
 router.beforeEach((to, from, next) => {
-    // 서비스 준비중 페이지 차단
-    if (to.meta.maintenance) {
-        alert("서비스 준비중입니다.");
-        return next("/");
-    }
+  // 서비스 준비중 페이지 차단
+  if (to.meta.maintenance) {
+    alert("서비스 준비중입니다.");
+    return next("/");
+  }
 
-    // 인증이 필요한 페이지 차단
-    if (to.meta.requiresAuth) {
-        const token = localStorage.getItem("token");
-        if (!token || !store.getters.isAuthenticated) {
-            alert("로그인이 필요한 페이지입니다.");
-            return next("/login");
-        }
+  // 인증이 필요한 페이지 차단
+  if (to.meta.requiresAuth) {
+    const token = localStorage.getItem("token");
+    if (!token || !store.getters.isAuthenticated) {
+      alert("로그인이 필요한 페이지입니다.");
+      return next("/login");
     }
+  }
 
-    // 접근 허용
-    next();
+  // 접근 허용
+  next();
 });
 
 export default router;
