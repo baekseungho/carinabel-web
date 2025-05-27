@@ -26,6 +26,13 @@ class UserService {
             },
         });
     }
+    getReferralEarningsByMonth(userId, yearMonth, token) {
+        return axios.get(`/users/referral-earnings/${userId}/${yearMonth}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    }
 }
 
 export default new UserService();
