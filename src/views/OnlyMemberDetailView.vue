@@ -6,7 +6,11 @@
 
         <div class="productDetailWrapper">
             <div class="productImageWrapper">
-                <img :src="product.imagePath || '/img/default.jpg'" :alt="product.koreanName" class="productImage" />
+                <img
+                    :src="product.imagePath || '/img/default.jpg'"
+                    :alt="product.koreanName"
+                    class="productImage"
+                />
             </div>
 
             <div class="productInfoWrapper">
@@ -16,12 +20,22 @@
                 </h1>
                 <p class="productVolume">용량: {{ product.volume || 0 }}ml</p>
                 <p v-if="isAuthenticated" class="productPrice">
-                    <span class="consumerPrice">소비자가: {{ formatPrice(product.consumerPrice) }}원</span>
-                    <span class="memberPrice">회원가: {{ formatPrice(product.memberPrice) }}원</span>
+                    <span class="consumerPrice"
+                        >소비자가:
+                        {{ formatPrice(product.consumerPrice) }}원</span
+                    >
+                    <span class="memberPrice"
+                        >회원가: {{ formatPrice(product.memberPrice) }}원</span
+                    >
                 </p>
                 <p v-else class="productPrice">
-                    <span class="memberPrice">소비자가: {{ formatPrice(product.consumerPrice) }}원</span>
-                    <span class="consumerPrice">회원가: {{ formatPrice(product.memberPrice) }}원</span>
+                    <span class="memberPrice"
+                        >소비자가:
+                        {{ formatPrice(product.consumerPrice) }}원</span
+                    >
+                    <span class="consumerPrice"
+                        >회원가: {{ formatPrice(product.memberPrice) }}원</span
+                    >
                 </p>
                 <div class="productDescription">
                     <h2>제품 설명</h2>
@@ -31,13 +45,27 @@
                 </div>
 
                 <div class="buyBtnBox">
-                    <button class="buyProductButton" @click="buyProduct(product)">구매하기</button>
-                    <button class="buyProductButton" @click="addToCart(product._id)">장바구니에 담기</button>
+                    <button
+                        class="buyProductButton"
+                        @click="buyProduct(product)"
+                    >
+                        구매하기
+                    </button>
+                    <button
+                        class="buyProductButton"
+                        @click="addToCart(product._id)"
+                    >
+                        장바구니에 담기
+                    </button>
                 </div>
             </div>
         </div>
         <div class="productDaildescription">
-            <img :src="product.detailImage || '/img/default.jpg'" :alt="product.koreanName" class="productImage" />
+            <img
+                :src="product.detailImage || '/img/default.jpg'"
+                :alt="product.koreanName"
+                class="productImage"
+            />
         </div>
     </div>
 </template>
@@ -48,6 +76,7 @@ import { useRoute, useRouter } from "vue-router";
 import essentialOils from "../assets/data/essentialoils.js";
 import { useStore } from "vuex";
 import AuthService from "@/api/AuthService";
+import OrderService from "@/api/OrderService";
 import ProductService from "@/api/ProductService.js";
 import CartService from "@/api/CartService.js";
 
@@ -82,25 +111,47 @@ function formatPrice(price) {
 
 function buyProduct(product) {
     if (!product.koreanName) return;
-    console.log(product);
-    const userId = JSON.parse(localStorage.getItem("user"))._id;
-    const data = {
-        userId: userId,
-        additionalAmount: product.memberPrice,
-    };
-    console.log(data, token);
-    AuthService.updateUserProfile(data.userId, data.additionalAmount, token)
-        .then((response) => {
-            console.log(response);
+
+    const user = JSON.parse(localStorage.getItem("user"));
+    const userId = user?._id;
+    const token = user?.token;
+
+    if (!userId || !token) {
+        alert("로그인이 필요합니다.");
+        return;
+    }
+
+    const additionalAmount = product.memberPrice;
+    const quantity = 1;
+
+    const updatePromise = AuthService.updateUserProfile(
+        userId,
+        additionalAmount,
+        token
+    );
+    const orderPromise = OrderService.createOrder(
+        {
+            userId,
+            productName: product.koreanName,
+            amount: additionalAmount,
+            quantity,
+            status: "결제완료", // 선택적
+        },
+        token
+    );
+
+    Promise.all([updatePromise, orderPromise])
+        .then(([userRes, orderRes]) => {
             alert(`${product.koreanName} 를 구매했습니다.`);
-            store.dispatch("login", response.data);
+            console.log("👤 회원정보 갱신:", userRes.data);
+            console.log("🧾 주문 기록 생성:", orderRes.data);
+            store.dispatch("login", userRes.data);
         })
         .catch((error) => {
-            console.error(error);
+            console.error("❌ 구매 실패:", error);
             alert("구매에 실패했습니다.");
         });
 }
-
 const addToCart = (productId) => {
     const token = localStorage.getItem("token");
 

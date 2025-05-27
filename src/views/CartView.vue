@@ -13,9 +13,15 @@
                 </div>
 
                 <div class="cartItemDetails">
-                    <h2 class="cartItemTitle">{{ item.productId.koreanName }}</h2>
-                    <p class="cartItemVolume">용량: {{ item.productId.volume }}ml</p>
-                    <p class="cartItemPrice">회원가: {{ formatPrice(item.price) }}원</p>
+                    <h2 class="cartItemTitle">
+                        {{ item.productId.koreanName }}
+                    </h2>
+                    <p class="cartItemVolume">
+                        용량: {{ item.productId.volume }}ml
+                    </p>
+                    <p class="cartItemPrice">
+                        회원가: {{ formatPrice(item.price) }}원
+                    </p>
                     <div class="cartItemQuantity">
                         <button @click="decreaseQuantity(item)">
                             <div class="minus smallIcon"></div>
@@ -25,7 +31,10 @@
                             <div class="plus smallIcon"></div>
                         </button>
                     </div>
-                    <button class="removeItemButton" @click="deleteItem(item._id)">
+                    <button
+                        class="removeItemButton"
+                        @click="deleteItem(item._id)"
+                    >
                         <div class="x smallIcon"></div>
                         삭제
                     </button>
@@ -47,9 +56,9 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import axios from "axios";
 import CartService from "@/api/CartService.js";
 import AuthService from "@/api/AuthService.js";
+import OrderService from "@/api/OrderService.js";
 import { useStore } from "vuex";
 
 const cartItems = ref([]);
@@ -119,26 +128,49 @@ function buyCart() {
         return;
     }
 
-    const userId = JSON.parse(localStorage.getItem("user"))._id;
-    const data = {
-        userId: userId,
-        additionalAmount: totalPrice.value,
-    };
-    console.log(data, token);
-    AuthService.updateUserProfile(data.userId, data.additionalAmount, token)
+    const user = JSON.parse(localStorage.getItem("user"));
+    const userId = user._id;
+    const token = user.token;
+
+    // 1️⃣ 수당/등급 업데이트
+    AuthService.updateUserProfile(userId, totalPrice.value, token)
         .then((response) => {
-            console.log(response);
-            alert(`장바구니상품들을 구매했습니다.`);
-            store.dispatch("login", response.data);
+            // 2️⃣ 주문기록 → 장바구니 아이템마다
+            const orderPromises = cartItems.value.map((item) => {
+                console.log(
+                    "🛒 주문 생성용 데이터:",
+                    item.productId.koreanName,
+                    item.price,
+                    item.quantity
+                );
+                return OrderService.createOrder(
+                    {
+                        userId,
+                        productName: item.productId.koreanName, // ✅ 이 값이 undefined면 에러 발생
+                        amount: item.price * item.quantity,
+                        quantity: item.quantity,
+                        status: "결제완료",
+                    },
+                    token
+                );
+            });
+
+            return Promise.all(orderPromises).then(() => {
+                alert("장바구니 상품들을 구매했습니다.");
+                store.dispatch("login", response.data);
+                getCartList(); // 장바구니 비우기
+            });
         })
         .catch((error) => {
-            console.error(error);
+            console.error("❌ 장바구니 구매 실패:", error);
             alert("구매에 실패했습니다.");
         });
 }
 
 // 📝 총 금액 계산
-const totalPrice = computed(() => cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0));
+const totalPrice = computed(() =>
+    cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
+);
 
 onMounted(() => {
     getCartList();

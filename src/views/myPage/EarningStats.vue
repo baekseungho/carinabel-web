@@ -1,13 +1,21 @@
 <template>
     <div class="recommendTable">
         <div class="header">
-            <h2>수당관리</h2>
+            <h2>마이페이지 > 수당관리</h2>
 
             <div class="monthFilter">
                 <label for="monthSelect">월 선택:</label>
-                <select id="monthSelect" v-model="selectedMonth" class="customSelect">
+                <select
+                    id="monthSelect"
+                    v-model="selectedMonth"
+                    class="customSelect"
+                >
                     <option value="전체">전체</option>
-                    <option v-for="stat in availableMonths" :key="stat" :value="stat">
+                    <option
+                        v-for="stat in availableMonths"
+                        :key="stat"
+                        :value="stat"
+                    >
                         {{ stat }}
                     </option>
                 </select>
@@ -40,7 +48,9 @@
             </tfoot>
         </table>
 
-        <div v-else class="loadingText">📡 수당 데이터를 불러오는 중입니다...</div>
+        <div v-else class="loadingText">
+            📡 수당 데이터를 불러오는 중입니다...
+        </div>
     </div>
     <ReferralDetailModal
         :visible="isModalVisible"
@@ -64,16 +74,20 @@ const isModalVisible = ref(false);
 const selectedMonthDetail = ref("");
 const monthDetails = ref([]);
 const availableMonths = computed(() =>
-    stats.value ? [...new Set(stats.value.stats.map((s) => s.yearMonth))].reverse() : []
+    stats.value
+        ? [...new Set(stats.value.stats.map((s) => s.yearMonth))].reverse()
+        : []
 );
 
 const filteredStats = computed(() => {
     if (!stats.value) return [];
-    if (selectedMonth.value === "전체") return stats.value.stats.slice().reverse();
+    if (selectedMonth.value === "전체")
+        return stats.value.stats.slice().reverse();
     return stats.value.stats.filter((s) => s.yearMonth === selectedMonth.value);
 });
 
-const formatPrice = (num) => num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+const formatPrice = (num) =>
+    num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 const openModal = (yearMonth) => {
     selectedMonthDetail.value = yearMonth;
     isModalVisible.value = true;

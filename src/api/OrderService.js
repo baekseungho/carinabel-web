@@ -20,6 +20,14 @@ class OrderService {
             },
         });
     }
+
+    createOrder(orderData, token) {
+        return axios.post("/orders/create", orderData, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    }
 }
 
 export default new OrderService();

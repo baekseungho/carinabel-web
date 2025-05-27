@@ -1,11 +1,19 @@
 <template>
     <div class="orderViewContainer">
-        <h2 class="pageTitle">📦 주문관리</h2>
+        <h2 class="pageTitle">마이페이지 > 주문관리</h2>
 
         <!-- 🧭 탭 메뉴 -->
         <div class="tabs">
-            <button :class="{ active: activeTab === 'default' }" @click="activeTab = 'default'">주문검색</button>
-            <button :class="{ active: activeTab === 'referred' }" @click="activeTab = 'referred'">
+            <button
+                :class="{ active: activeTab === 'default' }"
+                @click="activeTab = 'default'"
+            >
+                주문검색
+            </button>
+            <button
+                :class="{ active: activeTab === 'referred' }"
+                @click="activeTab = 'referred'"
+            >
                 추천하위주문검색
             </button>
         </div>
@@ -20,6 +28,7 @@
                         <th v-if="activeTab === 'referred'">추천인</th>
                         <th>주문일자</th>
                         <th>수량</th>
+                        <th>상품명</th>
                         <th>금액</th>
                         <th>주문상태</th>
                         <th>배송일자</th>
@@ -29,9 +38,14 @@
                     <tr v-for="order in filteredOrders" :key="order._id">
                         <td>{{ order.userId.email }}</td>
                         <td>{{ order.userId.fullName }}</td>
-                        <td v-if="activeTab === 'referred'">{{ order.userId.referrer?.email || "-" }}</td>
+                        <td v-if="activeTab === 'referred'">
+                            {{ order.userId.referrerId?.fullName }} ({{
+                                order.userId.referrerId?.email
+                            }})
+                        </td>
                         <td>{{ formatDate(order.createdAt) }}</td>
                         <td>{{ order.quantity }}</td>
+                        <td>{{ order.productName }}</td>
                         <td>{{ formatPrice(order.amount) }}원</td>
                         <td>{{ order.status }}</td>
                         <td>{{ formatDate(order.deliveryDate) }}</td>
@@ -60,9 +74,13 @@ import OrderService from "@/api/OrderService";
 // 📦 주문 불러오기
 const loadOrders = () => {
     if (activeTab.value === "default") {
-        OrderService.getOrders(user._id, token).then((res) => (orders.value = res.data));
+        OrderService.getOrders(user._id, token).then(
+            (res) => (orders.value = res.data)
+        );
     } else {
-        OrderService.getReferredOrders(user._id, token).then((res) => (orders.value = res.data));
+        OrderService.getReferredOrders(user._id, token).then(
+            (res) => (orders.value = res.data)
+        );
     }
 };
 
@@ -70,8 +88,12 @@ const loadOrders = () => {
 const filteredOrders = computed(() => orders.value);
 
 // 📊 합계 계산
-const totalQuantity = computed(() => orders.value.reduce((sum, o) => sum + (o.quantity || 0), 0));
-const totalAmount = computed(() => orders.value.reduce((sum, o) => sum + (o.amount || 0), 0));
+const totalQuantity = computed(() =>
+    orders.value.reduce((sum, o) => sum + (o.quantity || 0), 0)
+);
+const totalAmount = computed(() =>
+    orders.value.reduce((sum, o) => sum + (o.amount || 0), 0)
+);
 
 onMounted(loadOrders);
 watch(activeTab, loadOrders);
@@ -80,10 +102,12 @@ const formatPrice = (n) => n?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 const formatDate = (iso) => {
     if (!iso) return "-";
     const d = new Date(iso);
-    return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d
-        .getDate()
+    return `${d.getFullYear()}-${(d.getMonth() + 1)
         .toString()
-        .padStart(2, "0")} ${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
+        .padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")} ${d
+        .getHours()
+        .toString()
+        .padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
 };
 </script>
 
@@ -134,10 +158,13 @@ table {
     width: 100%;
     border-collapse: collapse;
     background: white;
-    border-radius: 12px;
+    /* border-radius: 12px; */
     overflow: hidden;
 }
-
+thead {
+    background-color: #333;
+    color: #fff;
+}
 th,
 td {
     padding: 14px;
