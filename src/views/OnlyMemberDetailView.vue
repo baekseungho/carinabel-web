@@ -6,11 +6,7 @@
 
         <div class="productDetailWrapper">
             <div class="productImageWrapper">
-                <img
-                    :src="product.imagePath || '/img/default.jpg'"
-                    :alt="product.koreanName"
-                    class="productImage"
-                />
+                <img :src="product.imagePath || '/img/default.jpg'" :alt="product.koreanName" class="productImage" />
             </div>
 
             <div class="productInfoWrapper">
@@ -20,22 +16,12 @@
                 </h1>
                 <p class="productVolume">용량: {{ product.volume || 0 }}ml</p>
                 <p v-if="isAuthenticated" class="productPrice">
-                    <span class="consumerPrice"
-                        >소비자가:
-                        {{ formatPrice(product.consumerPrice) }}원</span
-                    >
-                    <span class="memberPrice"
-                        >회원가: {{ formatPrice(product.memberPrice) }}원</span
-                    >
+                    <span class="consumerPrice">소비자가: {{ formatPrice(product.consumerPrice) }}원</span>
+                    <span class="memberPrice">회원가: {{ formatPrice(product.memberPrice) }}원</span>
                 </p>
                 <p v-else class="productPrice">
-                    <span class="memberPrice"
-                        >소비자가:
-                        {{ formatPrice(product.consumerPrice) }}원</span
-                    >
-                    <span class="consumerPrice"
-                        >회원가: {{ formatPrice(product.memberPrice) }}원</span
-                    >
+                    <span class="memberPrice">소비자가: {{ formatPrice(product.consumerPrice) }}원</span>
+                    <span class="consumerPrice">회원가: {{ formatPrice(product.memberPrice) }}원</span>
                 </p>
                 <div class="productDescription">
                     <h2>제품 설명</h2>
@@ -45,27 +31,13 @@
                 </div>
 
                 <div class="buyBtnBox">
-                    <button
-                        class="buyProductButton"
-                        @click="buyProduct(product)"
-                    >
-                        구매하기
-                    </button>
-                    <button
-                        class="buyProductButton"
-                        @click="addToCart(product._id)"
-                    >
-                        장바구니에 담기
-                    </button>
+                    <button class="buyProductButton" @click="buyProduct(product)">구매하기</button>
+                    <button class="buyProductButton" @click="addToCart(product._id)">장바구니에 담기</button>
                 </div>
             </div>
         </div>
         <div class="productDaildescription">
-            <img
-                :src="product.detailImage || '/img/default.jpg'"
-                :alt="product.koreanName"
-                class="productImage"
-            />
+            <img :src="product.detailImage || '/img/default.jpg'" :alt="product.koreanName" class="productImage" />
         </div>
     </div>
 </template>
@@ -124,17 +96,14 @@ function buyProduct(product) {
     const additionalAmount = product.memberPrice;
     const quantity = 1;
 
-    const updatePromise = AuthService.updateUserProfile(
-        userId,
-        additionalAmount,
-        token
-    );
+    const updatePromise = AuthService.updateUserProfile(userId, additionalAmount, token);
     const orderPromise = OrderService.createOrder(
         {
             userId,
             productName: product.koreanName,
             amount: additionalAmount,
             quantity,
+            imagePath: product.imagePath,
             status: "결제완료", // 선택적
         },
         token

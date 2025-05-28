@@ -9,6 +9,9 @@ import MemberManageView from "@/views/myPage/MemberManageView.vue";
 import EarningStatsView from "@/views/myPage/EarningStats.vue";
 import OrderManageView from "@/views/myPage/OrderManageView.vue";
 import AddressView from "@/views/myPage/AddressView.vue";
+import OrderHistoryView from "@/views/myPage/OrderHistoryView.vue";
+import OrderHistoryDetailView from "@/views/myPage/OrderHistoryDetailView.vue";
+
 import ProductView from "@/views/ProductView.vue";
 import ProductDetail from "@/views/ProductDetail.vue";
 import Onlymember from "@/views/OnlyMemberView.vue";
@@ -68,6 +71,8 @@ const routes = [
             { path: "referral", component: EarningStatsView },
             { path: "orders", component: OrderManageView },
             { path: "address", component: AddressView },
+            { path: "order-history", component: OrderHistoryView },
+            { path: "order-history/:id", component: OrderHistoryDetailView, name: "OrderHistoryDetailView" },
             // ...
         ],
     },

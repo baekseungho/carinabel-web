@@ -16,12 +16,8 @@
                     <h2 class="cartItemTitle">
                         {{ item.productId.koreanName }}
                     </h2>
-                    <p class="cartItemVolume">
-                        용량: {{ item.productId.volume }}ml
-                    </p>
-                    <p class="cartItemPrice">
-                        회원가: {{ formatPrice(item.price) }}원
-                    </p>
+                    <p class="cartItemVolume">용량: {{ item.productId.volume }}ml</p>
+                    <p class="cartItemPrice">회원가: {{ formatPrice(item.price) }}원</p>
                     <div class="cartItemQuantity">
                         <button @click="decreaseQuantity(item)">
                             <div class="minus smallIcon"></div>
@@ -31,10 +27,7 @@
                             <div class="plus smallIcon"></div>
                         </button>
                     </div>
-                    <button
-                        class="removeItemButton"
-                        @click="deleteItem(item._id)"
-                    >
+                    <button class="removeItemButton" @click="deleteItem(item._id)">
                         <div class="x smallIcon"></div>
                         삭제
                     </button>
@@ -137,16 +130,12 @@ function buyCart() {
         .then((response) => {
             // 2️⃣ 주문기록 → 장바구니 아이템마다
             const orderPromises = cartItems.value.map((item) => {
-                console.log(
-                    "🛒 주문 생성용 데이터:",
-                    item.productId.koreanName,
-                    item.price,
-                    item.quantity
-                );
+                console.log("🛒 주문 생성용 데이터:", item.productId.koreanName, item.price, item.quantity);
                 return OrderService.createOrder(
                     {
                         userId,
                         productName: item.productId.koreanName, // ✅ 이 값이 undefined면 에러 발생
+                        imagePath: item.productId.imagePath,
                         amount: item.price * item.quantity,
                         quantity: item.quantity,
                         status: "결제완료",
@@ -168,9 +157,7 @@ function buyCart() {
 }
 
 // 📝 총 금액 계산
-const totalPrice = computed(() =>
-    cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
-);
+const totalPrice = computed(() => cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0));
 
 onMounted(() => {
     getCartList();

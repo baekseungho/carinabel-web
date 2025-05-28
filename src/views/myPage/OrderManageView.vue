@@ -4,16 +4,8 @@
 
         <!-- 🧭 탭 메뉴 -->
         <div class="tabs">
-            <button
-                :class="{ active: activeTab === 'default' }"
-                @click="activeTab = 'default'"
-            >
-                주문검색
-            </button>
-            <button
-                :class="{ active: activeTab === 'referred' }"
-                @click="activeTab = 'referred'"
-            >
+            <button :class="{ active: activeTab === 'default' }" @click="activeTab = 'default'">주문검색</button>
+            <button :class="{ active: activeTab === 'referred' }" @click="activeTab = 'referred'">
                 추천하위주문검색
             </button>
         </div>
@@ -39,9 +31,7 @@
                         <td>{{ order.userId.email }}</td>
                         <td>{{ order.userId.fullName }}</td>
                         <td v-if="activeTab === 'referred'">
-                            {{ order.userId.referrerId?.fullName }} ({{
-                                order.userId.referrerId?.email
-                            }})
+                            {{ order.userId.referrerId?.fullName }} ({{ order.userId.referrerId?.email }})
                         </td>
                         <td>{{ formatDate(order.createdAt) }}</td>
                         <td>{{ order.quantity }}</td>
@@ -71,16 +61,27 @@ const orders = ref([]);
 const token = JSON.parse(localStorage.getItem("user"))?.token;
 const user = JSON.parse(localStorage.getItem("user"));
 import OrderService from "@/api/OrderService";
+
 // 📦 주문 불러오기
 const loadOrders = () => {
     if (activeTab.value === "default") {
-        OrderService.getOrders(user._id, token).then(
-            (res) => (orders.value = res.data)
-        );
+        OrderService.getOrders(user._id, token)
+            .then((res) => {
+                orders.value = res.data;
+            })
+            .catch((err) => {
+                console.error("❌ 일반 주문 불러오기 실패:", err);
+                alert("주문 데이터를 불러오는데 실패했습니다.");
+            });
     } else {
-        OrderService.getReferredOrders(user._id, token).then(
-            (res) => (orders.value = res.data)
-        );
+        OrderService.getReferredOrders(user._id, token)
+            .then((res) => {
+                orders.value = res.data;
+            })
+            .catch((err) => {
+                console.error("❌ 추천 하위 주문 불러오기 실패:", err);
+                alert("추천 하위 주문 데이터를 불러오는데 실패했습니다.");
+            });
     }
 };
 
@@ -88,12 +89,8 @@ const loadOrders = () => {
 const filteredOrders = computed(() => orders.value);
 
 // 📊 합계 계산
-const totalQuantity = computed(() =>
-    orders.value.reduce((sum, o) => sum + (o.quantity || 0), 0)
-);
-const totalAmount = computed(() =>
-    orders.value.reduce((sum, o) => sum + (o.amount || 0), 0)
-);
+const totalQuantity = computed(() => orders.value.reduce((sum, o) => sum + (o.quantity || 0), 0));
+const totalAmount = computed(() => orders.value.reduce((sum, o) => sum + (o.amount || 0), 0));
 
 onMounted(loadOrders);
 watch(activeTab, loadOrders);
@@ -102,12 +99,10 @@ const formatPrice = (n) => n?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 const formatDate = (iso) => {
     if (!iso) return "-";
     const d = new Date(iso);
-    return `${d.getFullYear()}-${(d.getMonth() + 1)
+    return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d
+        .getDate()
         .toString()
-        .padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")} ${d
-        .getHours()
-        .toString()
-        .padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
+        .padStart(2, "0")} ${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
 };
 </script>
 

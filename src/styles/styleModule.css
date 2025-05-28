@@ -34,6 +34,9 @@
 .themaBgColor3 {
     background-color: #604b6e;
 }
+.themaBgColor3:hover {
+    background-color: #503d5b;
+}
 /* 영성 */
 .themaColor4 {
     color: #857496;

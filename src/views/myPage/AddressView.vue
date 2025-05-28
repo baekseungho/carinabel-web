@@ -24,15 +24,8 @@
                     <td>{{ item.address }}</td>
                     <td>{{ item.isDefault ? "✔️" : "" }}</td>
                     <td>
-                        <button class="editBtn" @click="openModal(item)">
-                            수정
-                        </button>
-                        <button
-                            class="deleteBtn"
-                            @click="deleteAddress(item._id)"
-                        >
-                            삭제
-                        </button>
+                        <button class="editBtn" @click="openModal(item)">수정</button>
+                        <button class="deleteBtn" @click="deleteAddress(item._id)">삭제</button>
                     </td>
                 </tr>
             </tbody>
@@ -40,12 +33,7 @@
 
         <p v-else class="noData">등록된 배송지가 없습니다.</p>
 
-        <AddressModal
-            v-if="modalVisible"
-            :address="selectedAddress"
-            @close="modalVisible = false"
-            @saved="onSaved"
-        />
+        <AddressModal v-if="modalVisible" :address="selectedAddress" @close="modalVisible = false" @saved="onSaved" />
     </div>
 </template>
 
@@ -101,7 +89,12 @@ onMounted(fetchAddresses);
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
+.addBtn:hover {
+    background-color: #ca717f;
+}
+
 .addressTable {
     width: 100%;
     border-collapse: collapse;
@@ -125,12 +118,29 @@ onMounted(fetchAddresses);
     cursor: pointer;
 }
 .editBtn {
-    background: #f0c14b;
-    color: #333;
+    background: #604b6e; /* 왕족 테마 */
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
+.editBtn:hover {
+    background: #503d5b; /* 약간 어두운 톤 */
+}
+
 .deleteBtn {
     background: #e57373;
     color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.deleteBtn:hover {
+    background: #cc5c5c;
 }
 .noData {
     text-align: center;
