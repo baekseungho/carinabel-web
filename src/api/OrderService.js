@@ -28,6 +28,14 @@ class OrderService {
             },
         });
     }
+
+    getOrderDetail(orderId, token) {
+        return axios.get(`${API_URL}/detail/${orderId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    }
 }
 
 export default new OrderService();

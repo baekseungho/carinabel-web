@@ -1,250 +1,253 @@
 <template>
     <div class="orderDetailPage">
-        <!-- 주문 요약 -->
-        <div class="summaryBox">
-            <h2>주문 내역 상세 보기</h2>
-            <p class="orderId">
-                주문번호: <strong>{{ order?._id || "---" }}</strong>
-            </p>
-        </div>
+        <h2 class="pageTitle">주문 내역 상세 보기</h2>
 
-        <!-- 구매자 상품 정보 -->
-        <div class="productInfoBox">
-            <h3>구매자 상품보기</h3>
+        <div class="orderSummary">
             <div class="productInfo">
-                <img :src="order?.product?.detailImage || '/img/default.jpg'" class="productImage" />
-                <div class="productDetails">
-                    <p class="productName">{{ order?.product?.koreanName }}</p>
-                    <p>
-                        상품금액: <strong>{{ formatPrice(order?.amount) }}원</strong>
-                    </p>
-                    <p>수량: {{ order?.quantity }}개</p>
-                    <p>
-                        합계: <strong>{{ formatPrice(order?.amount * order?.quantity) }}원</strong>
-                    </p>
-                    <p class="status">상태: {{ statusLabel(order?.status) }}</p>
-                    <div class="actionBtns">
-                        <button class="actionBtn themaBgColor4">배송조회</button>
-                        <button class="actionBtn themaBgColor3">문의하기</button>
-                        <button class="actionBtn themaBgColor5">상품평쓰기</button>
-                    </div>
+                <img
+                    :src="order.product?.imagePath || '/img/default.jpg'"
+                    alt="상품 이미지"
+                    class="productImg"
+                />
+                <div class="productText">
+                    <h3>{{ order.product?.productName }}</h3>
+                    <p>수량: {{ order.product?.quantity }}개</p>
+                    <p>가격: {{ formatPrice(order.product?.amount) }}원</p>
+                    <p>상태: {{ statusLabel(order.status) }}</p>
                 </div>
             </div>
-        </div>
-
-        <!-- 주문자/배송지/결제 정보 -->
-        <div class="infoTables">
-            <div class="infoSection">
-                <h4>주문자 정보</h4>
-                <table>
-                    <tr>
-                        <th>이름</th>
-                        <td>{{ order?.user?.fullName }}</td>
-                    </tr>
-                    <tr>
-                        <th>전화번호</th>
-                        <td>{{ order?.user?.phone || "-" }}</td>
-                    </tr>
-                    <tr>
-                        <th>이메일</th>
-                        <td>{{ order?.user?.email }}</td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="infoSection">
-                <h4>배송지 정보</h4>
-                <table>
-                    <tr>
-                        <th>받는사람</th>
-                        <td>{{ order?.address?.recipientName }}</td>
-                    </tr>
-                    <tr>
-                        <th>전화번호</th>
-                        <td>{{ order?.address?.phone || "-" }}</td>
-                    </tr>
-                    <tr>
-                        <th>휴대폰</th>
-                        <td>{{ order?.address?.mobile }}</td>
-                    </tr>
-                    <tr>
-                        <th>주소</th>
-                        <td>{{ order?.address?.address }}</td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="infoSection">
-                <h4>결제 정보</h4>
-                <table>
-                    <tr>
-                        <th>결제방법</th>
-                        <td>가상계좌</td>
-                    </tr>
-                    <tr>
-                        <th>결제상태</th>
-                        <td>{{ statusLabel(order?.status) }}</td>
-                    </tr>
-                    <tr>
-                        <th>가상계좌</th>
-                        <td>
-                            {{ order?.user?.fullName }} / {{ order?.user?.bankName }} / {{ order?.user?.accountNumber }}
-                        </td>
-                    </tr>
-                </table>
+            <div class="actionButtons">
+                <button class="themaBgColor3">구매확정</button>
+                <button class="themaBgColor4">문의하기</button>
+                <button class="themaBgColor5">상품평쓰기</button>
             </div>
         </div>
 
-        <!-- 총 결제 금액 -->
-        <div class="paymentSummary">
-            <p>
-                상품금액: {{ formatPrice(order?.amount) }}원 + 배송비: 0원 =
-                <strong>{{ formatPrice(order?.amount) }}원</strong>
-            </p>
-            <div class="bottomBtns">
-                <button class="confirmBtn">확인</button>
-                <button class="printBtn">인쇄</button>
-            </div>
+        <div class="section">
+            <h4>주문자 정보</h4>
+            <ul class="infoList">
+                <li>
+                    <strong>이름</strong><span>{{ order.user?.fullName }}</span>
+                </li>
+                <li>
+                    <strong>이메일</strong><span>{{ order.user?.email }}</span>
+                </li>
+                <li>
+                    <strong>전화번호</strong
+                    ><span>{{ order.user?.phone || "-" }}</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h4>배송지 정보</h4>
+            <ul class="infoList">
+                <li>
+                    <strong>받는 사람</strong
+                    ><span>{{ order.delivery?.recipientName }}</span>
+                </li>
+                <li>
+                    <strong>연락처</strong
+                    ><span>{{ order.delivery?.phone }}</span>
+                </li>
+                <li>
+                    <strong>주소</strong
+                    ><span>{{ order.delivery?.fullAddress }}</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h4>결제 정보</h4>
+            <ul class="infoList">
+                <li>
+                    <strong>결제 수단</strong
+                    ><span>{{ order.payment?.method }}</span>
+                </li>
+                <li>
+                    <strong>결제 상태</strong
+                    ><span>{{ order.payment?.status }}</span>
+                </li>
+                <li>
+                    <strong>은행명</strong
+                    ><span>{{ order.payment?.bank }}</span>
+                </li>
+                <li>
+                    <strong>가상계좌</strong
+                    ><span>{{ order.payment?.virtualAccount }}</span>
+                </li>
+                <li>
+                    <strong>입금기한</strong
+                    ><span>{{ formatDateTime(order.payment?.dueDate) }}</span>
+                </li>
+                <li>
+                    <strong>상품금액</strong
+                    ><span>{{ formatPrice(order.product?.amount) }}원</span>
+                </li>
+                <li><strong>배송비</strong><span>0원</span></li>
+                <li>
+                    <strong>총 결제금액</strong
+                    ><span>{{ formatPrice(order.product?.amount) }}원</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="footerButtons">
+            <button class="confirmBtn" @click="goBack">확인</button>
         </div>
     </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
-import axios from "@/api/axios";
+import { useRoute, useRouter } from "vue-router";
+import OrderService from "@/api/OrderService";
 
 const route = useRoute();
-const order = ref(null);
+const router = useRouter();
 const token = localStorage.getItem("token");
+const orderId = route.params.id;
+const order = ref({});
 
-onMounted(() => {
-    axios
-        .get(`/orders/detail/${route.params.orderId}`, {
-            headers: { Authorization: `Bearer ${token}` },
-        })
+const fetchOrderDetail = () => {
+    OrderService.getOrderDetail(orderId, token)
         .then((res) => {
             order.value = res.data;
+        })
+        .catch((err) => {
+            console.error("❌ 주문 상세 조회 실패:", err);
         });
-});
+};
 
-const formatPrice = (val) => (val || 0).toLocaleString();
+const formatPrice = (price) => (price ? price.toLocaleString() : "0");
+const goBack = () => router.push("/mypage/order-history");
 
-const statusLabel = (s) => {
+const formatDateTime = (str) => {
+    if (!str) return "-";
+    const d = new Date(str);
+    return `${d.getFullYear()}-${(d.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")} ${d
+        .getHours()
+        .toString()
+        .padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
+};
+
+const statusLabel = (status) => {
     const map = {
         미결제: "주문완료/입금대기",
         결제완료: "입금완료/배송준비",
         배송중: "배송중",
         배송완료: "배송완료",
-        취소됨: "취소됨",
+        취소됨: "취소",
     };
-    return map[s] || s;
+    return map[status] || "-";
 };
+
+onMounted(fetchOrderDetail);
 </script>
 
 <style scoped>
 .orderDetailPage {
-    padding: 30px;
-    max-width: 900px;
-    margin: auto;
-    font-family: "Noto Sans KR", sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-.summaryBox {
+.pageTitle {
+    font-size: 24px;
     margin-bottom: 24px;
 }
-.orderId {
-    margin-top: 10px;
-    font-size: 15px;
-    color: #555;
-}
-.productInfoBox {
-    background: #fdfdfd;
-    border: 1px solid #ddd;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 30px;
+.orderSummary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
 }
 .productInfo {
     display: flex;
+    align-items: center;
     gap: 20px;
 }
-.productImage {
+.productImg {
     width: 100px;
     height: 100px;
     object-fit: contain;
+    border: 1px solid #ccc;
     border-radius: 8px;
-    border: 1px solid #eee;
 }
-.productDetails {
-    flex: 1;
+.productText h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
 }
-.status {
-    margin-top: 10px;
-    font-weight: bold;
-}
-.actionBtns {
+.actionButtons {
     display: flex;
+    flex-direction: column;
     gap: 10px;
-    margin-top: 12px;
 }
-.actionBtn {
-    padding: 6px 14px;
-    border-radius: 6px;
-    font-size: 14px;
-    color: #fff;
+.actionButtons button {
+    padding: 8px 12px;
     border: none;
+    border-radius: 6px;
     cursor: pointer;
+    color: white;
 }
-.infoTables {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    margin-bottom: 30px;
+.section {
+    margin-bottom: 24px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 12px;
 }
-.infoSection {
-    flex: 1 1 280px;
-    background: #fafafa;
-    padding: 16px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-}
-.infoSection h4 {
-    margin-bottom: 10px;
-}
-.infoSection table {
-    width: 100%;
-    font-size: 14px;
-}
-.infoSection table th {
-    text-align: left;
-    width: 100px;
-    color: #666;
+.section h4 {
+    margin-bottom: 16px;
+    font-size: 18px;
+    color: #444;
+    font-weight: bold;
+    border-bottom: 2px solid #ccc;
     padding-bottom: 6px;
 }
-.paymentSummary {
-    text-align: right;
-    font-size: 16px;
+.infoList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
-.bottomBtns {
-    margin-top: 20px;
+.infoList li {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 15px;
+    line-height: 1.6;
     gap: 12px;
 }
-.confirmBtn,
-.printBtn {
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-size: 14px;
-    border: none;
-    cursor: pointer;
+.infoList li strong {
+    color: #555;
+    width: 40%;
+    flex-shrink: 0;
+}
+.infoList li span {
+    text-align: right;
+    width: 58%;
+    color: #333;
+    word-break: break-word;
+}
+.footerButtons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
 }
 .confirmBtn {
-    background-color: #cc8a94;
+    padding: 10px 16px;
+    background-color: #604b6e;
     color: white;
-}
-.printBtn {
-    background-color: #999;
-    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
 }
 </style>

@@ -16,21 +16,39 @@
 
         <!-- 주문 리스트 -->
         <div class="orderList">
-            <div v-for="order in filteredOrders" :key="order._id" class="orderCard">
+            <div
+                v-for="order in filteredOrders"
+                :key="order._id"
+                class="orderCard"
+            >
                 <div class="orderHeader">
-                    <span class="orderDate">{{ formatDate(order.createdAt) }}</span>
-                    <span class="orderStatus">{{ statusLabel(order.status) }}</span>
+                    <span class="orderDate">{{
+                        formatDate(order.createdAt)
+                    }}</span>
+                    <span class="orderStatus">{{
+                        statusLabel(order.status)
+                    }}</span>
                 </div>
 
                 <div class="orderBody">
                     <div class="productInfo">
-                        <img :src="order.imagePath || '/img/default.jpg'" alt="상품 이미지" class="productImage" />
+                        <img
+                            :src="order.imagePath || '/img/default.jpg'"
+                            alt="상품 이미지"
+                            class="productImage"
+                        />
                         <div class="productDetails">
-                            <div class="productName">{{ order.productName }}</div>
-                            <div class="productPrice">{{ formatPrice(order.amount) }}원</div>
+                            <div class="productName">
+                                {{ order.productName }}
+                            </div>
+                            <div class="productPrice">
+                                {{ formatPrice(order.amount) }}원
+                            </div>
                         </div>
                     </div>
-                    <button class="detailBtn" @click="goToDetail(order)">조회 하기</button>
+                    <button class="detailBtn" @click="goToDetail(order)">
+                        조회 하기
+                    </button>
                 </div>
             </div>
         </div>
@@ -40,9 +58,9 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import OrderService from "@/api/OrderService";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
-const router = useRoute();
+const router = useRouter();
 const orders = ref([]);
 const selectedStatus = ref("all");
 const user = JSON.parse(localStorage.getItem("user"));
@@ -81,10 +99,9 @@ const statusLabel = (status) => {
 
 const formatDate = (dateStr) => {
     const d = new Date(dateStr);
-    return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d
-        .getDate()
+    return `${d.getFullYear()}-${(d.getMonth() + 1)
         .toString()
-        .padStart(2, "0")}`;
+        .padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")}`;
 };
 
 const formatPrice = (p) => p.toLocaleString();
