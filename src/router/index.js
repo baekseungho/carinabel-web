@@ -11,7 +11,6 @@ import OrderManageView from "@/views/myPage/OrderManageView.vue";
 import AddressView from "@/views/myPage/AddressView.vue";
 import OrderHistoryView from "@/views/myPage/OrderHistoryView.vue";
 import OrderHistoryDetailView from "@/views/myPage/OrderHistoryDetailView.vue";
-
 import ProductView from "@/views/ProductView.vue";
 import ProductDetail from "@/views/ProductDetail.vue";
 import Onlymember from "@/views/OnlyMemberView.vue";
@@ -24,6 +23,7 @@ import Navigate from "@/views/NavigateView.vue";
 import Events from "@/views/EventsView.vue";
 import Lectures from "@/views/LecturesView.vue";
 import QnA from "@/views/QnAView.vue";
+import QnACreate from "@/views/QnACreateView.vue";
 import Notices from "@/views/NoticesView.vue";
 import NoticeDetail from "@/views/NoticeDetailView.vue";
 import ProductManageView from "@/adminViews/ProductManagerView.vue";
@@ -95,7 +95,12 @@ const routes = [
         component: Lectures,
         meta: { maintenance: true },
     },
-    { path: "/qna", name: "QnA", component: QnA, meta: { maintenance: true } },
+    {
+        path: "/qna",
+        name: "QnA",
+        component: QnA,
+    },
+    { path: "/qna/create", name: "QnACreate", component: QnACreate },
     {
         path: "/notices",
         name: "Notices",

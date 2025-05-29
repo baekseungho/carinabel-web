@@ -4,11 +4,7 @@
 
         <div class="orderSummary">
             <div class="productInfo">
-                <img
-                    :src="order.product?.imagePath || '/img/default.jpg'"
-                    alt="상품 이미지"
-                    class="productImg"
-                />
+                <img :src="order.product?.imagePath || '/img/default.jpg'" alt="상품 이미지" class="productImg" />
                 <div class="productText">
                     <h3>{{ order.product?.productName }}</h3>
                     <p>수량: {{ order.product?.quantity }}개</p>
@@ -18,7 +14,7 @@
             </div>
             <div class="actionButtons">
                 <button class="themaBgColor3">구매확정</button>
-                <button class="themaBgColor4">문의하기</button>
+                <button class="themaBgColor4" @click="goToQna">문의하기</button>
                 <button class="themaBgColor5">상품평쓰기</button>
             </div>
         </div>
@@ -33,8 +29,7 @@
                     <strong>이메일</strong><span>{{ order.user?.email }}</span>
                 </li>
                 <li>
-                    <strong>전화번호</strong
-                    ><span>{{ order.user?.phone || "-" }}</span>
+                    <strong>전화번호</strong><span>{{ order.user?.phone || "-" }}</span>
                 </li>
             </ul>
         </div>
@@ -43,16 +38,13 @@
             <h4>배송지 정보</h4>
             <ul class="infoList">
                 <li>
-                    <strong>받는 사람</strong
-                    ><span>{{ order.delivery?.recipientName }}</span>
+                    <strong>받는 사람</strong><span>{{ order.delivery?.recipientName }}</span>
                 </li>
                 <li>
-                    <strong>연락처</strong
-                    ><span>{{ order.delivery?.phone }}</span>
+                    <strong>연락처</strong><span>{{ order.delivery?.phone }}</span>
                 </li>
                 <li>
-                    <strong>주소</strong
-                    ><span>{{ order.delivery?.fullAddress }}</span>
+                    <strong>주소</strong><span>{{ order.delivery?.address }}</span>
                 </li>
             </ul>
         </div>
@@ -61,33 +53,26 @@
             <h4>결제 정보</h4>
             <ul class="infoList">
                 <li>
-                    <strong>결제 수단</strong
-                    ><span>{{ order.payment?.method }}</span>
+                    <strong>결제 수단</strong><span>{{ order.payment?.method }}</span>
                 </li>
                 <li>
-                    <strong>결제 상태</strong
-                    ><span>{{ order.payment?.status }}</span>
+                    <strong>결제 상태</strong><span>{{ order.payment?.status }}</span>
                 </li>
                 <li>
-                    <strong>은행명</strong
-                    ><span>{{ order.payment?.bank }}</span>
+                    <strong>은행명</strong><span>{{ order.payment?.bank }}</span>
                 </li>
                 <li>
-                    <strong>가상계좌</strong
-                    ><span>{{ order.payment?.virtualAccount }}</span>
+                    <strong>가상계좌</strong><span>{{ order.payment?.virtualAccount }}</span>
                 </li>
                 <li>
-                    <strong>입금기한</strong
-                    ><span>{{ formatDateTime(order.payment?.dueDate) }}</span>
+                    <strong>입금기한</strong><span>{{ formatDateTime(order.payment?.dueDate) }}</span>
                 </li>
                 <li>
-                    <strong>상품금액</strong
-                    ><span>{{ formatPrice(order.product?.amount) }}원</span>
+                    <strong>상품금액</strong><span>{{ formatPrice(order.product?.amount) }}원</span>
                 </li>
                 <li><strong>배송비</strong><span>0원</span></li>
                 <li>
-                    <strong>총 결제금액</strong
-                    ><span>{{ formatPrice(order.product?.amount) }}원</span>
+                    <strong>총 결제금액</strong><span>{{ formatPrice(order.product?.amount) }}원</span>
                 </li>
             </ul>
         </div>
@@ -125,12 +110,10 @@ const goBack = () => router.push("/mypage/order-history");
 const formatDateTime = (str) => {
     if (!str) return "-";
     const d = new Date(str);
-    return `${d.getFullYear()}-${(d.getMonth() + 1)
+    return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d
+        .getDate()
         .toString()
-        .padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")} ${d
-        .getHours()
-        .toString()
-        .padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
+        .padStart(2, "0")} ${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
 };
 
 const statusLabel = (status) => {
@@ -142,6 +125,17 @@ const statusLabel = (status) => {
         취소됨: "취소",
     };
     return map[status] || "-";
+};
+
+const goToQna = () => {
+    router.push({
+        name: "QnACreate",
+        query: {
+            productName: order.value.product?.productName,
+            imagePath: order.value.product?.imagePath,
+            orderId: order.value._id,
+        },
+    });
 };
 
 onMounted(fetchOrderDetail);

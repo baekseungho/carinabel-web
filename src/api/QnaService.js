@@ -1,0 +1,53 @@
+import axios from "./axios";
+
+const API_URL = "/qna";
+
+class QnaService {
+    // 전체 목록 가져오기 (카테고리 및 검색 조건 포함)
+    getQnaList(data, token) {
+        return axios.get(API_URL,data, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },  "Content-Type": "application/json",
+    
+        });
+    }
+
+    // QnA 상세 조회
+    getQnaDetail(qnaId, token) {
+        return axios.get(`${API_URL}/${qnaId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    }
+
+    // QnA 작성
+    createQna(qnaData, token) {
+        return axios.post(API_URL, qnaData, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    }
+
+    // QnA 수정
+    updateQna(qnaId, qnaData, token) {
+        return axios.put(`${API_URL}/${qnaId}`, qnaData, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    }
+
+    // QnA 삭제
+    deleteQna(qnaId, token) {
+        return axios.delete(`${API_URL}/${qnaId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    }
+}
+
+export default new QnaService();
