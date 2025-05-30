@@ -4,15 +4,14 @@ const API_URL = "/qna";
 
 class QnaService {
     // 전체 목록 가져오기 (카테고리 및 검색 조건 포함)
-    getQnaList(data, token) {
-        return axios.get(API_URL,data, {
+    getQnaList(params, token) {
+        return axios.get(API_URL, {
             headers: {
                 Authorization: `Bearer ${token}`,
-            },  "Content-Type": "application/json",
-    
+            },
+            params, // ← GET 요청에서는 이렇게 필터링 데이터를 전달해야 함
         });
     }
-
     // QnA 상세 조회
     getQnaDetail(qnaId, token) {
         return axios.get(`${API_URL}/${qnaId}`, {

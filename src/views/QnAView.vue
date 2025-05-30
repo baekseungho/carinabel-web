@@ -72,23 +72,23 @@ const qnaList = ref([]);
 const searchType = ref("title");
 const searchKeyword = ref("");
 const currentPage = ref(1);
-const pageSize = 10;
+const pageSize = 1;
 const totalPages = ref(1);
 const token = localStorage.getItem("token");
 
 const fetchQnAs = () => {
-    const data = JSON.stringify({
+    const query = {
         category: selectedCategory.value === "전체" ? "" : selectedCategory.value,
         searchType: searchType.value,
         keyword: searchKeyword.value,
-        page: currentPage.value - 1,
+        page: currentPage.value,
         size: pageSize,
-    });
+    };
 
-    QnaService.getQnaList(data, token)
+    QnaService.getQnaList(query, token)
         .then((res) => {
             qnaList.value = res.data.qnas;
-            totalPages.value = res.data.totalPages;
+            totalPages.value = Math.ceil(res.data.total / pageSize);
         })
         .catch((err) => {
             console.error("❌ QnA 목록 불러오기 실패:", err);
