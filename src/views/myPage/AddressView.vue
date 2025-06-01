@@ -1,7 +1,7 @@
 <template>
     <div class="addressPage">
         <div class="addressHeader">
-            <h2>📦 배송지 관리</h2>
+            <h2>배송지 관리</h2>
             <button class="addBtn" @click="openModal()">+ 배송지 추가</button>
         </div>
 
@@ -24,8 +24,15 @@
                     <td>{{ item.address }}</td>
                     <td>{{ item.isDefault ? "✔️" : "" }}</td>
                     <td>
-                        <button class="editBtn" @click="openModal(item)">수정</button>
-                        <button class="deleteBtn" @click="deleteAddress(item._id)">삭제</button>
+                        <button class="editBtn" @click="openModal(item)">
+                            수정
+                        </button>
+                        <button
+                            class="deleteBtn"
+                            @click="deleteAddress(item._id)"
+                        >
+                            삭제
+                        </button>
                     </td>
                 </tr>
             </tbody>
@@ -33,7 +40,12 @@
 
         <p v-else class="noData">등록된 배송지가 없습니다.</p>
 
-        <AddressModal v-if="modalVisible" :address="selectedAddress" @close="modalVisible = false" @saved="onSaved" />
+        <AddressModal
+            v-if="modalVisible"
+            :address="selectedAddress"
+            @close="modalVisible = false"
+            @saved="onSaved"
+        />
     </div>
 </template>
 
@@ -81,6 +93,10 @@ onMounted(fetchAddresses);
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
+}
+.addressHeader h2 {
+    font-size: 24px;
+    font-weight: 700;
 }
 .addBtn {
     padding: 10px 20px;
