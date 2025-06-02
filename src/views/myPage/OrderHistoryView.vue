@@ -106,10 +106,13 @@ onMounted(fetchOrders);
 
 <style scoped>
 .orderHistoryPage {
+    animation: fadeIn 0.5s ease;
     padding: 40px 20px;
 }
 .pageTitle {
-    font-size: 22px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
     margin-bottom: 24px;
 }
 .statusFilters {

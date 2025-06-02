@@ -1,7 +1,7 @@
 <template>
     <div class="pageContainer">
         <div class="pageHeader">
-            <h1>마이페이지 > 정보관리</h1>
+            <h1>정보관리</h1>
             <p>내 정보를 한눈에 확인해보세요.</p>
         </div>
         <div class="infoView">
@@ -142,16 +142,6 @@ onMounted(() => {
     color: #999;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 .infoView {
     padding: 20px;
     background-color: #fff;

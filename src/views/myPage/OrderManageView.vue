@@ -1,6 +1,6 @@
 <template>
     <div class="orderViewContainer">
-        <h2 class="pageTitle">마이페이지 > 주문관리</h2>
+        <h2 class="pageTitle">주문관리</h2>
 
         <!-- 🧭 탭 메뉴 -->
         <div class="tabs">
@@ -108,12 +108,11 @@ const formatDate = (iso) => {
 
 <style scoped>
 .orderViewContainer {
-    padding: 40px 20px;
-    max-width: 1200px;
+    padding: 20px 30px;
     margin: auto;
     background-color: #fff;
-
     border-radius: 16px;
+    animation: fadeIn 0.5s ease;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
 }
 

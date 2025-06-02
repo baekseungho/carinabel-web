@@ -24,15 +24,8 @@
                     <td>{{ item.address }}</td>
                     <td>{{ item.isDefault ? "✔️" : "" }}</td>
                     <td>
-                        <button class="editBtn" @click="openModal(item)">
-                            수정
-                        </button>
-                        <button
-                            class="deleteBtn"
-                            @click="deleteAddress(item._id)"
-                        >
-                            삭제
-                        </button>
+                        <button class="editBtn" @click="openModal(item)">수정</button>
+                        <button class="deleteBtn" @click="deleteAddress(item._id)">삭제</button>
                     </td>
                 </tr>
             </tbody>
@@ -40,12 +33,7 @@
 
         <p v-else class="noData">등록된 배송지가 없습니다.</p>
 
-        <AddressModal
-            v-if="modalVisible"
-            :address="selectedAddress"
-            @close="modalVisible = false"
-            @saved="onSaved"
-        />
+        <AddressModal v-if="modalVisible" :address="selectedAddress" @close="modalVisible = false" @saved="onSaved" />
     </div>
 </template>
 
@@ -86,7 +74,11 @@ onMounted(fetchAddresses);
 
 <style scoped>
 .addressPage {
-    padding: 40px 20px;
+    padding: 20px 30px;
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    animation: fadeIn 0.5s ease;
 }
 .addressHeader {
     display: flex;
@@ -95,8 +87,10 @@ onMounted(fetchAddresses);
     margin-bottom: 24px;
 }
 .addressHeader h2 {
-    font-size: 24px;
-    font-weight: 700;
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
 }
 .addBtn {
     padding: 10px 20px;
@@ -161,5 +155,10 @@ onMounted(fetchAddresses);
 .noData {
     text-align: center;
     color: #777;
+}
+
+thead {
+    background-color: #333;
+    color: #fff;
 }
 </style>

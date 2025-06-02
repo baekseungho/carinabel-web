@@ -1,24 +1,9 @@
 <template>
     <div class="memberManage">
         <div class="toggleGroup">
-            <button
-                :class="{ active: period === '전체' }"
-                @click="setPeriod('전체')"
-            >
-                전체
-            </button>
-            <button
-                :class="{ active: period === '전월' }"
-                @click="setPeriod('전월')"
-            >
-                전월
-            </button>
-            <button
-                :class="{ active: period === '당월' }"
-                @click="setPeriod('당월')"
-            >
-                당월
-            </button>
+            <button :class="{ active: period === '전체' }" @click="setPeriod('전체')">전체</button>
+            <button :class="{ active: period === '전월' }" @click="setPeriod('전월')">전월</button>
+            <button :class="{ active: period === '당월' }" @click="setPeriod('당월')">당월</button>
         </div>
 
         <div class="orgChart">
@@ -52,11 +37,7 @@
                 <div class="connector-horizontal"></div>
 
                 <!-- 각각의 추천인 노드 -->
-                <div
-                    v-for="child in network.children"
-                    :key="child._id"
-                    class="childNodeWrapper"
-                >
+                <div v-for="child in network.children" :key="child._id" class="childNodeWrapper">
                     <!-- 수직 연결선 -->
                     <div class="connector-vertical top"></div>
 
@@ -65,9 +46,7 @@
                         <strong>{{ child.fullName }}</strong>
                         <div>{{ child?.email }}</div>
                         <div>{{ child?.membershipLevel }}</div>
-                        <div>
-                            매출: {{ formatPrice(child.purchaseAmount) }}원
-                        </div>
+                        <div>매출: {{ formatPrice(child.purchaseAmount) }}원</div>
                     </div>
                 </div>
             </div>
@@ -107,15 +86,15 @@ const setPeriod = (val) => {
     fetchNetwork();
 };
 
-const formatPrice = (val) =>
-    val?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+const formatPrice = (val) => val?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 onMounted(fetchNetwork);
 </script>
 
 <style scoped>
 .memberManage {
-    padding: 30px;
+    padding: 30px 30px 30px 0px;
+    animation: fadeIn 0.5s ease;
 }
 .toggleGroup {
     display: flex;
