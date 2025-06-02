@@ -1,6 +1,6 @@
 <template>
     <div class="qnaPage">
-        <h2 class="pageTitle">Q&A 게시판</h2>
+        <h2 class="pageTitle themaColor3">Q&A 게시판</h2>
 
         <!-- 카테고리 탭 -->
         <div class="categoryTabs">
@@ -31,48 +31,50 @@
         </div>
 
         <!-- Q&A 테이블 -->
-        <table class="qnaTable">
-            <thead>
-                <tr>
-                    <th>번호</th>
-                    <th>카테고리</th>
-                    <th>상품</th>
-                    <th>이미지</th>
-                    <th>제목</th>
-                    <th>작성자</th>
-                    <th>작성일</th>
-                    <th>조회수</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr
-                    v-for="(item, index) in qnaList"
-                    :key="item._id"
-                    @click="goToDetail(item._id)"
-                    class="clickableRow"
-                >
-                    <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
-                    <td>{{ item.category }}</td>
-                    <td>{{ item.productName }}</td>
-                    <td>
-                        <img
-                            :src="item.imagePath"
-                            alt="상품 이미지"
-                            class="qnaProductImg"
-                        />
-                    </td>
-                    <td>
-                        <span v-if="item.hasAnswer" class="answeredTag"
-                            >[답변완료]</span
-                        >
-                        {{ item.title }}
-                    </td>
-                    <td>{{ item.maskedAuthor }}</td>
-                    <td>{{ formatDate(item.createdAt) }}</td>
-                    <td>{{ item.views }}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="tableWrapper">
+            <table class="qnaTable">
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>카테고리</th>
+                        <th>상품</th>
+                        <th>이미지</th>
+                        <th>제목</th>
+                        <th>작성자</th>
+                        <th>작성일</th>
+                        <th>조회수</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                        v-for="(item, index) in qnaList"
+                        :key="item._id"
+                        @click="goToDetail(item._id)"
+                        class="clickableRow"
+                    >
+                        <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
+                        <td>{{ item.category }}</td>
+                        <td>{{ item.productName }}</td>
+                        <td>
+                            <img
+                                :src="item.imagePath"
+                                alt="상품 이미지"
+                                class="qnaProductImg"
+                            />
+                        </td>
+                        <td>
+                            <span v-if="item.hasAnswer" class="answeredTag">
+                                [답변완료]
+                            </span>
+                            {{ item.title }}
+                        </td>
+                        <td>{{ item.maskedAuthor }}</td>
+                        <td>{{ formatDate(item.createdAt) }}</td>
+                        <td>{{ item.views }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
         <!-- 페이지네이션 -->
         <Pagination
@@ -82,7 +84,6 @@
         />
     </div>
 </template>
-
 <script setup>
 import { ref, onMounted } from "vue";
 import QnaService from "@/api/QnaService";
@@ -153,69 +154,91 @@ onMounted(fetchQnAs);
     padding: 32px;
     max-width: 1200px;
     margin: 0 auto;
+    background-color: #fefefe;
 }
 .pageTitle {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 24px;
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 28px;
+    border-bottom: 2px solid #cc8a94;
+    padding-bottom: 12px;
 }
 .categoryTabs {
     display: flex;
+    flex-wrap: wrap;
     gap: 12px;
     margin-bottom: 20px;
 }
 .tabBtn {
-    padding: 8px 16px;
+    padding: 10px 20px;
     border: none;
-    background-color: #e0d3e5;
+    background-color: #f0e4ef;
     border-radius: 20px;
     cursor: pointer;
     color: #604b6e;
+    font-weight: 500;
+    transition: all 0.3s;
 }
 .tabBtn.active {
     background-color: #604b6e;
-    color: white;
+    color: #fff;
     font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 .searchFilter {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 12px;
     margin-bottom: 20px;
+    background-color: #fafafa;
+    padding: 16px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 .searchFilter select,
 .searchFilter input {
-    padding: 8px;
+    padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 6px;
+    border-radius: 8px;
+    font-size: 14px;
 }
 .searchBtn {
     background-color: #cc8a94;
     color: white;
     border: none;
-    padding: 8px 14px;
-    border-radius: 6px;
+    padding: 10px 16px;
+    border-radius: 8px;
     cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
 }
 .searchBtn:hover {
     background-color: #ca717f;
+}
+.tableWrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    background-color: #fff;
 }
 .qnaTable {
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
+    min-width: 900px;
 }
-.qnaTable th,
+.qnaTable th {
+    background-color: #857496;
+    color: #fff;
+    padding: 12px;
+    font-weight: 600;
+}
 .qnaTable td {
-    border: 1px solid #ddd;
-    padding: 10px;
+    border: 1px solid #eee;
+    padding: 12px;
     text-align: center;
-}
-.thumbImg {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
-    border-radius: 6px;
+    color: #333;
 }
 .qnaProductImg {
     width: 54px;
@@ -225,12 +248,12 @@ onMounted(fetchQnAs);
     border-radius: 6px;
     margin: 0 auto;
 }
-
 .clickableRow {
     cursor: pointer;
+    transition: background-color 0.2s;
 }
 .clickableRow:hover {
-    background-color: #f8f8f8;
+    background-color: #faf0f3;
 }
 .answeredTag {
     color: #4caf50;
