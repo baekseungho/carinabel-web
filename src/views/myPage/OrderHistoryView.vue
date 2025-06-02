@@ -8,34 +8,57 @@
                 v-for="s in statusList"
                 :key="s.value"
                 :class="['filterBtn', { active: selectedStatus === s.value }]"
-                @click="selectedStatus = s.value"
+                @click="changeStatus(s.value)"
             >
-                {{ s.label }} ({{ countByStatus(s.value) }})
+                {{ s.label }}
+                <!-- ({{ countByStatus(s.value) }}) -->
             </button>
         </div>
 
         <!-- 주문 리스트 -->
         <div class="orderList">
-            <div v-for="order in filteredOrders" :key="order._id" class="orderCard">
+            <div
+                v-for="order in filteredOrders"
+                :key="order._id"
+                class="orderCard"
+            >
                 <div class="orderHeader">
-                    <span class="orderDate">{{ formatDate(order.createdAt) }}</span>
-                    <span class="orderStatus">{{ statusLabel(order.status) }}</span>
+                    <span class="orderDate">{{
+                        formatDate(order.createdAt)
+                    }}</span>
+                    <span class="orderStatus">{{
+                        statusLabel(order.status)
+                    }}</span>
                 </div>
 
                 <div class="orderBody">
                     <div class="productInfo">
-                        <img :src="order.imagePath || '/img/default.jpg'" alt="상품 이미지" class="productImage" />
+                        <img
+                            :src="order.imagePath || '/img/default.jpg'"
+                            alt="상품 이미지"
+                            class="productImage"
+                        />
                         <div class="productDetails">
                             <div class="productName">
                                 {{ order.productName }}
                             </div>
-                            <div class="productPrice">{{ formatPrice(order.amount) }}원</div>
+                            <div class="productPrice">
+                                {{ formatPrice(order.amount) }}원
+                            </div>
                         </div>
                     </div>
-                    <button class="detailBtn" @click="goToDetail(order)">조회 하기</button>
+                    <button class="detailBtn" @click="goToDetail(order)">
+                        조회 하기
+                    </button>
                 </div>
             </div>
         </div>
+        <Pagination
+            v-if="totalPages > 1"
+            :current-page="currentPage"
+            :total-pages="totalPages"
+            @page-change="handlePageChange"
+        />
     </div>
 </template>
 
@@ -43,10 +66,14 @@
 import { ref, onMounted, computed } from "vue";
 import OrderService from "@/api/OrderService";
 import { useRoute, useRouter } from "vue-router";
-
+import Pagination from "@/components/common/Pagination.vue";
 const router = useRouter();
 const orders = ref([]);
 const selectedStatus = ref("all");
+const currentPage = ref(1);
+const pageSize = 5;
+const totalPages = ref(1);
+
 const user = JSON.parse(localStorage.getItem("user"));
 const token = localStorage.getItem("token");
 
@@ -60,8 +87,17 @@ const statusList = [
 ];
 
 const fetchOrders = () => {
-    OrderService.getOrders(user._id, token).then((res) => {
-        orders.value = res.data;
+    const query = {
+        userId: user._id,
+        status: selectedStatus.value,
+        page: currentPage.value,
+        size: pageSize,
+    };
+
+    OrderService.getOrdersWithPaging(query, token).then((res) => {
+        orders.value = res.data.orders;
+        totalPages.value = Math.ceil(res.data.total / pageSize);
+        console.log(totalPages.value);
     });
 };
 
@@ -83,10 +119,12 @@ const statusLabel = (status) => {
 
 const formatDate = (dateStr) => {
     const d = new Date(dateStr);
-    return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d
-        .getDate()
+    return `${d.getFullYear()}-${(d.getMonth() + 1)
         .toString()
-        .padStart(2, "0")} ${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
+        .padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")} ${d
+        .getHours()
+        .toString()
+        .padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
 };
 
 const formatPrice = (p) => p.toLocaleString();
@@ -100,6 +138,17 @@ function goToDetail(order) {
     console.log(order);
     router.push({ name: "OrderHistoryDetailView", params: { id: order._id } });
 }
+
+const changeStatus = (status) => {
+    selectedStatus.value = status;
+    currentPage.value = 1;
+    fetchOrders();
+};
+
+const handlePageChange = (page) => {
+    currentPage.value = page;
+    fetchOrders();
+};
 
 onMounted(fetchOrders);
 </script>

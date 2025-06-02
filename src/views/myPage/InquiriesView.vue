@@ -2,15 +2,24 @@
     <div class="myInquiriesPage">
         <h2 class="pageTitle">내 문의 내역</h2>
 
-        <div v-if="qnaList.length === 0" class="emptyState">아직 등록한 문의가 없습니다.</div>
+        <div v-if="qnaList.length === 0" class="emptyState">
+            아직 등록한 문의가 없습니다.
+        </div>
 
         <ul class="qnaList" v-else>
-            <li v-for="qna in qnaList" :key="qna._id" class="qnaItem" @click="goToDetail(qna._id)">
+            <li
+                v-for="qna in qnaList"
+                :key="qna._id"
+                class="qnaItem"
+                @click="goToDetail(qna._id)"
+            >
                 <div class="qnaItemHeader">
                     <span class="qnaCategory">[{{ qna.category }}]</span>
                     <span class="qnaTitle">
                         {{ qna.title }}
-                        <span v-if="qna.answer?.content" class="answeredTag">[답변완료]</span>
+                        <span v-if="qna.answer?.content" class="answeredTag"
+                            >[답변완료]</span
+                        >
                     </span>
                 </div>
                 <div class="qnaItemMeta">
@@ -19,6 +28,12 @@
                 </div>
             </li>
         </ul>
+        <Pagination
+            v-if="totalPages > 1"
+            :current-page="currentPage"
+            :total-pages="totalPages"
+            @page-change="handlePageChange"
+        />
     </div>
 </template>
 
@@ -26,34 +41,46 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import QnaService from "@/api/QnaService";
+import Pagination from "@/components/common/Pagination.vue";
 
 const router = useRouter();
 const token = localStorage.getItem("token");
 const user = JSON.parse(localStorage.getItem("user"));
 const qnaList = ref([]);
+const currentPage = ref(1);
+const pageSize = 5;
+const totalPages = ref(1);
 
 const fetchMyInquiries = () => {
-    if (!user?._id) return;
+    const query = {
+        userId: user._id,
+        page: currentPage.value,
+        size: pageSize,
+    };
 
-    QnaService.getMyQnaList(user._id, token)
+    QnaService.getMyQnaListWithPaging(query, token)
         .then((res) => {
-            qnaList.value = res.data;
+            qnaList.value = res.data.qnas;
+            totalPages.value = Math.ceil(res.data.total / pageSize);
         })
         .catch((err) => {
             console.error("❌ 내 문의내역 조회 실패:", err);
         });
 };
-
 const goToDetail = (id) => {
     router.push({ params: { id: id }, name: "QnADetail" });
 };
 
 const formatDate = (dateStr) => {
     const d = new Date(dateStr);
-    return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d
-        .getDate()
+    return `${d.getFullYear()}-${(d.getMonth() + 1)
         .toString()
-        .padStart(2, "0")}`;
+        .padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")}`;
+};
+
+const handlePageChange = (page) => {
+    currentPage.value = page;
+    fetchMyInquiries();
 };
 
 onMounted(fetchMyInquiries);
