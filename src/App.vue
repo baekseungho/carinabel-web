@@ -1,10 +1,10 @@
 <template>
-    <Header v-if="!isLoginPage" />
-    <div>
-        <router-view />
-    </div>
-    <Footer v-if="!isLoginPage" />
-    <ScrollToTopButton />
+  <Header v-if="!hideHeaderFooter" />
+  <div>
+    <router-view />
+  </div>
+  <Footer v-if="!hideHeaderFooter" />
+  <ScrollToTopButton />
 </template>
 
 <script setup>
@@ -15,11 +15,9 @@ import Footer from "./components/Footer.vue";
 import ScrollToTopButton from "./components/ui/ScrollToTopButton.vue";
 
 const route = useRoute();
-const isLoginPage = ref(route.path === "/login" || route.path === "/signup");
+const hideHeaderFooter = ref(route.meta.hideHeaderFooter || false);
 
 watch(route, (newRoute) => {
-    isLoginPage.value = newRoute.path === "/login" || newRoute.path === "/signup";
+  hideHeaderFooter.value = newRoute.meta.hideHeaderFooter || false;
 });
 </script>
-
-<style scoped></style>

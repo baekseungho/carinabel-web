@@ -29,15 +29,35 @@ import QnADetail from "@/views/QnADetailView.vue";
 import Notices from "@/views/NoticesView.vue";
 import NoticeDetail from "@/views/NoticeDetailView.vue";
 
+import AdminLayout from "@/adminViews/AdminLayout.vue";
+import AdminLoginView from "@/adminViews/AdminLoginView.vue";
+import AdminCreateView from "@/adminViews/AdminCreateView.vue";
+import AdminDashboardView from "@/adminViews/AdminDashboardView.vue";
+import AdminMemberManageView from "@/adminViews/AdminMemberManageView.vue";
+import AdminOrderManageView from "@/adminViews/AdminOrderManageView.vue";
+import DeliveryStatusView from "@/adminViews/DeliveryStatusView.vue";
 import ProductManageView from "@/adminViews/ProductManagerView.vue";
 import AnswerManagerView from "@/adminViews/AnswerManagerView.vue";
+import AdminShippingView from "@/adminViews/AdminShippingView.vue";
+import AdminQnaView from "@/adminViews/AdminQnaView.vue";
 
 import store from "@/store";
 
 const routes = [
   { path: "/", name: "Home", component: HomeView },
-  { path: "/login", name: "Login", component: Login },
-  { path: "/signup", name: "Signup", component: Signup },
+
+  {
+    path: "/login",
+    name: "Login",
+    component: Login,
+    meta: { hideHeaderFooter: true },
+  },
+  {
+    path: "/signup",
+    name: "Signup",
+    component: Signup,
+    meta: { hideHeaderFooter: true },
+  },
   { path: "/products/essential", name: "Products", component: ProductView },
   {
     path: "/products/essential/:id",
@@ -82,7 +102,6 @@ const routes = [
         name: "OrderHistoryDetailView",
       },
       { path: "inquiries", name: "InquiriesView", component: InquiriesView },
-      // ...
     ],
   },
   { path: "/about/greeting", name: "Greeting", component: Greeting },
@@ -126,14 +145,73 @@ const routes = [
 
   // 관리자 페이지
   {
-    path: "/admin/products",
-    name: "ProductManageView",
-    component: ProductManageView,
+    path: "/admin/login",
+    name: "AdminLoginView",
+    component: AdminLoginView,
+    meta: { hideHeaderFooter: true },
   },
   {
-    path: "/admin/answer",
-    name: "AnswerManagerView",
-    component: AnswerManagerView,
+    path: "/admin/create",
+    name: "AdminCreateView",
+    component: AdminCreateView,
+    meta: { hideFromGuard: true, hideHeaderFooter: true }, // 👉 관리자만 내부용으로 접근 가능하게
+  },
+
+  {
+    path: "/admin",
+    redirect: "/admin/dashboard",
+    component: AdminLayout,
+    meta: { hideHeaderFooter: true },
+    children: [
+      {
+        path: "dashboard",
+        name: "AdminDashboardView",
+        component: AdminDashboardView,
+        meta: { requiresAdmin: true, hideHeaderFooter: true },
+      },
+      {
+        path: "members",
+        name: "AdminMemberManageView",
+        component: AdminMemberManageView,
+        meta: { requiresAdmin: true, hideHeaderFooter: true },
+      },
+      {
+        path: "orders",
+        name: "AdminOrderManageView",
+        component: AdminOrderManageView,
+        meta: { requiresAdmin: true, hideHeaderFooter: true },
+      },
+      {
+        path: "delivery",
+        name: "DeliveryStatusView",
+        component: DeliveryStatusView,
+        meta: { requiresAdmin: true, hideHeaderFooter: true },
+      },
+      {
+        path: "products",
+        name: "ProductManageView",
+        component: ProductManageView,
+        meta: { requiresAdmin: true, hideHeaderFooter: true },
+      },
+      {
+        path: "answer",
+        name: "AnswerManagerView",
+        component: AnswerManagerView,
+        meta: { requiresAdmin: true, hideHeaderFooter: true },
+      },
+      {
+        path: "shipping",
+        name: "AdminShippingView",
+        component: AdminShippingView,
+        meta: { requiresAdmin: true, hideHeaderFooter: true },
+      },
+      {
+        path: "qna",
+        name: "AdminQnaView",
+        component: AdminQnaView,
+        meta: { requiresAdmin: true, hideHeaderFooter: true },
+      },
+    ],
   },
 ];
 
@@ -143,14 +221,14 @@ const router = createRouter({
 });
 
 // ❗ 전역 네비게이션 가드
+
 router.beforeEach((to, from, next) => {
-  // 서비스 준비중 페이지 차단
   if (to.meta.maintenance) {
     alert("서비스 준비중입니다.");
     return next("/");
   }
 
-  // 인증이 필요한 페이지 차단
+  // 일반 사용자 인증
   if (to.meta.requiresAuth) {
     const token = localStorage.getItem("token");
     if (!token || !store.getters.isAuthenticated) {
@@ -159,7 +237,15 @@ router.beforeEach((to, from, next) => {
     }
   }
 
-  // 접근 허용
+  // 관리자 전용 접근
+  if (to.meta.requiresAdmin) {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || user.role !== "admin") {
+      alert("관리자만 접근할 수 있는 페이지입니다.");
+      return next("/admin/login");
+    }
+  }
+
   next();
 });
 
