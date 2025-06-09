@@ -37,6 +37,7 @@ import AdminMemberManageView from "@/adminViews/AdminMemberManageView.vue";
 import AdminOrderManageView from "@/adminViews/AdminOrderManageView.vue";
 import DeliveryStatusView from "@/adminViews/DeliveryStatusView.vue";
 import ProductManageView from "@/adminViews/ProductManagerView.vue";
+import KitManageView from "@/adminViews/AdminKitManageView.vue";
 import AnswerManagerView from "@/adminViews/AnswerManagerView.vue";
 import AdminShippingView from "@/adminViews/AdminShippingView.vue";
 import AdminQnaView from "@/adminViews/AdminQnaView.vue";
@@ -44,209 +45,219 @@ import AdminQnaView from "@/adminViews/AdminQnaView.vue";
 import store from "@/store";
 
 const routes = [
-  { path: "/", name: "Home", component: HomeView },
+    { path: "/", name: "Home", component: HomeView },
 
-  {
-    path: "/login",
-    name: "Login",
-    component: Login,
-    meta: { hideHeaderFooter: true },
-  },
-  {
-    path: "/signup",
-    name: "Signup",
-    component: Signup,
-    meta: { hideHeaderFooter: true },
-  },
-  { path: "/products/essential", name: "Products", component: ProductView },
-  {
-    path: "/products/essential/:id",
-    name: "ProductDetail",
-    component: ProductDetail,
-  },
-  {
-    path: "/products/onlymember",
-    name: "Onlymember",
-    component: Onlymember,
-    meta: {
-      requiresAuth: true,
+    {
+        path: "/login",
+        name: "Login",
+        component: Login,
+        meta: { hideHeaderFooter: true },
     },
-  },
-  {
-    path: "/products/onlymember/:id",
-    name: "OnlymemberDetail",
-    component: OnlymemberDetail,
-    meta: {
-      requiresAuth: true,
+    {
+        path: "/signup",
+        name: "Signup",
+        component: Signup,
+        meta: { hideHeaderFooter: true },
     },
-  },
-  { path: "/cart", name: "Cart", component: Cart },
-  {
-    path: "/mypage",
-    component: MyPageView, // 여기에 SideMenu 항상 존재
-    children: [
-      {
-        path: "",
-        name: "MyPageMain",
-        component: () => import("@/views/myPage/MyPageMain.vue"), // 바로 위에 만든 컴포넌트
-      },
-      { path: "info", component: InfoView },
-      { path: "members", component: MemberManageView },
-      { path: "referral", component: EarningStatsView },
-      { path: "orders", component: OrderManageView },
-      { path: "address", component: AddressView },
-      { path: "order-history", component: OrderHistoryView },
-      {
-        path: "order-history/:id",
-        component: OrderHistoryDetailView,
-        name: "OrderHistoryDetailView",
-      },
-      { path: "inquiries", name: "InquiriesView", component: InquiriesView },
-    ],
-  },
-  { path: "/about/greeting", name: "Greeting", component: Greeting },
-  { path: "/about/story", name: "Story", component: Story },
-  { path: "/about/navigate", name: "Navigate", component: Navigate },
-  { path: "/about", name: "About", component: AboutView },
-  { path: "/contact", name: "Contact", component: ContactView },
+    { path: "/products/essential", name: "Products", component: ProductView },
+    {
+        path: "/products/essential/:id",
+        name: "ProductDetail",
+        component: ProductDetail,
+    },
+    {
+        path: "/products/onlymember",
+        name: "Onlymember",
+        component: Onlymember,
+        meta: {
+            requiresAuth: true,
+        },
+    },
+    {
+        path: "/products/onlymember/:id",
+        name: "OnlymemberDetail",
+        component: OnlymemberDetail,
+        meta: {
+            requiresAuth: true,
+        },
+    },
+    { path: "/cart", name: "Cart", component: Cart },
+    {
+        path: "/mypage",
+        component: MyPageView, // 여기에 SideMenu 항상 존재
+        children: [
+            {
+                path: "",
+                name: "MyPageMain",
+                component: () => import("@/views/myPage/MyPageMain.vue"), // 바로 위에 만든 컴포넌트
+            },
+            { path: "info", component: InfoView },
+            { path: "members", component: MemberManageView },
+            { path: "referral", component: EarningStatsView },
+            { path: "orders", component: OrderManageView },
+            { path: "address", component: AddressView },
+            { path: "order-history", component: OrderHistoryView },
+            {
+                path: "order-history/:id",
+                component: OrderHistoryDetailView,
+                name: "OrderHistoryDetailView",
+            },
+            {
+                path: "inquiries",
+                name: "InquiriesView",
+                component: InquiriesView,
+            },
+        ],
+    },
+    { path: "/about/greeting", name: "Greeting", component: Greeting },
+    { path: "/about/story", name: "Story", component: Story },
+    { path: "/about/navigate", name: "Navigate", component: Navigate },
+    { path: "/about", name: "About", component: AboutView },
+    { path: "/contact", name: "Contact", component: ContactView },
 
-  // ⚠️ 서비스 준비중 페이지들
-  {
-    path: "/business/events",
-    name: "Events",
-    component: Events,
-    meta: { maintenance: true },
-  },
-  {
-    path: "/business/lectures",
-    name: "Lectures",
-    component: Lectures,
-    meta: { maintenance: true },
-  },
-  {
-    path: "/qna",
-    name: "QnA",
-    component: QnA,
-  },
-  { path: "/qna/create", name: "QnACreate", component: QnACreate },
-  { path: "/qna/:id", name: "QnADetail", component: QnADetail },
-  {
-    path: "/notices",
-    name: "Notices",
-    component: Notices,
-    // meta: { maintenance: true },
-  },
-  {
-    path: "/notice/:id",
-    name: "NoticeDetail",
-    component: NoticeDetail,
-    // meta: { maintenance: true },
-  },
+    // ⚠️ 서비스 준비중 페이지들
+    {
+        path: "/business/events",
+        name: "Events",
+        component: Events,
+        meta: { maintenance: true },
+    },
+    {
+        path: "/business/lectures",
+        name: "Lectures",
+        component: Lectures,
+        meta: { maintenance: true },
+    },
+    {
+        path: "/qna",
+        name: "QnA",
+        component: QnA,
+    },
+    { path: "/qna/create", name: "QnACreate", component: QnACreate },
+    { path: "/qna/:id", name: "QnADetail", component: QnADetail },
+    {
+        path: "/notices",
+        name: "Notices",
+        component: Notices,
+        // meta: { maintenance: true },
+    },
+    {
+        path: "/notice/:id",
+        name: "NoticeDetail",
+        component: NoticeDetail,
+        // meta: { maintenance: true },
+    },
 
-  // 관리자 페이지
-  {
-    path: "/admin/login",
-    name: "AdminLoginView",
-    component: AdminLoginView,
-    meta: { hideHeaderFooter: true },
-  },
-  {
-    path: "/admin/create",
-    name: "AdminCreateView",
-    component: AdminCreateView,
-    meta: { hideFromGuard: true, hideHeaderFooter: true }, // 👉 관리자만 내부용으로 접근 가능하게
-  },
+    // 관리자 페이지
+    {
+        path: "/admin/login",
+        name: "AdminLoginView",
+        component: AdminLoginView,
+        meta: { hideHeaderFooter: true },
+    },
+    {
+        path: "/admin/create",
+        name: "AdminCreateView",
+        component: AdminCreateView,
+        meta: { hideFromGuard: true, hideHeaderFooter: true }, // 👉 관리자만 내부용으로 접근 가능하게
+    },
 
-  {
-    path: "/admin",
-    redirect: "/admin/dashboard",
-    component: AdminLayout,
-    meta: { hideHeaderFooter: true },
-    children: [
-      {
-        path: "dashboard",
-        name: "AdminDashboardView",
-        component: AdminDashboardView,
-        meta: { requiresAdmin: true, hideHeaderFooter: true },
-      },
-      {
-        path: "members",
-        name: "AdminMemberManageView",
-        component: AdminMemberManageView,
-        meta: { requiresAdmin: true, hideHeaderFooter: true },
-      },
-      {
-        path: "orders",
-        name: "AdminOrderManageView",
-        component: AdminOrderManageView,
-        meta: { requiresAdmin: true, hideHeaderFooter: true },
-      },
-      {
-        path: "delivery",
-        name: "DeliveryStatusView",
-        component: DeliveryStatusView,
-        meta: { requiresAdmin: true, hideHeaderFooter: true },
-      },
-      {
-        path: "products",
-        name: "ProductManageView",
-        component: ProductManageView,
-        meta: { requiresAdmin: true, hideHeaderFooter: true },
-      },
-      {
-        path: "answer",
-        name: "AnswerManagerView",
-        component: AnswerManagerView,
-        meta: { requiresAdmin: true, hideHeaderFooter: true },
-      },
-      {
-        path: "shipping",
-        name: "AdminShippingView",
-        component: AdminShippingView,
-        meta: { requiresAdmin: true, hideHeaderFooter: true },
-      },
-      {
-        path: "qna",
-        name: "AdminQnaView",
-        component: AdminQnaView,
-        meta: { requiresAdmin: true, hideHeaderFooter: true },
-      },
-    ],
-  },
+    {
+        path: "/admin",
+        redirect: "/admin/dashboard",
+        component: AdminLayout,
+        meta: { hideHeaderFooter: true },
+        children: [
+            {
+                path: "dashboard",
+                name: "AdminDashboardView",
+                component: AdminDashboardView,
+                meta: { requiresAdmin: true, hideHeaderFooter: true },
+            },
+            {
+                path: "members",
+                name: "AdminMemberManageView",
+                component: AdminMemberManageView,
+                meta: { requiresAdmin: true, hideHeaderFooter: true },
+            },
+            {
+                path: "orders",
+                name: "AdminOrderManageView",
+                component: AdminOrderManageView,
+                meta: { requiresAdmin: true, hideHeaderFooter: true },
+            },
+            {
+                path: "delivery",
+                name: "DeliveryStatusView",
+                component: DeliveryStatusView,
+                meta: { requiresAdmin: true, hideHeaderFooter: true },
+            },
+            {
+                path: "products",
+                name: "ProductManageView",
+                component: ProductManageView,
+                meta: { requiresAdmin: true, hideHeaderFooter: true },
+            },
+            {
+                path: "kits",
+                name: "KitManageView",
+                component: KitManageView,
+                meta: { requiresAdmin: true, hideHeaderFooter: true },
+            },
+            {
+                path: "answer",
+                name: "AnswerManagerView",
+                component: AnswerManagerView,
+                meta: { requiresAdmin: true, hideHeaderFooter: true },
+            },
+            {
+                path: "shipping",
+                name: "AdminShippingView",
+                component: AdminShippingView,
+                meta: { requiresAdmin: true, hideHeaderFooter: true },
+            },
+            {
+                path: "qna",
+                name: "AdminQnaView",
+                component: AdminQnaView,
+                meta: { requiresAdmin: true, hideHeaderFooter: true },
+            },
+        ],
+    },
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes,
+    history: createWebHistory(),
+    routes,
 });
 
 // ❗ 전역 네비게이션 가드
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.maintenance) {
-    alert("서비스 준비중입니다.");
-    return next("/");
-  }
-
-  // 일반 사용자 인증
-  if (to.meta.requiresAuth) {
-    const token = localStorage.getItem("token");
-    if (!token || !store.getters.isAuthenticated) {
-      alert("로그인이 필요한 페이지입니다.");
-      return next("/login");
+    if (to.meta.maintenance) {
+        alert("서비스 준비중입니다.");
+        return next("/");
     }
-  }
 
-  // 관리자 전용 접근
-  if (to.meta.requiresAdmin) {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user || user.role !== "admin") {
-      alert("관리자만 접근할 수 있는 페이지입니다.");
-      return next("/admin/login");
+    // 일반 사용자 인증
+    if (to.meta.requiresAuth) {
+        const token = localStorage.getItem("token");
+        if (!token || !store.getters.isAuthenticated) {
+            alert("로그인이 필요한 페이지입니다.");
+            return next("/login");
+        }
     }
-  }
 
-  next();
+    // 관리자 전용 접근
+    if (to.meta.requiresAdmin) {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user || user.role !== "admin") {
+            alert("관리자만 접근할 수 있는 페이지입니다.");
+            return next("/admin/login");
+        }
+    }
+
+    next();
 });
 
 export default router;

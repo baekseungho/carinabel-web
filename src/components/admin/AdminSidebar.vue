@@ -3,22 +3,39 @@
         <nav class="menu">
             <ul>
                 <li>
-                    <router-link to="/admin/dashboard" active-class="active">대시보드</router-link>
+                    <router-link to="/admin/dashboard" active-class="active"
+                        >대시보드</router-link
+                    >
                 </li>
                 <li>
-                    <router-link to="/admin/members" active-class="active">회원 리스트</router-link>
+                    <router-link to="/admin/members" active-class="active"
+                        >회원 리스트</router-link
+                    >
                 </li>
                 <li>
-                    <router-link to="/admin/orders" active-class="active">주문 리스트</router-link>
+                    <router-link to="/admin/orders" active-class="active"
+                        >주문 리스트</router-link
+                    >
                 </li>
                 <li>
-                    <router-link to="/admin/shipping" active-class="active">배송 현황</router-link>
+                    <router-link to="/admin/shipping" active-class="active"
+                        >배송 현황</router-link
+                    >
                 </li>
                 <li>
-                    <router-link to="/admin/products" active-class="active">상품 등록</router-link>
+                    <router-link to="/admin/products" active-class="active"
+                        >상품 등록</router-link
+                    >
                 </li>
                 <li>
-                    <router-link to="/admin/answer" active-class="active">QnA</router-link>
+                    <router-link to="/admin/kits" active-class="active"
+                        >키트 관리</router-link
+                    >
+                </li>
+                <li>
+                    <router-link to="/admin/answer" active-class="active"
+                        >QnA</router-link
+                    >
                 </li>
             </ul>
         </nav>

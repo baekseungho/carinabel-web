@@ -65,10 +65,41 @@ class AdminService {
 
     // 상품 수정
     updateProduct(productId, updatedData, token) {
-        return axios.put(`${ADMIN_API_URL}/products/update/${productId}`, updatedData, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+        return axios.put(
+            `${ADMIN_API_URL}/products/update/${productId}`,
+            updatedData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+    }
+
+    // 키트 전체 조회
+    getKits(token) {
+        return axios.get(`${ADMIN_API_URL}/kits`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+    }
+
+    // 키트 추가
+    createKit(kitData, token) {
+        return axios.post(`${ADMIN_API_URL}/kits/create`, kitData, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+    }
+
+    // 키트 수정
+    updateKit(kitId, updatedData, token) {
+        return axios.put(`${ADMIN_API_URL}/kits/${kitId}`, updatedData, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+    }
+    // 키트 삭제
+    deleteKit(kitId, token) {
+        return axios.delete(`${ADMIN_API_URL}/kits/${kitId}`, {
+            headers: { Authorization: `Bearer ${token}` },
         });
     }
 }
