@@ -15,6 +15,8 @@
                     <span class="productName">{{ product.productName }}</span>
                 </h1>
                 <p class="productVolume">용량: {{ product.volume || 0 }}ml</p>
+                <p class="productVolume">재고: {{ product.stock || 0 }}개</p>
+
                 <p v-if="isAuthenticated" class="productPrice">
                     <span class="consumerPrice">소비자가: {{ formatPrice(product.consumerPrice) }}원</span>
                     <span class="memberPrice">회원가: {{ formatPrice(product.memberPrice) }}원</span>
@@ -29,10 +31,25 @@
                         {{ product.description }}
                     </p>
                 </div>
-
+                <div class="productQuantity">
+                    <label>수량:</label>
+                    <div class="quantityControls">
+                        <button @click="decreaseQuantity">
+                            <div class="minus smallIcon"></div>
+                        </button>
+                        <span>{{ quantity }}</span>
+                        <button @click="increaseQuantity">
+                            <div class="plus smallIcon"></div>
+                        </button>
+                    </div>
+                </div>
                 <div class="buyBtnBox">
-                    <button class="buyProductButton" @click="buyProduct(product)">구매하기</button>
-                    <button class="buyProductButton" @click="addToCart(product._id)">장바구니에 담기</button>
+                    <button class="buyProductButton" @click="buyProduct(product)" :disabled="product.stock === 0">
+                        구매하기
+                    </button>
+                    <button class="buyProductButton" @click="addToCart(product._id)" :disabled="product.stock === 0">
+                        장바구니에 담기
+                    </button>
                 </div>
             </div>
         </div>
@@ -59,6 +76,8 @@ const product = ref({});
 const isAuthenticated = computed(() => store.getters.isAuthenticated);
 const token = localStorage.getItem("token");
 
+const quantity = ref(1); // 수량 상태 추가
+
 const getProduct = () => {
     console.log(route.params.id, token);
     ProductService.getProduct(route.params.id, token)
@@ -82,8 +101,6 @@ function formatPrice(price) {
 }
 
 function buyProduct(product) {
-    if (!product.koreanName) return;
-
     const user = JSON.parse(localStorage.getItem("user"));
     const userId = user?._id;
     const token = user?.token;
@@ -93,32 +110,31 @@ function buyProduct(product) {
         return;
     }
 
-    const additionalAmount = product.memberPrice;
-    const quantity = 1;
+    const amount = product.memberPrice * quantity.value;
 
-    const updatePromise = AuthService.updateUserProfile(userId, additionalAmount, token);
+    const updatePromise = AuthService.updateUserProfile(userId, amount, token);
     const orderPromise = OrderService.createOrder(
         {
             userId,
             productName: product.koreanName,
-            amount: additionalAmount,
-            quantity,
+            amount,
+            quantity: quantity.value,
             imagePath: product.imagePath,
-            status: "결제완료", // 선택적
+            status: "결제완료",
         },
         token
     );
 
     Promise.all([updatePromise, orderPromise])
         .then(([userRes, orderRes]) => {
-            alert(`${product.koreanName} 를 구매했습니다.`);
-            console.log("👤 회원정보 갱신:", userRes.data);
-            console.log("🧾 주문 기록 생성:", orderRes.data);
+            alert(`${product.koreanName}를 ${quantity.value}개 구매했습니다.`);
             store.dispatch("login", userRes.data);
+            getProduct();
         })
         .catch((error) => {
             console.error("❌ 구매 실패:", error);
-            alert("구매에 실패했습니다.");
+            const message = error.response?.data?.message || "구매에 실패했습니다.";
+            alert(message);
         });
 }
 const addToCart = (productId) => {
@@ -137,6 +153,18 @@ const addToCart = (productId) => {
 
 function goBack() {
     router.push("/products/onlymember");
+}
+
+function increaseQuantity() {
+    if (quantity.value < product.value.stock) {
+        quantity.value++;
+    } else {
+        alert(`최대 주문 가능 수량은 ${product.value.stock}개입니다.`);
+    }
+}
+
+function decreaseQuantity() {
+    if (quantity.value > 1) quantity.value--;
 }
 </script>
 
@@ -268,6 +296,43 @@ function goBack() {
 .buyProductButton:hover {
     background-color: #c97582;
 }
+
+.buyProductButton:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    opacity: 0.7;
+    pointer-events: none;
+}
 .productDaildescription {
+}
+
+.productQuantity {
+    margin: 20px 0;
+    font-size: 18px;
+    color: #444;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.quantityControls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.quantityControls button {
+    background-color: #cc8a94;
+    border: none;
+    padding: 8px 12px;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.quantityControls button:hover {
+    background-color: #ca717f;
 }
 </style>

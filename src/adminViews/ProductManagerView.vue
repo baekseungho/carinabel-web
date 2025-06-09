@@ -8,6 +8,7 @@
             <input v-model="koreanName" placeholder="상품명 (한글)" />
             <input v-model="volume" type="number" placeholder="용량 (ml)" />
             <input v-model="consumerPrice" type="number" placeholder="소비자가격 (원)" />
+            <input v-model="stock" type="number" placeholder="재고 수량" />
             <input v-model="imagePath" placeholder="리스트 이미지 경로" />
             <input v-model="detailImage" placeholder="상세 이미지 경로" />
             <button @click="addProduct">상품 추가</button>
@@ -23,7 +24,7 @@
                     class="productThumbnail"
                 />
                 <strong>{{ product.koreanName }}</strong> ({{ product.category }}) - {{ product.volume }}ml /
-                {{ product.consumerPrice }}원 / 회원가 {{ product.memberPrice }}원
+                {{ product.consumerPrice }}원 / 회원가 {{ product.memberPrice }}원 / 재고 {{ product.stock }}개
 
                 <button @click="deleteProduct(product._id)">삭제</button>
                 <button @click="editProduct(product)">수정</button>
@@ -37,6 +38,7 @@
             <input v-model="editForm.koreanName" placeholder="상품명 (한글)" />
             <input v-model="editForm.volume" type="number" placeholder="용량 (ml)" />
             <input v-model="editForm.consumerPrice" type="number" placeholder="소비자가격 (원)" />
+            <input v-model="editForm.stock" type="number" placeholder="재고 수량" />
             <input v-model="editForm.imagePath" placeholder="리스트 이미지 경로" />
             <input v-model="editForm.detailImage" placeholder="상세 이미지 경로" />
             <button @click="updateProduct">수정 완료</button>
@@ -47,13 +49,14 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import AdminService from "@/api/AdminService";
 
 const products = ref([]);
 const category = ref("");
 const productName = ref("");
 const koreanName = ref("");
 const volume = ref("");
+const stock = ref(0);
 const consumerPrice = ref("");
 const imagePath = ref("");
 const detailImage = ref("");
@@ -65,62 +68,69 @@ const editForm = ref({
     koreanName: "",
     volume: "",
     consumerPrice: "",
+    stock: 0,
     imagePath: "",
     detailImage: "",
 });
 
+const token = localStorage.getItem("token");
+
 // 상품 목록 불러오기
-const fetchProducts = async () => {
-    try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:5000/api/products", {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+const fetchProducts = () => {
+    AdminService.getAllProducts(token)
+        .then((res) => {
+            products.value = res.data;
+        })
+        .catch((err) => {
+            console.error("❌ 상품 목록 로딩 실패:", err.response || err);
+            alert("상품 목록을 불러오는 데 실패했습니다.");
         });
-        products.value = response.data;
-    } catch (error) {
-        console.error("상품 목록 로딩 오류:", error.response || error);
-        alert("상품 목록을 불러오는 데 실패했습니다.");
-    }
 };
 
 // 상품 추가
-const addProduct = async () => {
-    try {
-        const response = await axios.post("http://localhost:5000/api/products/add", {
-            category: category.value,
-            productName: productName.value,
-            koreanName: koreanName.value,
-            volume: volume.value,
-            consumerPrice: consumerPrice.value,
-            imagePath: imagePath.value || "/img/default.jpg",
-            detailImage: detailImage.value || "/img/default_detail.jpg",
+const addProduct = () => {
+    const productData = {
+        category: category.value,
+        productName: productName.value,
+        koreanName: koreanName.value,
+        volume: volume.value,
+        consumerPrice: consumerPrice.value,
+        stock: stock.value,
+        imagePath: imagePath.value || "/img/default.jpg",
+        detailImage: detailImage.value || "/img/default_detail.jpg",
+    };
+
+    AdminService.addProduct(productData, token)
+        .then((res) => {
+            products.value.push(res.data.product);
+            category.value = "";
+            productName.value = "";
+            koreanName.value = "";
+            volume.value = "";
+            consumerPrice.value = "";
+            stock.value = "";
+
+            imagePath.value = "";
+            detailImage.value = "";
+            alert("상품이 성공적으로 추가되었습니다.");
+        })
+        .catch((err) => {
+            console.error("❌ 상품 추가 실패:", err.response || err);
+            alert("상품 추가에 실패했습니다.");
         });
-        products.value.push(response.data.product);
-        category.value = "";
-        productName.value = "";
-        koreanName.value = "";
-        volume.value = "";
-        consumerPrice.value = "";
-        imagePath.value = "";
-        detailImage.value = "";
-        alert("상품이 성공적으로 추가되었습니다.");
-    } catch (error) {
-        console.error(error);
-        alert("상품 추가에 실패했습니다.");
-    }
 };
+
 // 상품 삭제
-const deleteProduct = async (productId) => {
-    try {
-        await axios.delete(`http://localhost:5000/api/products/delete/${productId}`);
-        products.value = products.value.filter((p) => p._id !== productId);
-        alert("상품이 성공적으로 삭제되었습니다.");
-    } catch (error) {
-        console.error(error);
-        alert("상품 삭제에 실패했습니다.");
-    }
+const deleteProduct = (productId) => {
+    AdminService.deleteProduct(productId, token)
+        .then(() => {
+            products.value = products.value.filter((p) => p._id !== productId);
+            alert("상품이 성공적으로 삭제되었습니다.");
+        })
+        .catch((err) => {
+            console.error("❌ 상품 삭제 실패:", err.response || err);
+            alert("상품 삭제에 실패했습니다.");
+        });
 };
 
 // 상품 수정 시작
@@ -130,23 +140,32 @@ const editProduct = (product) => {
 };
 
 // 상품 수정 완료
-const updateProduct = async () => {
-    try {
-        const response = await axios.put(`http://localhost:5000/api/products/update/${editForm.value._id}`, {
-            category: editForm.value.category,
-            productName: editForm.value.productName,
-            koreanName: editForm.value.koreanName,
-            volume: editForm.value.volume,
-            consumerPrice: editForm.value.consumerPrice,
+const updateProduct = () => {
+    const updatedData = {
+        category: editForm.value.category,
+        productName: editForm.value.productName,
+        koreanName: editForm.value.koreanName,
+        volume: editForm.value.volume,
+        consumerPrice: editForm.value.consumerPrice,
+        stock: editForm.value.stock,
+
+        imagePath: editForm.value.imagePath,
+        detailImage: editForm.value.detailImage,
+    };
+
+    AdminService.updateProduct(editForm.value._id, updatedData, token)
+        .then((res) => {
+            const index = products.value.findIndex((p) => p._id === editForm.value._id);
+            if (index !== -1) {
+                products.value[index] = res.data.product;
+            }
+            editMode.value = false;
+            alert("상품이 성공적으로 수정되었습니다.");
+        })
+        .catch((err) => {
+            console.error("❌ 상품 수정 실패:", err.response || err);
+            alert("상품 수정에 실패했습니다.");
         });
-        const index = products.value.findIndex((p) => p._id === editForm.value._id);
-        products.value[index] = response.data.product;
-        editMode.value = false;
-        alert("상품이 성공적으로 수정되었습니다.");
-    } catch (error) {
-        console.error(error);
-        alert("상품 수정에 실패했습니다.");
-    }
 };
 
 // 수정 취소
@@ -159,6 +178,9 @@ const cancelEdit = () => {
         koreanName: "",
         volume: "",
         consumerPrice: "",
+        stock: "",
+        imagePath: "",
+        detailImage: "",
     };
 };
 
