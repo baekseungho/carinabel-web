@@ -1,48 +1,84 @@
 <template>
     <div class="productManagerContainer">
-        <h1>상품 관리</h1>
-
-        <div class="productForm">
-            <input v-model="category" placeholder="카테고리" />
-            <input v-model="productName" placeholder="상품명 (영문)" />
-            <input v-model="koreanName" placeholder="상품명 (한글)" />
-            <input v-model="volume" type="number" placeholder="용량 (ml)" />
-            <input v-model="consumerPrice" type="number" placeholder="소비자가격 (원)" />
-            <input v-model="stock" type="number" placeholder="재고 수량" />
-            <input v-model="imagePath" placeholder="리스트 이미지 경로" />
-            <input v-model="detailImage" placeholder="상세 이미지 경로" />
-            <button @click="addProduct">상품 추가</button>
+        <div style="width: 20%">
+            <h1>상품 관리</h1>
+            <div class="productForm">
+                <input v-model="category" placeholder="카테고리" />
+                <input v-model="productName" placeholder="상품명 (영문)" />
+                <input v-model="koreanName" placeholder="상품명 (한글)" />
+                <input v-model="volume" type="number" placeholder="용량 (ml)" />
+                <input
+                    v-model="consumerPrice"
+                    type="number"
+                    placeholder="소비자가격 (원)"
+                />
+                <input v-model="stock" type="number" placeholder="재고 수량" />
+                <input v-model="imagePath" placeholder="리스트 이미지 경로" />
+                <input v-model="detailImage" placeholder="상세 이미지 경로" />
+                <button @click="addProduct">상품 추가</button>
+            </div>
         </div>
 
-        <h2>상품 목록</h2>
-        <ul>
-            <li style="display: flex; align-items: center" v-for="product in products" :key="product._id">
-                <img
-                    style="width: 40px; height: 80px"
-                    :src="product.imagePath"
-                    alt="상품 이미지"
-                    class="productThumbnail"
+        <div style="width: 79%">
+            <h2>상품 목록</h2>
+            <ul>
+                <li
+                    style="display: flex; align-items: center"
+                    v-for="product in products"
+                    :key="product._id"
+                >
+                    <img
+                        style="width: 40px; height: 80px"
+                        :src="product.imagePath"
+                        alt="상품 이미지"
+                        class="productThumbnail"
+                    />
+                    <strong>{{ product.koreanName }}</strong> ({{
+                        product.category
+                    }}) - {{ product.volume }}ml / {{ product.consumerPrice }}원
+                    / 회원가 {{ product.memberPrice }}원 / 재고
+                    {{ product.stock }}개
+                    <button @click="deleteProduct(product._id)">삭제</button>
+                    <button @click="editProduct(product)">수정</button>
+                </li>
+            </ul>
+            <div v-if="editMode" class="productEditForm">
+                <h2>상품 수정</h2>
+                <input v-model="editForm.category" placeholder="카테고리" />
+                <input
+                    v-model="editForm.productName"
+                    placeholder="상품명 (영문)"
                 />
-                <strong>{{ product.koreanName }}</strong> ({{ product.category }}) - {{ product.volume }}ml /
-                {{ product.consumerPrice }}원 / 회원가 {{ product.memberPrice }}원 / 재고 {{ product.stock }}개
-
-                <button @click="deleteProduct(product._id)">삭제</button>
-                <button @click="editProduct(product)">수정</button>
-            </li>
-        </ul>
-
-        <div v-if="editMode" class="productEditForm">
-            <h2>상품 수정</h2>
-            <input v-model="editForm.category" placeholder="카테고리" />
-            <input v-model="editForm.productName" placeholder="상품명 (영문)" />
-            <input v-model="editForm.koreanName" placeholder="상품명 (한글)" />
-            <input v-model="editForm.volume" type="number" placeholder="용량 (ml)" />
-            <input v-model="editForm.consumerPrice" type="number" placeholder="소비자가격 (원)" />
-            <input v-model="editForm.stock" type="number" placeholder="재고 수량" />
-            <input v-model="editForm.imagePath" placeholder="리스트 이미지 경로" />
-            <input v-model="editForm.detailImage" placeholder="상세 이미지 경로" />
-            <button @click="updateProduct">수정 완료</button>
-            <button @click="cancelEdit">취소</button>
+                <input
+                    v-model="editForm.koreanName"
+                    placeholder="상품명 (한글)"
+                />
+                <input
+                    v-model="editForm.volume"
+                    type="number"
+                    placeholder="용량 (ml)"
+                />
+                <input
+                    v-model="editForm.consumerPrice"
+                    type="number"
+                    placeholder="소비자가격 (원)"
+                />
+                <input
+                    v-model="editForm.stock"
+                    type="number"
+                    placeholder="재고 수량"
+                />
+                <input
+                    v-model="editForm.imagePath"
+                    placeholder="리스트 이미지 경로"
+                />
+                <input
+                    v-model="editForm.detailImage"
+                    placeholder="상세 이미지 경로"
+                />
+                <button @click="updateProduct">수정 완료</button>
+                <button @click="cancelEdit">취소</button>
+            </div>
         </div>
     </div>
 </template>
@@ -155,7 +191,9 @@ const updateProduct = () => {
 
     AdminService.updateProduct(editForm.value._id, updatedData, token)
         .then((res) => {
-            const index = products.value.findIndex((p) => p._id === editForm.value._id);
+            const index = products.value.findIndex(
+                (p) => p._id === editForm.value._id
+            );
             if (index !== -1) {
                 products.value[index] = res.data.product;
             }
@@ -192,12 +230,14 @@ onMounted(() => {
 
 <style scoped>
 .productManagerContainer {
-    width: 60%;
-    margin: auto;
+    width: 90%;
+    margin-left: 180px;
     padding: 20px;
     border-radius: 10px;
     background-color: #f9f9f9;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
 }
 
 .productForm,
