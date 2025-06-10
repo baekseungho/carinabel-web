@@ -140,7 +140,7 @@ function buyKit() {
 }
 
 function goBack() {
-    router.push("/kits");
+    router.push("/products/kits");
 }
 </script>
 

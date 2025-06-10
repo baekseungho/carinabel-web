@@ -21,7 +21,7 @@
                     <input v-model.number="price" type="number" placeholder="할인된 키트 가격" />
 
                     <div class="originalPriceDisplay">
-                        원래 총합 가격:
+                        기존 총합 가격:
                         <strong>{{ originalPrice.toLocaleString() }}원</strong>
                     </div>
                 </div>

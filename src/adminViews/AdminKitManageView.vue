@@ -141,7 +141,7 @@ onMounted(fetchKits);
 .dataTable td {
     border: 1px solid #ccc;
     padding: 12px;
-    text-align: left;
+    text-align: center;
     vertical-align: top;
 }
 .kitInfo {
