@@ -22,11 +22,7 @@
                 <option value="title_content">제목+내용</option>
                 <option value="author">작성자</option>
             </select>
-            <input
-                v-model="searchKeyword"
-                type="text"
-                placeholder="검색어 입력"
-            />
+            <input v-model="searchKeyword" type="text" placeholder="검색어 입력" />
             <button class="searchBtn" @click="handleSearch">검색</button>
         </div>
 
@@ -45,7 +41,7 @@
                         <th>조회수</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody v-if="qnaList.length > 0">
                     <tr
                         v-for="(item, index) in qnaList"
                         :key="item._id"
@@ -56,16 +52,10 @@
                         <td>{{ item.category }}</td>
                         <td>{{ item.productName }}</td>
                         <td>
-                            <img
-                                :src="item.imagePath"
-                                alt="상품 이미지"
-                                class="qnaProductImg"
-                            />
+                            <img :src="item.imagePath" alt="상품 이미지" class="qnaProductImg" />
                         </td>
                         <td>
-                            <span v-if="item.hasAnswer" class="answeredTag">
-                                [답변완료]
-                            </span>
+                            <span v-if="item.hasAnswer" class="answeredTag"> [답변완료] </span>
                             {{ item.title }}
                         </td>
                         <td>{{ item.maskedAuthor }}</td>
@@ -73,11 +63,17 @@
                         <td>{{ item.views }}</td>
                     </tr>
                 </tbody>
+                <tbody v-else>
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 20px">등록된 글이 없습니다.</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
 
         <!-- 페이지네이션 -->
         <Pagination
+            v-if="totalPages > 1"
             :current-page="currentPage"
             :total-pages="totalPages"
             @page-change="handlePageChange"
@@ -100,11 +96,18 @@ const currentPage = ref(1);
 const pageSize = 5;
 const totalPages = ref(1);
 const token = localStorage.getItem("token");
+const user = JSON.parse(localStorage.getItem("user")); // ← 사용자 정보 불러오기
 
 const fetchQnAs = () => {
+    if (!user?._id || !token) {
+        qnaList.value = [];
+        totalPages.value = 1;
+        return;
+    }
+
     const query = {
-        category:
-            selectedCategory.value === "전체" ? "" : selectedCategory.value,
+        userId: user._id, // ✅ 로그인된 사용자만 요청
+        category: selectedCategory.value === "전체" ? "" : selectedCategory.value,
         searchType: searchType.value,
         keyword: searchKeyword.value,
         page: currentPage.value,
@@ -118,6 +121,8 @@ const fetchQnAs = () => {
         })
         .catch((err) => {
             console.error("❌ QnA 목록 불러오기 실패:", err);
+            qnaList.value = [];
+            totalPages.value = 1;
         });
 };
 
@@ -142,9 +147,10 @@ const goToDetail = (id) => {
 };
 const formatDate = (str) => {
     const d = new Date(str);
-    return `${d.getFullYear()}-${(d.getMonth() + 1)
+    return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d
+        .getDate()
         .toString()
-        .padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")}`;
+        .padStart(2, "0")}`;
 };
 
 onMounted(fetchQnAs);

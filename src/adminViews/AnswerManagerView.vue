@@ -35,8 +35,8 @@
             <div v-if="selectedQna.hasAnswer">
                 <h4>답변 내용</h4>
                 <p>{{ selectedQna.hasAnswer.content }}</p>
+                <small>답변자: {{ selectedQna.hasAnswer.adminName }}</small>
             </div>
-
             <div v-else class="answerForm">
                 <textarea v-model="answerContent" rows="6" placeholder="답변 내용을 입력하세요"></textarea>
                 <button class="themaBgColor4" @click="submitAnswer">답변 등록</button>
