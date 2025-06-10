@@ -14,6 +14,7 @@
                 <option>총판</option>
             </select>
             <button @click="searchUsers">검색</button>
+            <button class="downloadBtn" @click="downloadExcel">엑셀 다운로드</button>
         </div>
 
         <table class="memberTable">
@@ -58,6 +59,7 @@
 import { ref, computed, onMounted } from "vue";
 import AdminService from "@/api/AdminService";
 import Pagination from "@/components/common/Pagination.vue";
+import * as XLSX from "xlsx";
 
 const users = ref([]);
 const totalCount = ref(0);
@@ -106,6 +108,40 @@ const handlePageChange = (page) => {
     fetchUsers();
 };
 
+const downloadExcel = async () => {
+    try {
+        const params = {
+            name: searchName.value,
+            email: searchEmail.value,
+            level: selectedLevel.value,
+            page: 1,
+            size: 10000, // 충분히 큰 숫자로 전체 조회
+        };
+        const res = await AdminService.getFilteredUsers(params, token);
+        const data = res.data.users.map((user, idx) => ({
+            번호: idx + 1,
+            이름: user.fullName,
+            이메일: user.email,
+            전화번호: user.phone,
+            생년월일: formatDate(user.birthday),
+            회원등급: user.membershipLevel,
+            총구매액: user.totalPurchaseAmount,
+            총추천수당: user.totalReferralEarnings,
+            가입일: formatDate(user.createdAt),
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "회원리스트");
+
+        const today = new Date().toISOString().slice(0, 10);
+        XLSX.writeFile(workbook, `회원리스트_${today}.xlsx`);
+    } catch (err) {
+        console.error("❌ 엑셀 다운로드 실패:", err);
+        alert("엑셀 다운로드 중 오류가 발생했습니다.");
+    }
+};
+
 onMounted(() => {
     fetchUsers();
 });
@@ -125,6 +161,34 @@ onMounted(() => {
     margin-bottom: 1.2rem;
     display: flex;
     gap: 1rem;
+}
+
+button {
+    /* margin: 10px; */
+    padding: 10px 20px;
+    background-color: #cc8a94;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #a0666f;
+}
+.downloadBtn {
+    margin-left: auto;
+    background: #444;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.downloadBtn:hover {
+    background-color: #333;
 }
 .filterBar input,
 .filterBar select {
@@ -147,19 +211,5 @@ onMounted(() => {
     background-color: #f2f2f2;
     color: #333;
     font-weight: 600;
-}
-button {
-    /* margin: 10px; */
-    padding: 10px 20px;
-    background-color: #cc8a94;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #a0666f;
 }
 </style>
