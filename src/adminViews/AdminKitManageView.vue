@@ -3,9 +3,7 @@
         <div class="adminContent">
             <h2 class="pageTitle">키트 관리</h2>
 
-            <button class="addBtn themaBgColor4" @click="showModal = true">
-                키트 추가
-            </button>
+            <button class="addBtn themaBgColor4" @click="showModal = true">키트 추가</button>
 
             <table class="dataTable">
                 <thead>
@@ -23,9 +21,7 @@
                     <tr v-for="kit in kits" :key="kit._id">
                         <td>
                             <img
-                                :src="
-                                    kit.imagePath || '/img/default_product.png'
-                                "
+                                :src="kit.imagePath || '/img/default_product.png'"
                                 alt="키트 이미지"
                                 class="kitThumbnail"
                             />
@@ -36,29 +32,14 @@
                         <td>{{ kit.originalPrice.toLocaleString() }}원</td>
                         <td>
                             <ul class="productList">
-                                <li
-                                    v-for="item in kit.products"
-                                    :key="item.productId._id"
-                                >
-                                    {{ item.productId.koreanName }} ({{
-                                        item.quantity
-                                    }}개)
+                                <li v-for="item in kit.products" :key="item.productId._id">
+                                    {{ item.productId.koreanName }} ({{ item.quantity }}개)
                                 </li>
                             </ul>
                         </td>
                         <td>
-                            <button
-                                class="actionBtn edit"
-                                @click="editKit(kit)"
-                            >
-                                수정
-                            </button>
-                            <button
-                                class="actionBtn delete"
-                                @click="deleteKit(kit._id)"
-                            >
-                                삭제
-                            </button>
+                            <button class="actionBtn edit" @click="editKit(kit)">수정</button>
+                            <button class="actionBtn delete" @click="deleteKit(kit._id)">삭제</button>
                         </td>
                     </tr>
                 </tbody>
@@ -66,7 +47,7 @@
 
             <KitModal
                 v-if="showModal"
-                @close="showModal = false"
+                @close="handleModalClose"
                 @refresh="fetchKits"
                 @created="createKit"
                 :editTarget="editTarget"
@@ -103,7 +84,10 @@ const editKit = (kit) => {
 const createKit = () => {
     fetchKits();
 };
-
+const handleModalClose = () => {
+    showModal.value = false;
+    editTarget.value = null;
+};
 const deleteKit = (kitId) => {
     if (!confirm("정말 삭제하시겠습니까?")) return;
     AdminService.deleteKit(kitId, token)

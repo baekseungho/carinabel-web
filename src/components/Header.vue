@@ -12,6 +12,9 @@
                         <li>
                             <a href="/products/onlymember">회원전용 상품</a>
                         </li>
+                        <li>
+                            <a href="/products/kits">키트 상품</a>
+                        </li>
                     </ul>
                 </li>
                 <li class="menuItem">

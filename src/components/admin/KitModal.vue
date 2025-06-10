@@ -6,38 +6,19 @@
             <div class="kitForm">
                 <div class="formSection">
                     <label>키트 이름</label>
-                    <input
-                        v-model="kitName"
-                        type="text"
-                        placeholder="키트 이름 입력"
-                    />
+                    <input v-model="kitName" type="text" placeholder="키트 이름 입력" />
 
                     <label>키트 설명</label>
-                    <textarea
-                        v-model="description"
-                        placeholder="키트 설명 입력"
-                    ></textarea>
+                    <textarea v-model="description" placeholder="키트 설명 입력"></textarea>
 
                     <label>리스트 이미지 경로</label>
-                    <input
-                        v-model="imagePath"
-                        type="text"
-                        placeholder="/img/kit_thumb.png"
-                    />
+                    <input v-model="imagePath" type="text" placeholder="/img/kit_thumb.png" />
 
                     <label>상세 이미지 경로</label>
-                    <input
-                        v-model="detailImage"
-                        type="text"
-                        placeholder="/img/kit_detail.png"
-                    />
+                    <input v-model="detailImage" type="text" placeholder="/img/kit_detail.png" />
 
                     <label>키트 가격</label>
-                    <input
-                        v-model.number="price"
-                        type="number"
-                        placeholder="할인된 키트 가격"
-                    />
+                    <input v-model.number="price" type="number" placeholder="할인된 키트 가격" />
 
                     <div class="originalPriceDisplay">
                         원래 총합 가격:
@@ -48,30 +29,13 @@
                 <div class="productsSection">
                     <h3>상품 목록</h3>
                     <div class="productList">
-                        <div
-                            v-for="product in products"
-                            :key="product._id"
-                            class="productItem"
-                        >
-                            <img
-                                :src="product.imagePath"
-                                alt="thumb"
-                                class="thumb"
-                            />
+                        <div v-for="product in products" :key="product._id" class="productItem">
+                            <img :src="product.imagePath" alt="thumb" class="thumb" />
                             <div class="info">
                                 <div>{{ product.koreanName }}</div>
-                                <div>
-                                    {{
-                                        product.consumerPrice.toLocaleString()
-                                    }}원
-                                </div>
+                                <div>{{ product.consumerPrice.toLocaleString() }}원</div>
                             </div>
-                            <input
-                                v-model.number="quantities[product._id]"
-                                type="number"
-                                min="1"
-                                placeholder="수량"
-                            />
+                            <input v-model.number="quantities[product._id]" type="number" min="1" placeholder="수량" />
                             <button @click="addToKit(product)">추가</button>
                         </div>
                     </div>
@@ -80,16 +44,8 @@
                 <div class="selectedSection">
                     <h3>선택된 구성</h3>
                     <div class="selectedList">
-                        <div
-                            v-for="(item, index) in selectedProducts"
-                            :key="index"
-                            class="selectedItem"
-                        >
-                            <span
-                                >{{ item.koreanName }} ({{
-                                    item.quantity
-                                }}개)</span
-                            >
+                        <div v-for="(item, index) in selectedProducts" :key="index" class="selectedItem">
+                            <span>{{ item.koreanName }} ({{ item.quantity }}개)</span>
                             <button @click="removeFromKit(index)">제거</button>
                         </div>
                     </div>
@@ -105,9 +61,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import AdminService from "@/api/AdminService";
 
+const props = defineProps({
+    editTarget: Object, // 수정 대상 키트 정보
+});
 const emit = defineEmits(["close", "created"]);
 const products = ref([]);
 const selectedProducts = ref([]);
@@ -141,38 +100,71 @@ const removeFromKit = (index) => {
 };
 
 const calculateOriginalPrice = () => {
-    originalPrice.value = selectedProducts.value.reduce(
-        (sum, item) => sum + item.consumerPrice * item.quantity,
-        0
-    );
+    originalPrice.value = selectedProducts.value.reduce((sum, item) => sum + item.consumerPrice * item.quantity, 0);
 };
-
 const submitKit = () => {
     const token = localStorage.getItem("token");
     const kitData = {
         kitName: kitName.value,
         description: description.value,
-        imagePath: imagePath.value || "/img/default_product.png",
-        detailImage: detailImage.value || "/img/default_detail.jpg",
         price: price.value,
         originalPrice: originalPrice.value,
+        imagePath: imagePath.value,
+        detailImage: detailImage.value,
         products: selectedProducts.value.map((p) => ({
             productId: p._id,
             quantity: p.quantity,
         })),
     };
 
-    AdminService.createKit(kitData, token)
+    const isEditing = !!props.editTarget;
+
+    const request = isEditing
+        ? AdminService.updateKit(props.editTarget._id, kitData, token)
+        : AdminService.createKit(kitData, token);
+
+    request
         .then(() => {
-            alert("키트가 등록되었습니다.");
+            alert(isEditing ? "키트가 수정되었습니다." : "키트가 등록되었습니다.");
             emit("created");
             emit("close");
         })
         .catch((err) => {
-            console.error("❌ 키트 등록 실패:", err);
-            alert("키트 등록 실패");
+            console.error("❌ 키트 등록/수정 실패:", err);
+            alert("작업 실패");
         });
 };
+
+watch(
+    () => props.editTarget,
+    (kit) => {
+        if (kit) {
+            // 수정일 경우: 데이터 채움
+            kitName.value = kit.kitName;
+            description.value = kit.description;
+            price.value = kit.price;
+            originalPrice.value = kit.originalPrice;
+            imagePath.value = kit.imagePath;
+            detailImage.value = kit.detailImage;
+            selectedProducts.value = kit.products.map((item) => ({
+                ...item.productId,
+                quantity: item.quantity,
+            }));
+            calculateOriginalPrice();
+        } else {
+            // 추가 모드일 경우: 초기화
+            kitName.value = "";
+            description.value = "";
+            price.value = 0;
+            originalPrice.value = 0;
+            imagePath.value = "";
+            detailImage.value = "";
+            selectedProducts.value = [];
+            quantities.value = {};
+        }
+    },
+    { immediate: true }
+);
 
 onMounted(fetchProducts);
 </script>
@@ -245,7 +237,7 @@ onMounted(fetchProducts);
 .productItem .thumb {
     width: 50px;
     height: 50px;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 6px;
 }
 .productItem .info {

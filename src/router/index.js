@@ -16,6 +16,8 @@ import ProductView from "@/views/ProductView.vue";
 import ProductDetail from "@/views/ProductDetail.vue";
 import Onlymember from "@/views/OnlyMemberView.vue";
 import OnlymemberDetail from "@/views/OnlyMemberDetailView.vue";
+import Kit from "@/views/KitView.vue";
+import KitDetail from "@/views/KitDetailView.vue";
 import AboutView from "@/views/AboutView.vue";
 import ContactView from "@/views/ContactView.vue";
 import Greeting from "@/views/GreetingView.vue";
@@ -28,7 +30,6 @@ import QnACreate from "@/views/QnACreateView.vue";
 import QnADetail from "@/views/QnADetailView.vue";
 import Notices from "@/views/NoticesView.vue";
 import NoticeDetail from "@/views/NoticeDetailView.vue";
-
 import AdminLayout from "@/adminViews/AdminLayout.vue";
 import AdminLoginView from "@/adminViews/AdminLoginView.vue";
 import AdminCreateView from "@/adminViews/AdminCreateView.vue";
@@ -77,6 +78,22 @@ const routes = [
         path: "/products/onlymember/:id",
         name: "OnlymemberDetail",
         component: OnlymemberDetail,
+        meta: {
+            requiresAuth: true,
+        },
+    },
+    {
+        path: "/products/kits",
+        name: "Kit",
+        component: Kit,
+        meta: {
+            requiresAuth: true,
+        },
+    },
+    {
+        path: "/products/kits/:id",
+        name: "KitDetail",
+        component: KitDetail,
         meta: {
             requiresAuth: true,
         },
