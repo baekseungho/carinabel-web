@@ -5,7 +5,7 @@
         <!-- 🔍 검색 필터 영역 -->
         <div class="filterBar">
             <input v-model="searchName" placeholder="이름 검색" />
-            <input v-model="searchEmail" placeholder="이메일 검색" />
+            <input v-model="searchmemberId" placeholder="회원번호 검색" />
             <select v-model="selectedLevel">
                 <option value="">전체</option>
                 <option>일반회원</option>
@@ -22,7 +22,7 @@
                 <tr>
                     <th>#</th>
                     <th>이름</th>
-                    <th>이메일</th>
+                    <th>회원번호</th>
                     <th>전화번호</th>
                     <th>생년월일</th>
                     <th>회원등급</th>
@@ -35,7 +35,7 @@
                 <tr v-for="(user, index) in users" :key="user._id">
                     <td>{{ index + 1 + (currentPage - 1) * pageSize }}</td>
                     <td>{{ user.fullName }}</td>
-                    <td>{{ user.email }}</td>
+                    <td>{{ user.memberId }}</td>
                     <td>{{ user.phone }}</td>
                     <td>{{ formatDate(user.birthday) }}</td>
                     <td>{{ user.membershipLevel }}</td>
@@ -67,7 +67,7 @@ const currentPage = ref(1);
 const pageSize = 20;
 
 const searchName = ref("");
-const searchEmail = ref("");
+const searchmemberId = ref("");
 const selectedLevel = ref("");
 
 const token = localStorage.getItem("token");
@@ -84,7 +84,7 @@ const formatCurrency = (amount) => Number(amount).toLocaleString("ko-KR") + "원
 const fetchUsers = () => {
     const params = {
         name: searchName.value,
-        email: searchEmail.value,
+        memberId: searchmemberId.value,
         level: selectedLevel.value,
         page: currentPage.value,
         size: pageSize,
@@ -112,7 +112,7 @@ const downloadExcel = async () => {
     try {
         const params = {
             name: searchName.value,
-            email: searchEmail.value,
+            memberId: searchmemberId.value,
             level: selectedLevel.value,
             page: 1,
             size: 10000, // 충분히 큰 숫자로 전체 조회
@@ -121,7 +121,7 @@ const downloadExcel = async () => {
         const data = res.data.users.map((user, idx) => ({
             번호: idx + 1,
             이름: user.fullName,
-            이메일: user.email,
+            회원번호: user.memberId,
             전화번호: user.phone,
             생년월일: formatDate(user.birthday),
             회원등급: user.membershipLevel,

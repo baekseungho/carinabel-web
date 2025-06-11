@@ -8,7 +8,7 @@
                     <li v-for="(record, index) in records" :key="index">
                         <div class="detailTop">
                             <span class="name"
-                                >{{ record.referredUserId.fullName }} ({{ record.referredUserId.email }})</span
+                                >{{ record.referredUserId.fullName }} ({{ record.referredUserId.memberId }})</span
                             >&nbsp;
                             <span class="amount">{{ formatPrice(record.amount) }}원 ({{ record.percentage }}%)</span>
                         </div>

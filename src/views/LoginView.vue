@@ -1,32 +1,23 @@
 <template>
     <div class="loginPageContainer">
         <div class="loginBackground">
-            <img
-                src="/img/background_login.png"
-                alt="Login Background"
-                class="backgroundImage"
-            />
+            <img src="/img/background_login.png" alt="Login Background" class="backgroundImage" />
             <div class="loginOverlay"></div>
         </div>
         <div class="loginContent">
             <div class="loginHeader">
-                <img
-                    src="/img/logo2.png"
-                    alt="Logo"
-                    class="loginLogo"
-                    @click="goHome"
-                />
+                <img src="/img/logo2.png" alt="Logo" class="loginLogo" @click="goHome" />
             </div>
             <div class="loginFormContainer">
                 <h2 class="loginTitle">로그인</h2>
                 <form @submit.prevent="handleLogin">
                     <div class="inputGroup">
-                        <label for="email">이메일 또는 카리나벨 ID</label>
+                        <label for="memberId">회원번호</label>
                         <input
                             type="text"
-                            id="email"
-                            v-model="emailOrId"
-                            placeholder="이메일 또는 카리나벨 ID를 입력하세요."
+                            id="memberId"
+                            v-model="memberIdOrId"
+                            placeholder="회원번호를 입력하세요."
                             @keydown.enter="userLogin"
                         />
                     </div>
@@ -40,29 +31,17 @@
                                 placeholder="비밀번호를 입력하세요."
                                 @keydown.enter="userLogin"
                             />
-                            <span
-                                class="passwordToggle"
-                                @click="togglePassword"
-                                >{{
-                                    showPassword
-                                        ? "비밀번호 숨기기"
-                                        : "비밀번호 보기"
-                                }}</span
-                            >
+                            <span class="passwordToggle" @click="togglePassword">{{
+                                showPassword ? "비밀번호 숨기기" : "비밀번호 보기"
+                            }}</span>
                         </div>
                     </div>
                     <div class="optionsContainer">
                         <label class="rememberMeLabel">
-                            <input
-                                type="checkbox"
-                                v-model="rememberMe"
-                                class="customCheckbox"
-                            />
+                            <input type="checkbox" v-model="rememberMe" class="customCheckbox" />
                             <span class="customCheckboxLabel">아이디 저장</span>
                         </label>
-                        <a href="#" class="forgotPasswordLink"
-                            >비밀번호 설정/찾기</a
-                        >
+                        <a href="#" class="forgotPasswordLink">비밀번호 설정/찾기</a>
                     </div>
                     <button type="submit" class="loginButton">로그인</button>
                 </form>
@@ -78,7 +57,7 @@ import router from "@/router";
 import { useStore } from "vuex";
 import AuthService from "@/api/AuthService";
 const store = useStore();
-const emailOrId = ref("");
+const memberIdOrId = ref("");
 const password = ref("");
 const rememberMe = ref(false);
 const showPassword = ref(false);
@@ -92,8 +71,8 @@ const goSignup = () => {
 };
 
 const handleLogin = () => {
-    if (!emailOrId.value.trim()) {
-        alert("이메일 또는 아이디를 입력해주세요.");
+    if (!memberIdOrId.value.trim()) {
+        alert("회원번호 또는 아이디를 입력해주세요.");
         return;
     }
     if (!password.value.trim()) {
@@ -102,7 +81,7 @@ const handleLogin = () => {
     }
 
     const data = {
-        emailOrId: emailOrId.value.trim(),
+        memberIdOrId: memberIdOrId.value.trim(),
         password: password.value.trim(),
     };
 
@@ -115,7 +94,7 @@ const handleLogin = () => {
         })
         .catch((error) => {
             console.error(error);
-            alert("이메일 또는 비밀번호를 확인해주세요.");
+            alert("회원번호 또는 비밀번호를 확인해주세요.");
         });
 };
 

@@ -12,7 +12,7 @@
                 <!-- <div class="connector-vertical top"></div> -->
                 <div v-if="network.parent" class="node parent">
                     <strong>{{ network.parent?.fullName }}</strong>
-                    <div>{{ network.parent?.email }}</div>
+                    <div>{{ network.parent?.memberId }}</div>
                     <div>{{ network.parent?.membershipLevel }}</div>
                 </div>
             </div>
@@ -22,7 +22,7 @@
                 <div class="connector-vertical bottom"></div>
                 <div class="node center">
                     <strong>{{ network.center?.fullName }}</strong>
-                    <div>{{ network.center?.email }}</div>
+                    <div>{{ network.center?.memberId }}</div>
                     <div>{{ network.center?.membershipLevel }}</div>
                     <div>
                         매출:
@@ -44,7 +44,7 @@
                     <!-- 추천인 노드 박스 -->
                     <div class="node child">
                         <strong>{{ child.fullName }}</strong>
-                        <div>{{ child?.email }}</div>
+                        <div>{{ child?.memberId }}</div>
                         <div>{{ child?.membershipLevel }}</div>
                         <div>매출: {{ formatPrice(child.purchaseAmount) }}원</div>
                     </div>

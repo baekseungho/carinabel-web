@@ -26,7 +26,7 @@
                     <strong>이름</strong><span>{{ order.user?.fullName }}</span>
                 </li>
                 <li>
-                    <strong>이메일</strong><span>{{ order.user?.email }}</span>
+                    <strong>회원번호</strong><span>{{ order.user?.memberId }}</span>
                 </li>
                 <li>
                     <strong>전화번호</strong><span>{{ order.user?.phone || "-" }}</span>
@@ -41,7 +41,7 @@
                     <strong>받는 사람</strong><span>{{ order.delivery?.recipientName }}</span>
                 </li>
                 <li>
-                    <strong>연락처</strong><span>{{ order.delivery?.phone }}</span>
+                    <strong>연락처</strong><span>{{ order.delivery?.mobile }}</span>
                 </li>
                 <li>
                     <strong>주소</strong><span>{{ order.delivery?.address }}</span>

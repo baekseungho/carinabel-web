@@ -14,7 +14,7 @@
                     </tr>
                     <tr>
                         <th>회원ID</th>
-                        <td>{{ profile.email }}</td>
+                        <td>{{ profile.memberId }}</td>
                     </tr>
                     <tr>
                         <th>회원직급</th>
@@ -26,7 +26,7 @@
                     </tr>
                     <tr>
                         <th>추천인명</th>
-                        <td>{{ profile.referrerName || "-" }} ({{ profile.referrerEmail || "-" }})</td>
+                        <td>{{ profile.referrerName || "-" }} ({{ profile.referrermemberId || "-" }})</td>
                     </tr>
                     <tr>
                         <th>생년월일</th>

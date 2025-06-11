@@ -4,16 +4,8 @@
 
         <!-- 🧭 탭 메뉴 -->
         <div class="tabs">
-            <button
-                :class="{ active: activeTab === 'default' }"
-                @click="activeTab = 'default'"
-            >
-                주문검색
-            </button>
-            <button
-                :class="{ active: activeTab === 'referred' }"
-                @click="activeTab = 'referred'"
-            >
+            <button :class="{ active: activeTab === 'default' }" @click="activeTab = 'default'">주문검색</button>
+            <button :class="{ active: activeTab === 'referred' }" @click="activeTab = 'referred'">
                 추천하위주문검색
             </button>
         </div>
@@ -36,12 +28,10 @@
                 </thead>
                 <tbody>
                     <tr v-for="order in filteredOrders" :key="order._id">
-                        <td>{{ order.userId.email }}</td>
+                        <td>{{ order.userId.memberId }}</td>
                         <td>{{ order.userId.fullName }}</td>
                         <td v-if="activeTab === 'referred'">
-                            {{ order.userId.referrerId?.fullName }} ({{
-                                order.userId.referrerId?.email
-                            }})
+                            {{ order.userId.referrerId?.fullName }} ({{ order.userId.referrerId?.memberId }})
                         </td>
                         <td>{{ formatDate(order.createdAt) }}</td>
                         <td>{{ order.quantity }}</td>
@@ -63,7 +53,7 @@
         </div>
 
         <Pagination
-         v-if="totalPages > 1"
+            v-if="totalPages > 1"
             :current-page="currentPage"
             :total-pages="totalPages"
             @page-change="handlePageChange"
@@ -116,12 +106,8 @@ const fetchOrders = () => {
 const filteredOrders = computed(() => orders.value);
 
 // 📊 합계 계산
-const totalQuantity = computed(() =>
-    orders.value.reduce((sum, o) => sum + (o.quantity || 0), 0)
-);
-const totalAmount = computed(() =>
-    orders.value.reduce((sum, o) => sum + (o.amount || 0), 0)
-);
+const totalQuantity = computed(() => orders.value.reduce((sum, o) => sum + (o.quantity || 0), 0));
+const totalAmount = computed(() => orders.value.reduce((sum, o) => sum + (o.amount || 0), 0));
 
 onMounted(fetchOrders);
 watch(activeTab, fetchOrders);
@@ -130,12 +116,10 @@ const formatPrice = (n) => n?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 const formatDate = (iso) => {
     if (!iso) return "-";
     const d = new Date(iso);
-    return `${d.getFullYear()}-${(d.getMonth() + 1)
+    return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d
+        .getDate()
         .toString()
-        .padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")} ${d
-        .getHours()
-        .toString()
-        .padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
+        .padStart(2, "0")} ${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
 };
 
 const handlePageChange = (page) => {

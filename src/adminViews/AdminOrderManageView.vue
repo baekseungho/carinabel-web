@@ -5,7 +5,7 @@
         <div class="filterSection">
             <input v-model="filters.productName" type="text" placeholder="상품명" />
             <input v-model="filters.name" type="text" placeholder="사용자 이름" />
-            <input v-model="filters.email" type="text" placeholder="이메일" />
+            <input v-model="filters.memberId" type="text" placeholder="회원번호" />
             <button @click="fetchOrders(1)">검색</button>
             <div class="excelButtons">
                 <button @click="downloadCurrentPageOrders">현재페이지 엑셀</button>
@@ -19,7 +19,7 @@
                     <th>#</th>
                     <th>주문일시</th>
                     <th>이름</th>
-                    <th>이메일</th>
+                    <th>회원번호</th>
                     <th>상품명</th>
                     <th>수량</th>
                     <th>가격</th>
@@ -31,7 +31,7 @@
                     <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
                     <td>{{ formatDate(order.createdAt) }}</td>
                     <td>{{ order.userId.fullName }}</td>
-                    <td>{{ order.userId.email }}</td>
+                    <td>{{ order.userId.memberId }}</td>
                     <td>{{ order.productName }}</td>
                     <td>{{ order.quantity }}</td>
                     <td>{{ formatCurrency(order.amount) }}</td>
@@ -65,7 +65,7 @@ const token = localStorage.getItem("token");
 const filters = ref({
     productName: "",
     name: "",
-    email: "",
+    memberId: "",
 });
 
 const formatDate = (dateStr) => {
@@ -105,7 +105,7 @@ const downloadAllOrders = async () => {
             번호: idx + 1,
             주문일시: formatDate(order.createdAt),
             이름: order.userId.fullName,
-            이메일: order.userId.email,
+            회원번호: order.userId.memberId,
             상품명: order.productName,
             수량: order.quantity,
             가격: order.amount,
@@ -129,7 +129,7 @@ const downloadCurrentPageOrders = () => {
         번호: (currentPage.value - 1) * pageSize + idx + 1,
         주문일시: formatDate(order.createdAt),
         이름: order.userId.fullName,
-        이메일: order.userId.email,
+        회원번호: order.userId.memberId,
         상품명: order.productName,
         수량: order.quantity,
         가격: order.amount,
