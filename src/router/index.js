@@ -42,6 +42,7 @@ import KitManageView from "@/adminViews/AdminKitManageView.vue";
 import AnswerManagerView from "@/adminViews/AnswerManagerView.vue";
 import AdminShippingView from "@/adminViews/AdminShippingView.vue";
 import AdminQnaView from "@/adminViews/AdminQnaView.vue";
+import AdminReferralView from "@/adminViews/AdminReferralEarningsView.vue";
 
 import store from "@/store";
 
@@ -231,6 +232,12 @@ const routes = [
                 path: "shipping",
                 name: "AdminShippingView",
                 component: AdminShippingView,
+                meta: { requiresAdmin: true, hideHeaderFooter: true },
+            },
+            {
+                path: "referral",
+                name: "AdminReferralView",
+                component: AdminReferralView,
                 meta: { requiresAdmin: true, hideHeaderFooter: true },
             },
             {

@@ -3,9 +3,15 @@
         <h1 class="pageTitle">주문 리스트</h1>
 
         <div class="filterSection">
+            <div class="order-filter">
+                <input type="date" v-model="filters.fromDate" />
+                ~
+                <input type="date" v-model="filters.toDate" />
+            </div>
+            <input v-model="filters.orderNumber" placeholder="주문번호 검색" />
             <input v-model="filters.productName" type="text" placeholder="상품명" />
             <input v-model="filters.name" type="text" placeholder="사용자 이름" />
-            <input v-model="filters.memberId" type="text" placeholder="회원번호" />
+
             <button @click="fetchOrders(1)">검색</button>
             <div class="excelButtons">
                 <button @click="downloadCurrentPageOrders">현재페이지 엑셀</button>
@@ -16,7 +22,7 @@
         <table class="orderTable">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th>주문번호</th>
                     <th>주문일시</th>
                     <th>이름</th>
                     <th>회원번호</th>
@@ -28,7 +34,7 @@
             </thead>
             <tbody>
                 <tr v-for="(order, index) in orders" :key="order._id">
-                    <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
+                    <td>{{ order.orderNumber ?? " - " }}</td>
                     <td>{{ formatDate(order.createdAt) }}</td>
                     <td>{{ order.userId.fullName }}</td>
                     <td>{{ order.userId.memberId }}</td>
@@ -65,9 +71,10 @@ const token = localStorage.getItem("token");
 const filters = ref({
     productName: "",
     name: "",
-    memberId: "",
+    orderNumber: "", // 🔁 memberId → orderNumber
+    fromDate: "",
+    toDate: "",
 });
-
 const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleString("ko-KR");
 };

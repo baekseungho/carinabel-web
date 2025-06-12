@@ -4,6 +4,11 @@
 
         <!-- 🔍 검색 필터 영역 -->
         <div class="filterBar">
+            <div class="date-filter">
+                <input style="height: 44px" type="date" v-model="fromDate" />
+                ~
+                <input style="height: 44px" type="date" v-model="toDate" />
+            </div>
             <input v-model="searchName" placeholder="이름 검색" />
             <input v-model="searchmemberId" placeholder="회원번호 검색" />
             <select v-model="selectedLevel">
@@ -26,8 +31,9 @@
                     <th>전화번호</th>
                     <th>생년월일</th>
                     <th>회원등급</th>
-                    <th>총 구매액</th>
-                    <th>총 추천 수당</th>
+                    <th>추천인 이름</th>
+                    <th>추천인 회원번호</th>
+                    <th>주소</th>
                     <th>가입일</th>
                 </tr>
             </thead>
@@ -39,8 +45,9 @@
                     <td>{{ user.phone }}</td>
                     <td>{{ formatDate(user.birthday) }}</td>
                     <td>{{ user.membershipLevel }}</td>
-                    <td>{{ formatCurrency(user.totalPurchaseAmount) }}</td>
-                    <td>{{ formatCurrency(user.totalReferralEarnings) }}</td>
+                    <td>{{ user.referrerName }}</td>
+                    <td>{{ user.referrerMemberId }}</td>
+                    <td>{{ user.address }}</td>
                     <td>{{ formatDate(user.createdAt) }}</td>
                 </tr>
             </tbody>
@@ -64,6 +71,8 @@ import * as XLSX from "xlsx";
 const users = ref([]);
 const totalCount = ref(0);
 const currentPage = ref(1);
+const fromDate = ref("");
+const toDate = ref("");
 const pageSize = 20;
 
 const searchName = ref("");
@@ -79,8 +88,6 @@ const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleDateString("ko-KR");
 };
 
-const formatCurrency = (amount) => Number(amount).toLocaleString("ko-KR") + "원";
-
 const fetchUsers = () => {
     const params = {
         name: searchName.value,
@@ -88,6 +95,8 @@ const fetchUsers = () => {
         level: selectedLevel.value,
         page: currentPage.value,
         size: pageSize,
+        fromDate: fromDate.value || null,
+        toDate: toDate.value || null,
     };
 
     AdminService.getFilteredUsers(params, token)
@@ -125,8 +134,9 @@ const downloadExcel = async () => {
             전화번호: user.phone,
             생년월일: formatDate(user.birthday),
             회원등급: user.membershipLevel,
-            총구매액: user.totalPurchaseAmount,
-            총추천수당: user.totalReferralEarnings,
+            추천인이름: user.referrerName,
+            추천인회원번호: user.referrerMemberId,
+            주소: user.address,
             가입일: formatDate(user.createdAt),
         }));
 

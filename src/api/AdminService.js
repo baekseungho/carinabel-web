@@ -65,15 +65,11 @@ class AdminService {
 
     // 상품 수정
     updateProduct(productId, updatedData, token) {
-        return axios.put(
-            `${ADMIN_API_URL}/products/update/${productId}`,
-            updatedData,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
+        return axios.put(`${ADMIN_API_URL}/products/update/${productId}`, updatedData, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
     }
 
     // 키트 전체 조회
@@ -102,6 +98,14 @@ class AdminService {
             headers: { Authorization: `Bearer ${token}` },
         });
     }
+
+    getReferralEarningsList = (token) => {
+        return axios.get(`${ADMIN_API_URL}/referral-earnings`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    };
 }
 
 export default new AdminService();
