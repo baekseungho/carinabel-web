@@ -99,13 +99,26 @@ class AdminService {
         });
     }
 
-    getReferralEarningsList = (token) => {
+    getReferralEarningsList = (token, params) => {
         return axios.get(`${ADMIN_API_URL}/referral-earnings`, {
+            headers: { Authorization: `Bearer ${token}` },
+            params,
+        });
+    };
+    getReferralDetails = (token, userId) => {
+        return axios.get(`${ADMIN_API_URL}/referral-details/${userId}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
         });
     };
+
+    // 수당 지급
+    payReferral(data, token) {
+        return axios.post(`${ADMIN_API_URL}/referral-pay`, data, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+    }
 }
 
 export default new AdminService();
