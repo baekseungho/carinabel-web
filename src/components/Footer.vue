@@ -39,10 +39,16 @@
         </div>
         <div class="footerLinks">
             <ul>
-                <li @click="navigateTo('/privacy')" class="clickable">개인정보처리방침</li>
-                <li @click="navigateTo('/law')" class="clickable">관련법령</li>
-                <li @click="navigateTo('/terms')" class="clickable">이용 약관</li>
-                <li @click="navigateTo('/member')" class="clickable">회원조회</li>
+                <li>
+                    <a href="/file/카리나벨 개인정보취급방침.pdf" target="_blank" class="clickable">
+                        개인정보처리방침
+                    </a>
+                </li>
+                <!-- <li @click="navigateTo('/law')" class="clickable">관련법령</li> -->
+                <li>
+                    <a href="/file/카리나벨 이용약관.pdf" target="_blank" class="clickable"> 이용 약관 </a>
+                </li>
+                <!-- <li @click="navigateTo('/member')" class="clickable">회원조회</li> -->
             </ul>
         </div>
         <div class="footerCopyright">

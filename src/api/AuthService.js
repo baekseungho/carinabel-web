@@ -16,6 +16,12 @@ class AuthService {
         localStorage.removeItem("user");
     }
 
+    findMemberId(data) {
+        return axios.post(`${API_URL_AUTH}/find-member-id`, data);
+    }
+    resetPassword(data) {
+        return axios.post(`${API_URL_AUTH}/reset-password`, data);
+    }
     getUserProfile(token) {
         return axios.get(`${API_URL_AUTH}/profile`, {
             headers: {

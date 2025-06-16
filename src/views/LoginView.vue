@@ -41,27 +41,31 @@
                             <input type="checkbox" v-model="rememberMe" class="customCheckbox" />
                             <span class="customCheckboxLabel">아이디 저장</span>
                         </label>
-                        <a href="#" class="forgotPasswordLink">비밀번호 설정/찾기</a>
+                        <div>
+                            <a class="forgotPasswordLink" @click="showModal = true">회원/비밀번호 찾기</a>
+                        </div>
                     </div>
                     <button type="submit" class="loginButton">로그인</button>
                 </form>
                 <button class="signupButton" @click="goSignup">회원가입</button>
             </div>
+            <FindUserModal :visible="showModal" @close="showModal = false" />
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import router from "@/router";
 import { useStore } from "vuex";
 import AuthService from "@/api/AuthService";
+import FindUserModal from "@/components/FindUserModal.vue";
 const store = useStore();
 const memberIdOrId = ref("");
 const password = ref("");
 const rememberMe = ref(false);
 const showPassword = ref(false);
-
+const showModal = ref(false);
 const goHome = () => {
     router.push("/");
 };
@@ -90,6 +94,14 @@ const handleLogin = () => {
             console.log("로그인 성공:", response.data);
             store.dispatch("login", response.data);
             localStorage.setItem("user", JSON.stringify(response.data));
+
+            // ✅ 아이디 저장 기능
+            if (rememberMe.value) {
+                localStorage.setItem("savedMemberId", memberIdOrId.value.trim());
+            } else {
+                localStorage.removeItem("savedMemberId");
+            }
+
             router.push("/");
         })
         .catch((error) => {
@@ -101,6 +113,13 @@ const handleLogin = () => {
 const togglePassword = () => {
     showPassword.value = !showPassword.value;
 };
+onMounted(() => {
+    const savedId = localStorage.getItem("savedMemberId");
+    if (savedId) {
+        memberIdOrId.value = savedId;
+        rememberMe.value = true;
+    }
+});
 </script>
 
 <style scoped>

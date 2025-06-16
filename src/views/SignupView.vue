@@ -43,12 +43,40 @@
                                 placeholder="비밀번호를 다시 입력하세요."
                             />
                         </div>
+                        <div class="optionsContainer"></div>
                         <div class="optionsContainer">
                             <label class="termsLabel">
-                                <input type="checkbox" v-model="agreedToTerms" class="customCheckbox" />
-                                <span class="customCheckboxLabel">이용약관 및 개인정보 처리방침에 동의합니다.</span>
+                                <input
+                                    type="checkbox"
+                                    :checked="agreedToTerms"
+                                    @change="handleTermsCheckboxChange"
+                                    class="customCheckbox"
+                                />
+                                <span class="customCheckboxLabel">
+                                    <span>
+                                        <a
+                                            href="/file/카리나벨 이용약관.pdf"
+                                            target="_blank"
+                                            class="termsLink"
+                                            @click="hasViewedTerms = true"
+                                        >
+                                            이용약관
+                                        </a>
+                                        및
+                                        <a
+                                            href="/file/카리나벨 개인정보취급방침.pdf"
+                                            target="_blank"
+                                            class="termsLink"
+                                            @click="hasViewedPrivacy = true"
+                                        >
+                                            개인정보 처리방침
+                                        </a>
+                                        에 동의합니다.
+                                    </span>
+                                </span>
                             </label>
                         </div>
+
                         <button type="button" class="signupButton" @click="nextStep">다음으로</button>
                     </div>
 
@@ -114,7 +142,8 @@ const baseAddress = ref("");
 const zoneCode = ref("");
 const detailAddress = ref("");
 const referrermemberId = ref("");
-
+const hasViewedTerms = ref(false);
+const hasViewedPrivacy = ref(false);
 const goHome = () => {
     router.push("/");
 };
@@ -139,6 +168,26 @@ const copyAddress = () => {
         .writeText(fullAddress)
         .then(() => alert("주소가 복사되었습니다."))
         .catch(() => alert("복사에 실패했습니다."));
+};
+
+const handleTermsCheckboxChange = (event) => {
+    if (!hasViewedTerms.value && !hasViewedPrivacy.value) {
+        alert("이용약관과 개인정보 처리방침을 모두 열람해주세요.");
+        event.target.checked = false;
+        return;
+    }
+    if (!hasViewedTerms.value) {
+        alert("이용약관을 확인해주세요.");
+        event.target.checked = false;
+        return;
+    }
+    if (!hasViewedPrivacy.value) {
+        alert("개인정보 처리방침을 확인해주세요.");
+        event.target.checked = false;
+        return;
+    }
+
+    agreedToTerms.value = event.target.checked;
 };
 
 const nextStep = () => {
@@ -291,6 +340,17 @@ const handleSubmit = () => {
     cursor: pointer;
     font-weight: 600;
     color: #333;
+}
+.termsLink {
+    color: #333;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s, text-decoration 0.2s;
+}
+
+.termsLink:hover {
+    color: #cc8a94;
+    text-decoration: underline;
 }
 
 .customCheckboxLabel::before {
