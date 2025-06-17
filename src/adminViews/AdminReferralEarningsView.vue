@@ -30,7 +30,8 @@
                     <td>{{ format(user.unpaidReferralEarnings) }}원</td>
                     <td>{{ user.accountNumber || "-" }}</td>
                     <td>{{ user.bankName || "-" }}</td>
-                    <td>{{ maskSsn(user.socialSecurityNumber) }}</td>
+                    <td>{{ user.socialSecurityNumber }}</td>
+                    <!-- <td>{{ maskSsn(user.socialSecurityNumber) }}</td> -->
                 </tr>
             </tbody>
         </table>

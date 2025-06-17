@@ -1,7 +1,7 @@
 <template>
     <div class="adminPageWrapper">
         <div class="adminContent">
-            <h2 class="pageTitle">키트 관리</h2>
+            <h1 class="pageTitle">키트 관리</h1>
 
             <button class="addBtn themaBgColor4" @click="showModal = true">키트 추가</button>
 
@@ -110,15 +110,15 @@ onMounted(fetchKits);
 
 .adminContent {
     flex-grow: 1;
-    padding: 24px;
-    max-width: 1200px;
-    margin: 0 auto;
+    padding: 2rem;
+    margin-left: 220px;
+    /* margin: 0 auto; */
 }
 
 .pageTitle {
-    font-size: 24px;
+    font-size: 1.8rem;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 1.5rem;
 }
 
 .addBtn {
