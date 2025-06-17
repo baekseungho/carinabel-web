@@ -149,7 +149,6 @@ const updateProduct = () => {
         volume: editForm.value.volume,
         consumerPrice: editForm.value.consumerPrice,
         stock: editForm.value.stock,
-
         imagePath: editForm.value.imagePath,
         detailImage: editForm.value.detailImage,
     };

@@ -17,39 +17,47 @@
                 <p class="productVolume">용량: {{ product.volume || 0 }}ml</p>
                 <p class="productVolume">재고: {{ product.stock || 0 }}개</p>
 
-                <p v-if="isAuthenticated" class="productPrice">
-                    <span class="consumerPrice">소비자가: {{ formatPrice(product.consumerPrice) }}원</span>
-                    <span class="memberPrice">회원가: {{ formatPrice(product.memberPrice) }}원</span>
+                <p class="productPrice">
+                    <template v-if="product.consumerPrice !== product.memberPrice">
+                        <span class="consumerPrice">소비자가: {{ formatPrice(product.consumerPrice) }}원</span>
+                        <span class="memberPrice">회원가: {{ formatPrice(product.memberPrice) }}원</span>
+                    </template>
+                    <template v-else>
+                        <span class="memberPrice">가격: {{ formatPrice(product.memberPrice) }}원</span>
+                    </template>
                 </p>
-                <p v-else class="productPrice">
-                    <span class="memberPrice">소비자가: {{ formatPrice(product.consumerPrice) }}원</span>
-                    <span class="consumerPrice">회원가: {{ formatPrice(product.memberPrice) }}원</span>
-                </p>
-                <div class="productDescription">
+
+                <!-- <div class="productDescription">
                     <h2>제품 설명</h2>
                     <p>
                         {{ product.description }}
                     </p>
-                </div>
-                <div class="productQuantity">
-                    <label>수량:</label>
-                    <div class="quantityControls">
-                        <button @click="decreaseQuantity">
-                            <div class="minus smallIcon"></div>
+                </div> -->
+                <div style="position: absolute; bottom: 0">
+                    <div class="productQuantity">
+                        <label>수량:</label>
+                        <div class="quantityControls">
+                            <button @click="decreaseQuantity">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <span>{{ quantity }}</span>
+                            <button @click="increaseQuantity">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="buyBtnBox">
+                        <button class="buyProductButton" @click="buyProduct(product)" :disabled="product.stock === 0">
+                            구매하기
                         </button>
-                        <span>{{ quantity }}</span>
-                        <button @click="increaseQuantity">
-                            <div class="plus smallIcon"></div>
+                        <button
+                            class="buyProductButton"
+                            @click="addToCart(product._id)"
+                            :disabled="product.stock === 0"
+                        >
+                            장바구니에 담기
                         </button>
                     </div>
-                </div>
-                <div class="buyBtnBox">
-                    <button class="buyProductButton" @click="buyProduct(product)" :disabled="product.stock === 0">
-                        구매하기
-                    </button>
-                    <button class="buyProductButton" @click="addToCart(product._id)" :disabled="product.stock === 0">
-                        장바구니에 담기
-                    </button>
                 </div>
             </div>
         </div>
@@ -222,6 +230,7 @@ function decreaseQuantity() {
     border-radius: 20px;
 }
 .productInfoWrapper {
+    position: relative;
     flex: 1;
     min-width: 300px;
     display: flex;
@@ -236,10 +245,21 @@ function decreaseQuantity() {
 }
 .productName {
     display: block;
-    font-size: 1.2rem;
-    font-weight: normal;
+    font-size: 1.4rem;
+    font-weight: bold;
     color: #777;
     margin-top: 5px;
+}
+.productNameInline {
+    display: inline-block;
+    font-size: 1.2rem;
+    font-weight: normal;
+    color: #888;
+    margin-left: 4px;
+}
+
+.quantityControls i {
+    font-size: 14px;
 }
 .productVolume {
     font-size: 1.2rem;
@@ -325,7 +345,12 @@ function decreaseQuantity() {
 .quantityControls button {
     background-color: #cc8a94;
     border: none;
-    padding: 8px 12px;
+    /* padding: 8px 12px; */
+    height: 32px;
+    width: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: white;
     border-radius: 5px;
     cursor: pointer;

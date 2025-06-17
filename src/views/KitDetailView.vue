@@ -31,11 +31,11 @@
                     <label>수량:</label>
                     <div class="quantityControls">
                         <button @click="decreaseQuantity">
-                            <div class="minus smallIcon"></div>
+                            <i class="fas fa-minus"></i>
                         </button>
                         <span>{{ quantity }}</span>
                         <button @click="increaseQuantity">
-                            <div class="plus smallIcon"></div>
+                            <i class="fas fa-plus"></i>
                         </button>
                     </div>
                 </div>
@@ -301,7 +301,12 @@ function goBack() {
 .quantityControls button {
     background-color: #cc8a94;
     border: none;
-    padding: 8px 12px;
+    /* padding: 8px 12px; */
+    height: 32px;
+    width: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: white;
     border-radius: 5px;
     cursor: pointer;
