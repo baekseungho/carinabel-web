@@ -1,7 +1,7 @@
 <template>
     <div class="productManagerContainer">
         <div style="width: 20%">
-            <h1>상품 관리</h1>
+            <h2>상품 관리</h2>
             <div class="productForm">
                 <input v-model="category" placeholder="카테고리" />
                 <input v-model="productName" placeholder="상품명 (영문)" />
@@ -246,5 +246,10 @@ li {
     padding: 15px;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
 }
 </style>

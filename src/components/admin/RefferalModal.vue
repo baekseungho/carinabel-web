@@ -146,7 +146,7 @@ const maskSsn = (ssn) => {
     background: #fff;
     padding: 24px;
     width: 1100px;
-    max-height: 1200px;
+    max-height: 900px;
     overflow-y: auto;
     border-radius: 8px;
     display: flex;
@@ -168,7 +168,7 @@ const maskSsn = (ssn) => {
     border-radius: 6px;
 }
 .left .recordTableWrapper {
-    max-height: 800px;
+    max-height: 600px;
     overflow-y: auto;
 }
 .sectionTitle {

@@ -18,11 +18,7 @@
             <thead>
                 <tr>
                     <th>
-                        <input
-                            type="checkbox"
-                            v-model="selectAll"
-                            @change="toggleAll"
-                        />
+                        <input type="checkbox" v-model="selectAll" @change="toggleAll" />
                     </th>
                     <th>주문번호</th>
                     <th>회원명</th>
@@ -37,11 +33,7 @@
             <tbody>
                 <tr v-for="order in orders" :key="order._id">
                     <td>
-                        <input
-                            type="checkbox"
-                            v-model="selectedOrders"
-                            :value="order._id"
-                        />
+                        <input type="checkbox" v-model="selectedOrders" :value="order._id" />
                     </td>
                     <td>{{ order.orderNumber }}</td>
                     <td>{{ order.userId.fullName }}</td>
@@ -52,11 +44,7 @@
                     <td>{{ order.status }}</td>
                     <td>
                         <select v-model="pendingStatuses[order._id]">
-                            <option
-                                v-for="s in statusOptions"
-                                :key="s"
-                                :value="s"
-                            >
+                            <option v-for="s in statusOptions" :key="s" :value="s">
                                 {{ s }}
                             </option>
                         </select>
@@ -74,9 +62,7 @@
                     {{ s }}
                 </option>
             </select>
-            <button @click="updateMultipleStatus">
-                선택 항목 상태 일괄 변경
-            </button>
+            <button @click="updateMultipleStatus">선택 항목 상태 일괄 변경</button>
         </div>
     </div>
 </template>
@@ -88,7 +74,7 @@ import AdminService from "@/api/AdminService";
 const orders = ref([]);
 const searchName = ref("");
 const searchOrderNumber = ref("");
-const searchStatus = ref("");
+const searchStatus = ref("입금대기");
 const token = JSON.parse(localStorage.getItem("user"))?.token;
 const selectedOrders = ref([]); // 선택된 주문 ID 배열
 const selectAll = ref(false); // 전체선택 체크박스
@@ -103,16 +89,7 @@ const toggleAll = () => {
     }
 };
 
-const statusOptions = [
-    "입금대기",
-    "결제완료",
-    "상품준비중",
-    "배송중",
-    "배송완료",
-    "구매확정",
-    "취소됨",
-    "반품됨",
-];
+const statusOptions = ["입금대기", "결제완료", "상품준비중", "배송중", "배송완료", "구매확정", "취소됨", "반품됨"];
 
 const fetchOrders = () => {
     const params = {
@@ -162,9 +139,7 @@ const updateMultipleStatus = () => {
         return alert("변경할 상태를 선택해주세요.");
     }
 
-    const updates = selectedOrders.value.map((id) =>
-        AdminService.updateOrderStatus(id, bulkStatus.value, token)
-    );
+    const updates = selectedOrders.value.map((id) => AdminService.updateOrderStatus(id, bulkStatus.value, token));
 
     Promise.all(updates)
         .then(() => {
