@@ -1,12 +1,16 @@
 <template>
     <div class="productDetailContainer">
         <div class="backButton" @click="goBack">
-            <div class="back bigIcon"></div>
+            <div class="back normalIcon"></div>
         </div>
 
         <div class="productDetailWrapper">
             <div class="productImageWrapper">
-                <img :src="product.imagePath || '/img/default.jpg'" :alt="product.koreanName" class="productImage" />
+                <img
+                    :src="product.imagePath || '/img/default.jpg'"
+                    :alt="product.koreanName"
+                    class="productImage"
+                />
             </div>
 
             <div class="productInfoWrapper">
@@ -18,12 +22,23 @@
                 <p class="productVolume">재고: {{ product.stock || 0 }}개</p>
 
                 <p class="productPrice">
-                    <template v-if="product.consumerPrice !== product.memberPrice">
-                        <span class="consumerPrice">소비자가: {{ formatPrice(product.consumerPrice) }}원</span>
-                        <span class="memberPrice">회원가: {{ formatPrice(product.memberPrice) }}원</span>
+                    <template
+                        v-if="product.consumerPrice !== product.memberPrice"
+                    >
+                        <span class="consumerPrice"
+                            >소비자가:
+                            {{ formatPrice(product.consumerPrice) }}원</span
+                        >
+                        <span class="memberPrice"
+                            >회원가:
+                            {{ formatPrice(product.memberPrice) }}원</span
+                        >
                     </template>
                     <template v-else>
-                        <span class="memberPrice">가격: {{ formatPrice(product.memberPrice) }}원</span>
+                        <span class="memberPrice"
+                            >가격:
+                            {{ formatPrice(product.memberPrice) }}원</span
+                        >
                     </template>
                 </p>
 
@@ -33,36 +48,43 @@
                         {{ product.description }}
                     </p>
                 </div> -->
-                <div style="position: absolute; bottom: 0">
-                    <div class="productQuantity">
-                        <label>수량:</label>
-                        <div class="quantityControls">
-                            <button @click="decreaseQuantity">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <span>{{ quantity }}</span>
-                            <button @click="increaseQuantity">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="buyBtnBox">
-                        <button class="buyProductButton" @click="buyProduct(product)" :disabled="product.stock === 0">
-                            구매하기
+
+                <div class="productQuantity">
+                    <label>수량:</label>
+                    <div class="quantityControls">
+                        <button @click="decreaseQuantity">
+                            <i class="fas fa-minus"></i>
                         </button>
-                        <button
-                            class="buyProductButton"
-                            @click="addToCart(product._id)"
-                            :disabled="product.stock === 0"
-                        >
-                            장바구니에 담기
+                        <span>{{ quantity }}</span>
+                        <button @click="increaseQuantity">
+                            <i class="fas fa-plus"></i>
                         </button>
                     </div>
+                </div>
+                <div class="buyBtnBox">
+                    <button
+                        class="buyProductButton"
+                        @click="buyProduct(product)"
+                        :disabled="product.stock === 0"
+                    >
+                        구매하기
+                    </button>
+                    <button
+                        class="buyProductButton"
+                        @click="addToCart(product._id)"
+                        :disabled="product.stock === 0"
+                    >
+                        장바구니에 담기
+                    </button>
                 </div>
             </div>
         </div>
         <div class="productDaildescription">
-            <img :src="product.detailImage || '/img/default.jpg'" :alt="product.koreanName" class="productImage" />
+            <img
+                :src="product.detailImage || '/img/default.jpg'"
+                :alt="product.koreanName"
+                class="productImage"
+            />
         </div>
     </div>
 </template>
@@ -141,7 +163,8 @@ function buyProduct(product) {
         })
         .catch((error) => {
             console.error("❌ 구매 실패:", error);
-            const message = error.response?.data?.message || "구매에 실패했습니다.";
+            const message =
+                error.response?.data?.message || "구매에 실패했습니다.";
             alert(message);
         });
 }
@@ -187,13 +210,13 @@ function decreaseQuantity() {
 }
 .backButton {
     position: absolute;
-    top: 20px;
+    top: 8px;
     left: 20px;
     background-color: transparent;
     color: #333;
-    padding: 10px 20px;
+    padding: 10px 12px;
     font-size: 14px;
-    border: none;
+    border: 1px solid #eee;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s;
@@ -324,8 +347,6 @@ function decreaseQuantity() {
     opacity: 0.7;
     pointer-events: none;
 }
-.productDaildescription {
-}
 
 .productQuantity {
     margin: 20px 0;
@@ -359,5 +380,82 @@ function decreaseQuantity() {
 
 .quantityControls button:hover {
     background-color: #ca717f;
+}
+
+@media (max-width: 1200px) {
+    .productDetailWrapper {
+        padding: 24px;
+    }
+
+    .productTitle {
+        font-size: 1.8rem;
+    }
+
+    .productPrice {
+        font-size: 1.2rem;
+    }
+
+    .buyProductButton {
+        font-size: 1rem;
+        padding: 12px 24px;
+    }
+
+    .productQuantity {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .productDetailContainer {
+        padding: 20px 10px;
+    }
+
+    .backButton {
+        top: 4px;
+        left: 10px;
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+
+    .productTitle {
+        font-size: 1.4rem;
+        text-align: center;
+    }
+    .productVolume {
+        text-align: center;
+    }
+    .productName {
+        font-size: 1rem;
+    }
+
+    .productPrice {
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    .buyBtnBox {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+    .productQuantity {
+        display: flex;
+        justify-content: center;
+    }
+    .productImageWrapper {
+        min-width: 100%;
+    }
+
+    .productInfoWrapper {
+        min-width: 100%;
+    }
+
+    .productDaildescription .productImage {
+        width: 100%;
+        height: auto;
+    }
+    .buyProductButton {
+        width: 100%;
+    }
 }
 </style>

@@ -17,30 +17,56 @@
                             <RouterLink to="/products/essential">에센셜 오일</RouterLink>
                         </li> -->
                         <li @click="closeMobileMenu">
-                            <RouterLink to="/products/onlymember">에센셜 오일</RouterLink>
+                            <RouterLink to="/products/onlymember"
+                                >에센셜 오일</RouterLink
+                            >
                         </li>
-                        <li @click="closeMobileMenu"><RouterLink to="/products/kits">키트 상품</RouterLink></li>
+                        <li @click="closeMobileMenu">
+                            <RouterLink to="/products/kits"
+                                >키트 상품</RouterLink
+                            >
+                        </li>
                     </ul>
                 </li>
                 <li class="menuItem">
                     <a>회사소개</a>
                     <ul class="subMenu">
-                        <li @click="closeMobileMenu"><RouterLink to="/about/greeting">인사말</RouterLink></li>
-                        <li @click="closeMobileMenu"><RouterLink to="/about/story">브랜드 스토리</RouterLink></li>
                         <li @click="closeMobileMenu">
-                            <RouterLink to="/about/navigate">찾아오시는 길</RouterLink>
+                            <RouterLink to="/about/greeting">인사말</RouterLink>
+                        </li>
+                        <li @click="closeMobileMenu">
+                            <RouterLink to="/about/story"
+                                >브랜드 스토리</RouterLink
+                            >
+                        </li>
+                        <li @click="closeMobileMenu">
+                            <RouterLink to="/about/navigate"
+                                >찾아오시는 길</RouterLink
+                            >
                         </li>
                     </ul>
                 </li>
                 <li class="menuItem">
                     <a>비즈니스</a>
                     <ul class="subMenu">
-                        <li @click="closeMobileMenu"><RouterLink to="/business/events">행사/이벤트</RouterLink></li>
-                        <li @click="closeMobileMenu"><RouterLink to="/business/lectures">강의자료</RouterLink></li>
+                        <li @click="closeMobileMenu">
+                            <RouterLink to="/business/events"
+                                >행사/이벤트</RouterLink
+                            >
+                        </li>
+                        <li @click="closeMobileMenu">
+                            <RouterLink to="/business/lectures"
+                                >강의자료</RouterLink
+                            >
+                        </li>
                     </ul>
                 </li>
-                <li @click="closeMobileMenu" class="menuItem"><RouterLink to="/notices">공지사항</RouterLink></li>
-                <li @click="closeMobileMenu" class="menuItem"><RouterLink to="/qna">QnA</RouterLink></li>
+                <li @click="closeMobileMenu" class="menuItem">
+                    <RouterLink to="/notices">공지사항</RouterLink>
+                </li>
+                <li @click="closeMobileMenu" class="menuItem">
+                    <RouterLink to="/qna">QnA</RouterLink>
+                </li>
             </ul>
         </nav>
 
@@ -56,15 +82,43 @@
                 </span>
                 <div v-show="showAuthMenu" class="authMenu">
                     <p class="authWelcome">
-                        {{ isAuthenticated ? userName + "님, 환영합니다." : "카리나벨에 오신 것을 환영합니다!" }}
+                        {{
+                            isAuthenticated
+                                ? userName + "님, 환영합니다."
+                                : "카리나벨에 오신 것을 환영합니다!"
+                        }}
                     </p>
                     <p v-if="isAuthenticated" class="authWelcome">
                         {{ "회원등급 : " + userMembershipLevel }}
                     </p>
-                    <button v-if="!isAuthenticated" class="authLoginButton" @click="goLogin">로그인</button>
-                    <button v-if="!isAuthenticated" class="authSignupButton" @click="goSignup">회원가입</button>
-                    <button v-if="isAuthenticated" class="myPageButton" @click="goMypage">마이페이지</button>
-                    <button v-if="isAuthenticated" class="authLogoutButton" @click="handleLogout">로그아웃</button>
+                    <button
+                        v-if="!isAuthenticated"
+                        class="authLoginButton"
+                        @click="goLogin"
+                    >
+                        로그인
+                    </button>
+                    <button
+                        v-if="!isAuthenticated"
+                        class="authSignupButton"
+                        @click="goSignup"
+                    >
+                        회원가입
+                    </button>
+                    <button
+                        v-if="isAuthenticated"
+                        class="myPageButton"
+                        @click="goMypage"
+                    >
+                        마이페이지
+                    </button>
+                    <button
+                        v-if="isAuthenticated"
+                        class="authLogoutButton"
+                        @click="handleLogout"
+                    >
+                        로그아웃
+                    </button>
                 </div>
             </div>
         </div>
@@ -368,6 +422,28 @@ onMounted(() => {
         padding-left: 1rem;
         opacity: 1 !important;
         visibility: visible !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .headerContainer {
+        padding: 0.2rem 0.4rem;
+    }
+    .logoContainer .logo {
+        height: 60px;
+        width: 140px;
+        cursor: pointer;
+    }
+    .authMenuContainer {
+        width: 112px;
+    }
+    .cartText {
+        margin-top: 0.2rem;
+        font-size: 0.8rem;
+    }
+    .loginText {
+        margin-top: 0.2rem;
+        font-size: 0.8rem;
     }
 }
 </style>

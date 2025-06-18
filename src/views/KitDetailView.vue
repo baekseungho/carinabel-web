@@ -1,12 +1,16 @@
 <template>
     <div class="productDetailContainer">
         <div class="backButton" @click="goBack">
-            <div class="back bigIcon"></div>
+            <div class="back normalIcon"></div>
         </div>
 
         <div class="productDetailWrapper">
             <div class="productImageWrapper">
-                <img :src="kit.imagePath || '/img/default.jpg'" :alt="kit.kitName" class="productImage" />
+                <img
+                    :src="kit.imagePath || '/img/default.jpg'"
+                    :alt="kit.kitName"
+                    class="productImage"
+                />
             </div>
 
             <div class="productInfoWrapper">
@@ -17,14 +21,19 @@
                 <p class="productVolume">구성품:</p>
                 <ul>
                     <li v-for="(item, index) in kit.products" :key="index">
-                        - {{ item.productInfo.koreanName }} × {{ item.quantity }} (재고:
+                        - {{ item.productInfo.koreanName }} ×
+                        {{ item.quantity }} (재고:
                         {{ item.productInfo.stock || 0 }}개)
                     </li>
                 </ul>
 
-                <p class="productVolume">총 구성 원가: {{ formatPrice(kit.originalPrice) }}원</p>
+                <p class="productVolume">
+                    총 구성 원가: {{ formatPrice(kit.originalPrice) }}원
+                </p>
                 <p class="productPrice">
-                    <span class="memberPrice">회원가: {{ formatPrice(kit.memberPrice) }}원</span>
+                    <span class="memberPrice"
+                        >회원가: {{ formatPrice(kit.memberPrice) }}원</span
+                    >
                 </p>
 
                 <div class="productQuantity">
@@ -41,7 +50,13 @@
                 </div>
 
                 <div class="buyBtnBox">
-                    <button class="buyProductButton" @click="buyKit" :disabled="!isStockAvailable">구매하기</button>
+                    <button
+                        class="buyProductButton"
+                        @click="buyKit"
+                        :disabled="!isStockAvailable"
+                    >
+                        구매하기
+                    </button>
                 </div>
             </div>
         </div>
@@ -84,7 +99,9 @@ function formatPrice(price) {
 
 // 모든 구성품이 수량만큼 재고가 충분한지 확인
 const isStockAvailable = computed(() => {
-    return kit.value.products.every((item) => item.productInfo.stock >= item.quantity * quantity.value);
+    return kit.value.products.every(
+        (item) => item.productInfo.stock >= item.quantity * quantity.value
+    );
 });
 
 function increaseQuantity() {
@@ -129,7 +146,9 @@ function buyKit() {
             );
         })
         .then(() => {
-            alert(`${kit.value.kitName} 키트를 ${quantity.value}개 구매했습니다.`);
+            alert(
+                `${kit.value.kitName} 키트를 ${quantity.value}개 구매했습니다.`
+            );
             getKit(); // 재고 다시 불러오기
         })
         .catch((err) => {
@@ -155,13 +174,13 @@ function goBack() {
 }
 .backButton {
     position: absolute;
-    top: 20px;
+    top: 8px;
     left: 20px;
     background-color: transparent;
     color: #333;
-    padding: 10px 20px;
+    padding: 10px 12px;
     font-size: 14px;
-    border: none;
+    border: 1px solid #eee;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s;
@@ -171,6 +190,17 @@ function goBack() {
     background-color: #cc8a94;
     color: #fff;
 }
+.productInfoWrapper ul {
+    margin: 0 0 16px 0;
+    padding-left: 20px;
+    list-style: disc;
+    color: #444;
+    font-size: 1.05rem;
+}
+.productInfoWrapper li {
+    margin-bottom: 8px;
+}
+
 .productDetailWrapper {
     display: flex;
     flex-wrap: wrap;
@@ -280,8 +310,6 @@ function goBack() {
     opacity: 0.7;
     pointer-events: none;
 }
-.productDaildescription {
-}
 
 .productQuantity {
     margin: 20px 0;
@@ -315,5 +343,80 @@ function goBack() {
 
 .quantityControls button:hover {
     background-color: #ca717f;
+}
+
+@media (max-width: 1200px) {
+    .productDetailWrapper {
+        /* flex-direction: column; */
+        padding: 24px;
+    }
+
+    .productTitle {
+        font-size: 1.8rem;
+    }
+
+    .productPrice {
+        font-size: 1.2rem;
+    }
+
+    .buyProductButton {
+        font-size: 1rem;
+        padding: 12px 24px;
+    }
+
+    .productQuantity {
+        font-size: 1rem;
+    }
+}
+
+/* 반응형 - 600px 이하 */
+@media (max-width: 600px) {
+    .productDetailContainer {
+        padding: 20px 10px;
+    }
+
+    .backButton {
+        top: 4px;
+        left: 10px;
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+    .productTitle {
+        font-size: 1.4rem;
+        text-align: center;
+    }
+
+    .productPrice {
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    .buyBtnBox {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+    .productQuantity {
+        display: flex;
+        justify-content: center;
+    }
+    .productImageWrapper {
+        min-width: 100%;
+    }
+    .productInfoWrapper ul {
+        list-style: none;
+    }
+
+    .productInfoWrapper {
+        min-width: 100%;
+        text-align: center;
+    }
+
+    .productImage {
+        height: auto;
+    }
+    .buyProductButton {
+        width: 100%;
+    }
 }
 </style>

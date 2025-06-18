@@ -5,17 +5,44 @@
                 <div id="map" class="mapWrapper"></div>
                 <div class="contactForm">
                     <h2>Contact With Us</h2>
-                    <p>If you have any questions please feel free to contact with us.</p>
+                    <p>
+                        If you have any questions please feel free to contact
+                        with us.
+                    </p>
                     <form @submit.prevent="sendmemberId">
                         <div class="inputGroup">
-                            <input v-model="company" type="text" placeholder="회사명" required />
-                            <input v-model="name" type="text" placeholder="담당자명" required />
+                            <input
+                                v-model="company"
+                                type="text"
+                                placeholder="회사명"
+                                required
+                            />
+                            <input
+                                v-model="name"
+                                type="text"
+                                placeholder="담당자명"
+                                required
+                            />
                         </div>
                         <div class="inputGroup">
-                            <input v-model="phone" type="text" placeholder="연락처" required />
-                            <input v-model="memberId" type="memberId" placeholder="회원번호" required />
+                            <input
+                                v-model="phone"
+                                type="text"
+                                placeholder="연락처"
+                                required
+                            />
+                            <input
+                                v-model="memberId"
+                                type="memberId"
+                                placeholder="회원번호"
+                                required
+                            />
                         </div>
-                        <textarea v-model="message" placeholder="문의내용" required></textarea>
+                        <textarea
+                            v-model="message"
+                            placeholder="문의내용"
+                            required
+                        ></textarea>
                         <button type="submit" class="submitButton">Send</button>
                     </form>
                 </div>
@@ -74,7 +101,8 @@ function initializeMap() {
 onMounted(() => {
     if (!window.google || !window.google.maps) {
         const script = document.createElement("script");
-        script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDcNgrHakFpf9NDhsoORSAfTg3vAoBWUMc";
+        script.src =
+            "https://maps.googleapis.com/maps/api/js?key=AIzaSyDcNgrHakFpf9NDhsoORSAfTg3vAoBWUMc";
         script.async = true;
         script.defer = true;
         script.onload = initializeMap;
@@ -95,7 +123,7 @@ function sendmemberId() {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 40px 20px;
+    padding: 60px 20px;
     background-color: #f7f7f7;
 }
 .navigateContent {
@@ -116,8 +144,8 @@ function sendmemberId() {
     flex: 1;
 }
 .mapWrapper {
-    flex: 1;
-    min-width: 300px;
+    /* flex: 1; */
+    min-width: 600px;
     height: 400px;
     border-radius: 20px;
     overflow: hidden;
@@ -207,11 +235,6 @@ textarea {
         flex-direction: column;
     }
 
-    .mapWrapper {
-        width: 100%;
-        height: 300px; /* 높이는 필요시 조정 */
-    }
-
     .contactForm {
         width: 100%;
     }
@@ -227,6 +250,38 @@ textarea {
         font-size: 0.85rem;
         width: 90%; /* 좌우 공간 좁히기 */
         padding: 15px;
+    }
+    .mapWrapper {
+        /* flex: 1; */
+        min-width: 300px;
+        height: 400px;
+        border-radius: 20px;
+        /* overflow: hidden; */
+    }
+}
+
+@media (max-width: 600px) {
+    .navigateContainer {
+        padding: 40px 10px;
+        width: 100%;
+        /* max-width: 100%; */
+        box-sizing: border-box;
+        /* overflow: hidden; */
+    }
+
+    .storyContent h1 {
+        font-size: 1.6rem;
+    }
+
+    .storyContent p {
+        font-size: 0.9rem;
+    }
+    .navigateContent {
+        padding: 20px;
+    }
+
+    .inputGroup {
+        flex-direction: column;
     }
 }
 </style>
