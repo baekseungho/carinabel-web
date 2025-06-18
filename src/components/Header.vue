@@ -3,37 +3,44 @@
         <div class="logoContainer">
             <img src="/img/logo2.png" alt="Logo" class="logo" @click="goHome" />
         </div>
-        <nav class="navContainer">
+
+        <div class="hamburger" @click="toggleMobileMenu">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <nav class="navContainer" :class="{ open: isMobileMenuOpen }">
             <ul class="navList">
                 <li class="menuItem">
-                    <a href="#">제품</a>
+                    <a>제품</a>
                     <ul class="subMenu">
-                        <li><a href="/products/essential">에센셜 오일</a></li>
-                        <li>
-                            <a href="/products/onlymember">회원전용 상품</a>
+                        <!-- <li @click="closeMobileMenu">
+                            <RouterLink to="/products/essential">에센셜 오일</RouterLink>
+                        </li> -->
+                        <li @click="closeMobileMenu">
+                            <RouterLink to="/products/onlymember">에센셜 오일</RouterLink>
                         </li>
-                        <li>
-                            <a href="/products/kits">키트 상품</a>
+                        <li @click="closeMobileMenu"><RouterLink to="/products/kits">키트 상품</RouterLink></li>
+                    </ul>
+                </li>
+                <li class="menuItem">
+                    <a>회사소개</a>
+                    <ul class="subMenu">
+                        <li @click="closeMobileMenu"><RouterLink to="/about/greeting">인사말</RouterLink></li>
+                        <li @click="closeMobileMenu"><RouterLink to="/about/story">브랜드 스토리</RouterLink></li>
+                        <li @click="closeMobileMenu">
+                            <RouterLink to="/about/navigate">찾아오시는 길</RouterLink>
                         </li>
                     </ul>
                 </li>
                 <li class="menuItem">
-                    <a href="#">회사소개</a>
+                    <a>비즈니스</a>
                     <ul class="subMenu">
-                        <li><a href="/about/greeting">인사말</a></li>
-                        <li><a href="/about/story">브랜드 스토리</a></li>
-                        <li><a href="/about/navigate">찾아오시는 길</a></li>
+                        <li @click="closeMobileMenu"><RouterLink to="/business/events">행사/이벤트</RouterLink></li>
+                        <li @click="closeMobileMenu"><RouterLink to="/business/lectures">강의자료</RouterLink></li>
                     </ul>
                 </li>
-                <li class="menuItem">
-                    <a href="#">비즈니스</a>
-                    <ul class="subMenu">
-                        <li><a href="/business/events">행사/이벤트</a></li>
-                        <li><a href="/business/lectures">강의자료</a></li>
-                    </ul>
-                </li>
-                <li class="menuItem"><a href="/notices">공지사항</a></li>
-                <li class="menuItem"><a href="/qna">QnA</a></li>
+                <li @click="closeMobileMenu" class="menuItem"><RouterLink to="/notices">공지사항</RouterLink></li>
+                <li @click="closeMobileMenu" class="menuItem"><RouterLink to="/qna">QnA</RouterLink></li>
             </ul>
         </nav>
 
@@ -72,7 +79,7 @@ import { onMounted } from "vue";
 
 const showAuthMenu = ref(false);
 const store = useStore();
-
+const isMobileMenuOpen = ref(false);
 const isAuthenticated = computed(() => store.getters.isAuthenticated);
 const userName = computed(() => store.getters.userName);
 const userMembershipLevel = computed(() => store.getters.membershipLevel);
@@ -96,6 +103,14 @@ const goMypage = () => {
 const toggleAuthMenu = () => {
     showAuthMenu.value = !showAuthMenu.value;
 };
+const toggleMobileMenu = () => {
+    isMobileMenuOpen.value = !isMobileMenuOpen.value;
+};
+
+const closeMobileMenu = () => {
+    isMobileMenuOpen.value = false;
+};
+
 const handleLogout = () => {
     store.dispatch("logout");
     alert("로그아웃 되었습니다.");
@@ -133,6 +148,7 @@ onMounted(() => {
 .navContainer .navList {
     display: flex;
     gap: 2rem;
+    animation: fadeIn 0.3s ease;
 }
 
 .menuItem {
@@ -301,5 +317,57 @@ onMounted(() => {
 
 .myPageButton {
     margin-bottom: 0.8rem;
+}
+
+.hamburger {
+    display: none;
+    font-size: 1.8rem;
+    color: #333;
+    cursor: pointer;
+}
+
+@media (max-width: 1200px) {
+    .menuItem {
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 0.8rem;
+    }
+    .menuItem:last-child {
+        border: none;
+    }
+    .navContainer {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: #fff;
+        width: 100%;
+        padding: 0rem 2rem;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        flex-direction: column;
+    }
+
+    .navContainer.open {
+        display: flex;
+    }
+
+    .hamburger {
+        display: block;
+    }
+
+    .navList {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .navContainer .navList {
+        gap: 0;
+    }
+    .menuItem .subMenu {
+        position: static;
+        box-shadow: none;
+        margin-top: 0.5rem;
+        padding-left: 1rem;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
 }
 </style>

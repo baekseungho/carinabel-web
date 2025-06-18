@@ -21,16 +21,16 @@
                 </div>
             </div>
             <div class="contactInfoWrapper">
-                <div class="contactInfo themaBgColor6">
-                    <div class="bigIcon call"></div>
+                <div class="contactInfo themaBgColor2">
+                    <i class="fas fa-phone-alt iconWhite"></i>
                     042.488.9302
                 </div>
-                <div class="contactInfo themaBgColor6">
-                    <div class="bigIcon location"></div>
+                <div class="contactInfo themaBgColor2">
+                    <i class="fas fa-map-marker-alt iconWhite"></i>
                     대전 유성구 은구비남로7번길 73 3층
                 </div>
-                <div class="contactInfo themaBgColor6">
-                    <div class="bigIcon mail"></div>
+                <div class="contactInfo themaBgColor2">
+                    <i class="fas fa-envelope iconWhite"></i>
                     karinable@karinabel.com
                 </div>
             </div>
@@ -181,19 +181,52 @@ textarea {
     justify-content: space-between;
 }
 .contactInfo {
-    /* flex: 1; */
-    padding: 20px;
-    color: #000;
-    border-radius: 10px;
-    font-size: 0.9rem;
-    font-weight: bold;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 10px;
+    padding: 20px;
+    color: white;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: bold;
     min-width: 200px;
     width: 32%;
 }
+
+.iconWhite {
+    color: white;
+    font-size: 1.2rem;
+}
 .contactInfo > div {
     margin-right: 8px;
+}
+
+@media (max-width: 1200px) {
+    .mapFormWrapper {
+        flex-direction: column;
+    }
+
+    .mapWrapper {
+        width: 100%;
+        height: 300px; /* 높이는 필요시 조정 */
+    }
+
+    .contactForm {
+        width: 100%;
+    }
+
+    .contactInfoWrapper {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        margin-top: 30px;
+    }
+
+    .contactInfo {
+        font-size: 0.85rem;
+        width: 90%; /* 좌우 공간 좁히기 */
+        padding: 15px;
+    }
 }
 </style>

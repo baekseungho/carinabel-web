@@ -1,6 +1,6 @@
 <template>
     <div class="modalWrapper" v-if="visible">
-        <div class="modalOverlay" @click="closeModal"></div>
+        <div class="modalOverlay"></div>
         <div class="modalContent">
             <div class="modalHeader">
                 <h2>회원/비밀번호 찾기</h2>

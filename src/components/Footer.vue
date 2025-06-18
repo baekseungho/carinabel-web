@@ -32,7 +32,7 @@
                 </ul>
             </div>
             <div class="footerSection essentialOils">
-                <h3>최고의 품질 카리나벨 에센셜 오일</h3>
+                <h3>카리나벨 소개</h3>
                 <ul>
                     <li @click="navigateTo('/about/greeting')" class="clickable">인사말</li>
                     <li @click="navigateTo('/about/story')" class="clickable">브랜드 스토리</li>

@@ -1,10 +1,10 @@
 <template>
-  <Header v-if="!hideHeaderFooter" />
-  <div>
-    <router-view />
-  </div>
-  <Footer v-if="!hideHeaderFooter" />
-  <ScrollToTopButton />
+    <Header v-if="!hideHeaderFooter" />
+    <div class="content">
+        <router-view />
+    </div>
+    <Footer v-if="!hideHeaderFooter" />
+    <ScrollToTopButton />
 </template>
 
 <script setup>
@@ -18,6 +18,11 @@ const route = useRoute();
 const hideHeaderFooter = ref(route.meta.hideHeaderFooter || false);
 
 watch(route, (newRoute) => {
-  hideHeaderFooter.value = newRoute.meta.hideHeaderFooter || false;
+    hideHeaderFooter.value = newRoute.meta.hideHeaderFooter || false;
 });
 </script>
+<style scoped>
+.content {
+    min-height: 780px;
+}
+</style>

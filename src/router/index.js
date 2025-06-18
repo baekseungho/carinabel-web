@@ -71,17 +71,17 @@ const routes = [
         path: "/products/onlymember",
         name: "Onlymember",
         component: Onlymember,
-        meta: {
-            requiresAuth: true,
-        },
+        // meta: {
+        //     requiresAuth: true,
+        // },
     },
     {
         path: "/products/onlymember/:id",
         name: "OnlymemberDetail",
         component: OnlymemberDetail,
-        meta: {
-            requiresAuth: true,
-        },
+        // meta: {
+        //     requiresAuth: true,
+        // },
     },
     {
         path: "/products/kits",
