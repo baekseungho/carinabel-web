@@ -17,6 +17,19 @@
 
         <div style="width: 79%">
             <h2>상품 목록</h2>
+            <div v-if="editMode" class="productEditForm">
+                <h2>상품 수정</h2>
+                <input v-model="editForm.category" placeholder="카테고리" />
+                <input v-model="editForm.productName" placeholder="상품명 (영문)" />
+                <input v-model="editForm.koreanName" placeholder="상품명 (한글)" />
+                <input v-model="editForm.volume" type="number" placeholder="용량 (ml)" />
+                <input v-model="editForm.consumerPrice" type="number" placeholder="소비자가격 (원)" />
+                <input v-model="editForm.stock" type="number" placeholder="재고 수량" />
+                <input v-model="editForm.imagePath" placeholder="리스트 이미지 경로" />
+                <input v-model="editForm.detailImage" placeholder="상세 이미지 경로" />
+                <button @click="updateProduct">수정 완료</button>
+                <button @click="cancelEdit">취소</button>
+            </div>
             <ul>
                 <li style="display: flex; align-items: center" v-for="product in products" :key="product._id">
                     <img
@@ -31,19 +44,6 @@
                     <button @click="editProduct(product)">수정</button>
                 </li>
             </ul>
-            <div v-if="editMode" class="productEditForm">
-                <h2>상품 수정</h2>
-                <input v-model="editForm.category" placeholder="카테고리" />
-                <input v-model="editForm.productName" placeholder="상품명 (영문)" />
-                <input v-model="editForm.koreanName" placeholder="상품명 (한글)" />
-                <input v-model="editForm.volume" type="number" placeholder="용량 (ml)" />
-                <input v-model="editForm.consumerPrice" type="number" placeholder="소비자가격 (원)" />
-                <input v-model="editForm.stock" type="number" placeholder="재고 수량" />
-                <input v-model="editForm.imagePath" placeholder="리스트 이미지 경로" />
-                <input v-model="editForm.detailImage" placeholder="상세 이미지 경로" />
-                <button @click="updateProduct">수정 완료</button>
-                <button @click="cancelEdit">취소</button>
-            </div>
         </div>
     </div>
 </template>
@@ -91,14 +91,14 @@ const fetchProducts = () => {
 // 상품 추가
 const addProduct = () => {
     const productData = {
-        category: category.value,
+        category: category.value || "에센셜 오일",
         productName: productName.value,
         koreanName: koreanName.value,
         volume: volume.value,
         consumerPrice: consumerPrice.value,
         stock: stock.value,
         imagePath: imagePath.value || "/img/default.jpg",
-        detailImage: detailImage.value || "/img/default_detail.jpg",
+        detailImage: detailImage.value || "/products/라벤더상세.jpg",
     };
 
     AdminService.addProduct(productData, token)
