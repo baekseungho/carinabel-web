@@ -27,7 +27,7 @@
                     />
                     <strong>{{ product.koreanName }}</strong> ({{ product.category }}) - {{ product.volume }}ml /
                     {{ product.consumerPrice }}원 / 회원가 {{ product.memberPrice }}원 / 재고 {{ product.stock }}개
-                    <!-- <button @click="deleteProduct(product._id)">삭제</button> -->
+                    <button @click="deleteProduct(product._id)">삭제</button>
                     <button @click="editProduct(product)">수정</button>
                 </li>
             </ul>
