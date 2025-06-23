@@ -16,18 +16,26 @@
                     <h2 class="cartItemTitle">
                         {{ item.productId.koreanName }}
                     </h2>
-                    <p class="cartItemVolume">용량: {{ item.productId.volume }}ml</p>
-                    <p class="cartItemPrice">회원가: {{ formatPrice(item.price) }}원</p>
+                    <p class="cartItemVolume">
+                        용량: {{ item.productId.volume }}ml
+                    </p>
+                    <p class="cartItemPrice">
+                        회원가: {{ formatPrice(item.price) }}원
+                    </p>
                     <div class="cartItemQuantity">
                         <button @click="decreaseQuantity(item)">
-                            <div class="minus smallIcon"></div>
+                            <i class="fas fa-minus"></i>
                         </button>
                         <span>{{ item.quantity }}</span>
                         <button @click="increaseQuantity(item)">
-                            <div class="plus smallIcon"></div>
+                            <i class="fas fa-plus"></i>
                         </button>
                     </div>
-                    <button class="removeItemButton" @click="deleteItem(item._id)">
+
+                    <button
+                        class="removeItemButton"
+                        @click="deleteItem(item._id)"
+                    >
                         <div class="x smallIcon"></div>
                         삭제
                     </button>
@@ -130,7 +138,12 @@ function buyCart() {
         .then((response) => {
             // 2️⃣ 주문기록 → 장바구니 아이템마다
             const orderPromises = cartItems.value.map((item) => {
-                console.log("🛒 주문 생성용 데이터:", item.productId.koreanName, item.price, item.quantity);
+                console.log(
+                    "🛒 주문 생성용 데이터:",
+                    item.productId.koreanName,
+                    item.price,
+                    item.quantity
+                );
                 return OrderService.createOrder(
                     {
                         userId,
@@ -157,7 +170,9 @@ function buyCart() {
 }
 
 // 📝 총 금액 계산
-const totalPrice = computed(() => cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0));
+const totalPrice = computed(() =>
+    cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
+);
 
 onMounted(() => {
     getCartList();
@@ -186,10 +201,10 @@ onMounted(() => {
     display: flex;
     align-items: center;
     gap: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     background-color: #f7f7f7;
     border-radius: 15px;
-    padding: 20px;
+    padding: 16px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
@@ -313,5 +328,67 @@ onMounted(() => {
     text-align: center;
     font-size: 1.5rem;
     color: #999;
+}
+
+@media (max-width: 600px) {
+    .cartContainer {
+        padding: 20px 10px;
+    }
+
+    .cartTitle {
+        font-size: 24px;
+    }
+
+    .cartItem {
+        /* flex-direction: column; */
+        /* align-items: flex-start; */
+        padding: 12px;
+    }
+
+    .cartItemImageWrapper {
+        /* width: 100%; */
+        height: auto;
+
+        max-height: 200px;
+    }
+
+    .cartItemImage {
+        width: 100%;
+        height: auto;
+    }
+
+    .cartItemTitle {
+        font-size: 18px;
+    }
+
+    .cartItemVolume,
+    .cartItemPrice {
+        font-size: 14px;
+    }
+
+    .cartItemQuantity button {
+        padding: 4px 8px;
+        font-size: 14px;
+    }
+
+    .removeItemButton {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+
+    .cartSummary {
+        font-size: 18px;
+        text-align: center;
+    }
+
+    .checkoutButton {
+        width: 100%;
+        font-size: 16px;
+        padding: 12px;
+    }
+
+    .emptyCartMessage {
+        font-size: 1.2rem;
+    }
 }
 </style>

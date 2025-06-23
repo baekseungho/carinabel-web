@@ -22,7 +22,11 @@
                 <option value="title_content">제목+내용</option>
                 <option value="author">작성자</option>
             </select>
-            <input v-model="searchKeyword" type="text" placeholder="검색어 입력" />
+            <input
+                v-model="searchKeyword"
+                type="text"
+                placeholder="검색어 입력"
+            />
             <button class="searchBtn" @click="handleSearch">검색</button>
         </div>
 
@@ -52,10 +56,16 @@
                         <td>{{ item.category }}</td>
                         <td>{{ item.productName }}</td>
                         <td>
-                            <img :src="item.imagePath" alt="상품 이미지" class="qnaProductImg" />
+                            <img
+                                :src="item.imagePath"
+                                alt="상품 이미지"
+                                class="qnaProductImg"
+                            />
                         </td>
                         <td>
-                            <span v-if="item.hasAnswer" class="answeredTag"> [답변완료] </span>
+                            <span v-if="item.hasAnswer" class="answeredTag">
+                                [답변완료]
+                            </span>
                             {{ item.title }}
                         </td>
                         <td>{{ item.maskedAuthor }}</td>
@@ -65,7 +75,12 @@
                 </tbody>
                 <tbody v-else>
                     <tr>
-                        <td colspan="8" style="text-align: center; padding: 20px">등록된 글이 없습니다.</td>
+                        <td
+                            colspan="8"
+                            style="text-align: center; padding: 20px"
+                        >
+                            등록된 글이 없습니다.
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -107,7 +122,8 @@ const fetchQnAs = () => {
 
     const query = {
         userId: user._id, // ✅ 로그인된 사용자만 요청
-        category: selectedCategory.value === "전체" ? "" : selectedCategory.value,
+        category:
+            selectedCategory.value === "전체" ? "" : selectedCategory.value,
         searchType: searchType.value,
         keyword: searchKeyword.value,
         page: currentPage.value,
@@ -147,10 +163,9 @@ const goToDetail = (id) => {
 };
 const formatDate = (str) => {
     const d = new Date(str);
-    return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d
-        .getDate()
+    return `${d.getFullYear()}-${(d.getMonth() + 1)
         .toString()
-        .padStart(2, "0")}`;
+        .padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")}`;
 };
 
 onMounted(fetchQnAs);
@@ -265,5 +280,81 @@ onMounted(fetchQnAs);
     color: #4caf50;
     font-weight: bold;
     margin-right: 6px;
+}
+
+@media (max-width: 1200px) {
+    .qnaPage {
+        padding: 24px;
+    }
+
+    .pageTitle {
+        font-size: 24px;
+    }
+
+    .qnaTable {
+        font-size: 13px;
+    }
+
+    .searchFilter select,
+    .searchFilter input {
+        font-size: 13px;
+    }
+
+    .searchBtn {
+        font-size: 13px;
+        padding: 8px 14px;
+    }
+
+    .tabBtn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 600px) {
+    .qnaPage {
+        padding: 16px;
+    }
+
+    .pageTitle {
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .categoryTabs {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .tabBtn {
+        width: 100%;
+        text-align: center;
+        font-size: 12px;
+    }
+
+    .searchFilter {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .searchFilter select,
+    .searchFilter input {
+        width: 100%;
+        font-size: 12px;
+    }
+
+    .searchBtn {
+        width: 100%;
+        font-size: 14px;
+    }
+
+    .qnaTable {
+        min-width: 600px;
+    }
+
+    .qnaProductImg {
+        width: 48px;
+        height: 48px;
+    }
 }
 </style>
