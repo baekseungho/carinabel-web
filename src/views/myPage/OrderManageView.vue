@@ -192,4 +192,47 @@ tfoot {
     background: #f9f9f9;
     font-weight: bold;
 }
+.orderTableWrapper::-webkit-scrollbar {
+    height: 6px;
+}
+.orderTableWrapper::-webkit-scrollbar-thumb {
+    background-color: #cc8a94;
+    border-radius: 3px;
+    cursor: pointer;
+}
+/* ✅ 1200px 이하: 테이블 자체에만 스크롤 발생시키기 */
+@media (max-width: 1200px) {
+    .orderTableWrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+        /* min-width: 1000px */
+    }
+}
+
+/* ✅ 600px 이하: 모바일 추가 대응 */
+@media (max-width: 600px) {
+    .orderViewContainer {
+        padding: 12px 10px;
+    }
+
+    .tabs {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .tabs button {
+        width: 100%;
+        padding: 10px 0;
+        font-size: 14px;
+    }
+
+    th,
+    td {
+        font-size: 13.5px;
+        padding: 10px 6px;
+    }
+}
 </style>

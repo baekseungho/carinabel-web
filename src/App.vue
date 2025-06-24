@@ -23,6 +23,6 @@ watch(route, (newRoute) => {
 </script>
 <style scoped>
 .content {
-    min-height: 780px;
+    min-height: 980px;
 }
 </style>

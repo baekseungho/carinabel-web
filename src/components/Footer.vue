@@ -11,50 +11,41 @@
             />
         </div>
         <div class="fotterLine themaBgColor4"></div>
-        <div class="footerWrapper">
-            <div class="footerSection customerCenter">
-                <h3>고객센터</h3>
-                <ul>
+
+        <div class="footerBottom">
+            <div class="footerCopyrightLeft">
+                <p>© 2025 Karinabel. All Rights Reserved.</p>
+            </div>
+            <div class="footerInfoRight">
+                <div class="footerLinks">
+                    <ul>
+                        <li>
+                            <a href="/file/카리나벨 개인정보취급방침.pdf" target="_blank" class="clickable withDivider">
+                                개인정보처리방침
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/file/카리나벨 이용약관.pdf" target="_blank" class="clickable withDivider">
+                                이용 약관
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="clickable">탈퇴신청</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <ul class="footerCompanyInfo">
                     <li>(주)카리나벨</li>
-                    <li>대전광역시 은구비남로7번길 73, 3층 301호</li>
-                    <li>고객상담: 042-822-2581 FAX: 042-822-2582</li>
-                    <li>이메일 주소: karinabel@naver.com</li>
-                    <li>대표이사: 주재현 / 사업자등록번호: 443-19-01421</li>
-                    <li>통신판매 등록번호: 2022-대전유성-0937</li>
-                    <!-- <li>방문판매 등록번호: 2025-대전유성-0015</li>
-                    <li>건강기능식품 등록번호: 2021-0243657</li> -->
+                    <li>대표이사: 주재현</li>
+                    <li>사업자등록번호: 443-19-01421</li>
+                    <li>통신판매업신고: 2022-대전유성-0937</li>
+                    <li>주소: 대전광역시 은구비남로7번길 73, 3층 301호</li>
+                    <li>고객상담: 042-822-2581</li>
+                    <li>FAX: 042-822-2582</li>
+                    <li>이메일: karinabel@naver.com</li>
                 </ul>
             </div>
-            <div class="footerSection basicInfo">
-                <h3>카리나벨 베이직</h3>
-                <ul>
-                    <li @click="navigateTo('/notices')" class="clickable">공지사항</li>
-                </ul>
-            </div>
-            <div class="footerSection essentialOils">
-                <h3>카리나벨 소개</h3>
-                <ul>
-                    <li @click="navigateTo('/about/greeting')" class="clickable">인사말</li>
-                    <li @click="navigateTo('/about/story')" class="clickable">브랜드 스토리</li>
-                </ul>
-            </div>
-        </div>
-        <div class="footerLinks">
-            <ul>
-                <li>
-                    <a href="/file/카리나벨 개인정보취급방침.pdf" target="_blank" class="clickable">
-                        개인정보처리방침
-                    </a>
-                </li>
-                <!-- <li @click="navigateTo('/law')" class="clickable">관련법령</li> -->
-                <li>
-                    <a href="/file/카리나벨 이용약관.pdf" target="_blank" class="clickable"> 이용 약관 </a>
-                </li>
-                <!-- <li @click="navigateTo('/member')" class="clickable">회원조회</li> -->
-            </ul>
-        </div>
-        <div class="footerCopyright">
-            <p>© 2025 Karinabel</p>
         </div>
     </footer>
 </template>
@@ -107,12 +98,16 @@ function navigateTo(route) {
     background-color: #f7f9fc;
     padding: 40px 20px;
     color: #333;
+    font-size: 14px;
+    line-height: 1.6;
 }
+
 .footerIcons {
     display: flex;
     gap: 16px;
     margin-bottom: 20px;
 }
+
 .socialIcon {
     width: 44px;
     height: 44px;
@@ -120,55 +115,76 @@ function navigateTo(route) {
     border-radius: 50%;
     transition: transform 0.2s, box-shadow 0.2s;
 }
+
 .socialIcon:hover {
     transform: scale(1.1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
+
 .fotterLine {
     height: 1px;
     width: 100%;
     opacity: 0.6;
     margin: 16px 0;
+    background-color: #ccc;
 }
-.footerWrapper {
+
+.footerBottom {
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
-    margin-bottom: 24px;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
 }
-.footerSection h3 {
-    font-size: 18px;
-    margin-bottom: 16px;
+
+.footerCopyrightLeft {
+    flex: 1;
+    font-size: 13px;
+    color: #ccc;
+    display: flex;
+    align-items: center;
 }
-.footerSection ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+
+.footerInfoRight {
+    flex: 2;
+    font-size: 13px;
+    color: #ddd;
 }
-.footerSection li {
-    margin-bottom: 8px;
-    font-size: 14px;
-}
+
 .footerLinks ul {
     display: flex;
-    justify-content: center;
-    gap: 16px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 8px;
+    font-size: 13px;
+    color: #666;
+}
+
+.footerLinks ul li:not(:last-child) .withDivider::after {
+    content: "|";
+    margin-left: 12px;
+    color: #999;
+}
+
+.footerCompanyInfo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
     list-style: none;
     padding: 0;
     margin: 0;
     font-size: 12px;
-    color: #666;
-    margin-bottom: 16px;
+    color: #aaa;
 }
-.footerCopyright {
-    text-align: center;
-    font-size: 12px;
-    color: #999;
-}
+
 .clickable {
     cursor: pointer;
     transition: color 0.2s, text-decoration 0.2s;
 }
+
 .clickable:hover {
     color: #cc8a94;
     text-decoration: underline;

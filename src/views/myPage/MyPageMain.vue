@@ -50,4 +50,10 @@ import RecommendationTable from "@/components/myPage/RecommendationTable.vue";
         transform: translateY(0);
     }
 }
+
+@media (max-width: 600px) {
+    .pageContainer {
+        padding: 20px 20px;
+    }
+}
 </style>

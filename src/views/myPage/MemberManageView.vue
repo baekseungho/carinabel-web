@@ -194,4 +194,68 @@ onMounted(fetchNetwork);
     background-color: #ccc;
     z-index: 0;
 }
+
+@media (max-width: 1200px) {
+    .memberManage {
+        padding: 20px;
+    }
+
+    .toggleGroup button {
+        padding: 8px 16px;
+        font-size: 15px;
+    }
+
+    .node {
+        min-width: 200px;
+        padding: 14px;
+        font-size: 15px;
+    }
+
+    .childContainerWithLines .childNodeWrapper {
+        margin: 0 12px;
+    }
+}
+
+@media (max-width: 600px) {
+    .memberManage {
+        padding: 16px 12px;
+    }
+
+    .toggleGroup {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .toggleGroup button {
+        width: 100%;
+        font-size: 14px;
+        padding: 10px 0;
+    }
+
+    .orgChart {
+        gap: 10px;
+    }
+
+    .node {
+        min-width: 100%;
+        padding: 12px;
+        font-size: 14px;
+        margin: 12px 0;
+    }
+
+    .childContainerWithLines {
+        /* flex-direction: column; */
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .childContainerWithLines .childNodeWrapper {
+        margin: 10px 0;
+    }
+
+    .connector-horizontal {
+        /* display: none; 모바일에서는 수평선 제거 */
+    }
+}
 </style>
