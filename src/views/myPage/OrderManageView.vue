@@ -199,15 +199,32 @@ tfoot {
 .orderTableWrapper::-webkit-scrollbar-thumb {
     background-color: #cc8a94;
     border-radius: 3px;
+    cursor: pointer;
 }
-/* ✅ 1200px 이하: 테이블 자체에만 스크롤 발생시키기 */
 @media (max-width: 1200px) {
-    .orderTableWrapper {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+    .orderViewContainer {
+        padding: 16px 20px;
+    }
+
+    .pageTitle {
+        font-size: 24px;
+    }
+
+    .tabs button {
+        padding: 8px 16px;
+        font-size: 15px;
+    }
+
+    th,
+    td {
+        font-size: 15px;
+        padding: 10px 8px; /* 기본값보다 살짝 작게 */
+        word-break: keep-all; /* 텍스트 단어 줄바꿈 방지 */
     }
 
     table {
+        width: 100%; /* ✅ 1200px 구간에서는 스크롤 없이 꽉 차게 */
+        min-width: unset; /* ✅ scroll 방지용 min-width 제거 */
     }
 }
 
