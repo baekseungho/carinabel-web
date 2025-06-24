@@ -194,11 +194,11 @@ tfoot {
 }
 .orderTableWrapper::-webkit-scrollbar {
     height: 6px;
+    cursor: pointer;
 }
 .orderTableWrapper::-webkit-scrollbar-thumb {
     background-color: #cc8a94;
     border-radius: 3px;
-    cursor: pointer;
 }
 /* ✅ 1200px 이하: 테이블 자체에만 스크롤 발생시키기 */
 @media (max-width: 1200px) {
@@ -208,7 +208,6 @@ tfoot {
     }
 
     table {
-        /* min-width: 1000px */
     }
 }
 
@@ -227,6 +226,15 @@ tfoot {
         width: 100%;
         padding: 10px 0;
         font-size: 14px;
+    }
+
+    .orderTableWrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+        min-width: 900px; /* 모바일에서도 깨짐 없이 가로 스크롤 유지 */
     }
 
     th,
