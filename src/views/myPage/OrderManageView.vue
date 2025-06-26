@@ -228,6 +228,28 @@ tfoot {
     }
 }
 
+@media (max-width: 900px) {
+    th,
+    td {
+        font-size: 14px;
+        padding: 8px 6px;
+    }
+
+    .tabs button {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    .pageTitle {
+        font-size: 22px;
+    }
+
+    table {
+        width: 100%;
+        min-width: unset;
+    }
+}
+
 /* ✅ 600px 이하: 모바일 추가 대응 */
 @media (max-width: 600px) {
     .orderViewContainer {

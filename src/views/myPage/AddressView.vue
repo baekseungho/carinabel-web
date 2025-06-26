@@ -5,31 +5,33 @@
             <button class="addBtn" @click="openModal()">+ 배송지 추가</button>
         </div>
 
-        <table class="addressTable" v-if="addresses.length">
-            <thead>
-                <tr>
-                    <th>받는사람</th>
-                    <th>전화번호</th>
-                    <th>휴대폰</th>
-                    <th>주소</th>
-                    <th>기본</th>
-                    <th>관리</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="item in addresses" :key="item._id">
-                    <td>{{ item.recipientName }}</td>
-                    <td>{{ item.phone || "-" }}</td>
-                    <td>{{ item.mobile }}</td>
-                    <td>{{ item.address }}</td>
-                    <td>{{ item.isDefault ? "✔️" : "" }}</td>
-                    <td>
-                        <button class="editBtn" @click="openModal(item)">수정</button>
-                        <button class="deleteBtn" @click="deleteAddress(item._id)">삭제</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="addressTableWrapper" v-if="addresses.length">
+            <table class="addressTable">
+                <thead>
+                    <tr>
+                        <th>받는사람</th>
+                        <th>전화번호</th>
+                        <th>휴대폰</th>
+                        <th>주소</th>
+                        <th>기본</th>
+                        <th>관리</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in addresses" :key="item._id">
+                        <td>{{ item.recipientName }}</td>
+                        <td>{{ item.phone || "-" }}</td>
+                        <td>{{ item.mobile }}</td>
+                        <td>{{ item.address }}</td>
+                        <td>{{ item.isDefault ? "✔️" : "" }}</td>
+                        <td>
+                            <button class="editBtn" @click="openModal(item)">수정</button>
+                            <button class="deleteBtn" @click="deleteAddress(item._id)">삭제</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
         <p v-else class="noData">등록된 배송지가 없습니다.</p>
 
@@ -111,7 +113,20 @@ onMounted(fetchAddresses);
     background: white;
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
     border-radius: 12px;
+
     overflow: hidden;
+}
+.addressTableWrapper {
+    overflow-x: auto;
+}
+.addressTableWrapper::-webkit-scrollbar {
+    height: 6px;
+    cursor: pointer;
+}
+.addressTableWrapper::-webkit-scrollbar-thumb {
+    background-color: #cc8a94;
+    border-radius: 3px;
+    cursor: pointer;
 }
 .addressTable th,
 .addressTable td {
@@ -160,5 +175,106 @@ onMounted(fetchAddresses);
 thead {
     background-color: #333;
     color: #fff;
+}
+
+@media (max-width: 1200px) {
+    .addressPage {
+        padding: 16px 20px;
+        border-radius: 12px;
+    }
+
+    .addressHeader h2 {
+        font-size: 24px;
+        margin-bottom: 4px;
+    }
+
+    .addBtn {
+        font-size: 15px;
+        padding: 8px 16px;
+    }
+    .addressTable {
+        min-width: 640px;
+    }
+    .addressTable th,
+    .addressTable td {
+        font-size: 15px;
+        padding: 10px 8px;
+    }
+
+    .editBtn,
+    .deleteBtn {
+        font-size: 14px;
+        padding: 5px 10px;
+    }
+}
+/* ✅ 900px 이하: 중간 크기 대응 (태블릿 세로, 작은 노트북 등) */
+@media (max-width: 900px) {
+    .addressPage {
+        padding: 14px 16px;
+    }
+
+    .addressHeader h2 {
+        font-size: 22px;
+    }
+
+    .addBtn {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    .addressTable th,
+    .addressTable td {
+        font-size: 14px;
+        padding: 8px 6px;
+    }
+
+    .editBtn,
+    .deleteBtn {
+        font-size: 13px;
+        padding: 5px 8px;
+    }
+}
+@media (max-width: 600px) {
+    .addressPage {
+        padding: 12px 10px;
+    }
+
+    .addressHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .addressHeader h2 {
+        font-size: 20px;
+    }
+
+    .addBtn {
+        width: 100%;
+        font-size: 14px;
+        padding: 10px 0;
+    }
+
+    .addressTable {
+        overflow-x: auto;
+        display: block;
+    }
+
+    .addressTable table {
+        min-width: 800px;
+        width: 100%;
+    }
+
+    .addressTable th,
+    .addressTable td {
+        font-size: 13.5px;
+        padding: 8px 6px;
+    }
+
+    .editBtn,
+    .deleteBtn {
+        font-size: 13px;
+        padding: 5px 8px;
+    }
 }
 </style>

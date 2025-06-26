@@ -28,6 +28,7 @@ const toggleCollapse = () => {
 .myPageMain {
     flex: 1;
     padding-left: 40px; /* 펼쳤을 때 사이드바 넓이만큼 */
+    overflow: hidden;
 }
 
 .myPageMain.collapsed {

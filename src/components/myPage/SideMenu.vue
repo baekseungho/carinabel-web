@@ -58,6 +58,7 @@ const menus = [
 <style scoped>
 .sideMenu {
     width: 240px;
+
     background-color: white;
     border-radius: 16px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -71,6 +72,7 @@ const menus = [
 /* 사이드 메뉴가 접혔을 때 스타일 */
 .sideMenu.collapsed {
     width: 80px;
+
     padding: 30px 10px;
 }
 
@@ -139,7 +141,10 @@ nav i {
 @media (max-width: 1200px) {
     .sideMenu {
         width: 200px;
-        /* min-width: 180px; */
+        min-width: 180px;
+    }
+    .sideMenu.collapsed {
+        min-width: 80px;
     }
 }
 @media (max-width: 600px) {
