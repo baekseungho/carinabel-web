@@ -16,7 +16,10 @@
                             <label for="fullName">이름</label>
                             <input type="text" id="fullName" v-model="fullName" placeholder="이름을 입력하세요." />
                         </div>
-
+                        <div class="inputGroup">
+                            <label for="email">이메일</label>
+                            <input type="email" id="email" v-model="email" placeholder="example@example.com" required />
+                        </div>
                         <div class="inputGroup">
                             <label for="phone">휴대폰 번호</label>
                             <input type="text" id="phone" v-model="phone" placeholder="휴대폰 번호를 입력하세요." />
@@ -135,6 +138,7 @@ const step = ref(1);
 const fullName = ref("");
 const phone = ref("");
 const birthday = ref("");
+const email = ref("");
 const password = ref("");
 const confirmPassword = ref("");
 const agreedToTerms = ref(false);
@@ -189,10 +193,15 @@ const handleTermsCheckboxChange = (event) => {
 
     agreedToTerms.value = event.target.checked;
 };
+const isValidEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+};
 
 const nextStep = () => {
     if (
         !fullName.value.trim() ||
+        !email.value.trim() ||
         !phone.value.trim() ||
         !birthday.value.trim() ||
         !password.value.trim() ||
@@ -201,14 +210,22 @@ const nextStep = () => {
         alert("모든 필드를 입력해주세요.");
         return;
     }
+
+    if (!isValidEmail(email.value.trim())) {
+        alert("올바른 이메일 형식을 입력해주세요.");
+        return;
+    }
+
     if (password.value !== confirmPassword.value) {
         alert("비밀번호가 일치하지 않습니다.");
         return;
     }
+
     if (!agreedToTerms.value) {
         alert("이용약관 및 개인정보 처리방침에 동의해주세요.");
         return;
     }
+
     step.value = 2;
 };
 
@@ -221,6 +238,7 @@ const handleSubmit = () => {
 
     const data = {
         fullName: fullName.value.trim(),
+        email: email.value.trim(),
         phone: phone.value.trim(),
         birthday: birthday.value.trim(),
         password: password.value.trim(),
@@ -228,7 +246,6 @@ const handleSubmit = () => {
         referrermemberId: referrermemberId.value.trim(),
         agreedToTerms: agreedToTerms.value,
     };
-
     AuthService.register(data)
         .then((response) => {
             console.log("회원가입 성공:", response.data);
