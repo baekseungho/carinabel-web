@@ -20,6 +20,15 @@ class PayService {
             },
         });
     }
+
+    requestBankPay(data, token) {
+        return axios.post("/bankpay/request", data, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    }
 }
 
 export default new PayService();
