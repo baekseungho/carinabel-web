@@ -1,6 +1,12 @@
 <template>
     <div>
-        <button class="buyProductButton" @click="initiateBankPay" :disabled="disabled">결제하기</button>
+        <button
+            class="buyProductButton"
+            @click="initiateBankPay"
+            :disabled="disabled"
+        >
+            결제하기
+        </button>
     </div>
 </template>
 
@@ -39,10 +45,8 @@ const initiateBankPay = () => {
         tid,
         amt: props.amount,
         goodsName: props.productName,
-        productType: "01", // 실물
+        productType: "00", // 실물
         payMethod: "BPAY",
-        isCashReceipt: true,
-        isMandatoryIssuer: true,
         ordNm: props.userInfo.fullName || "비회원",
         email: props.userInfo.email || "test@example.com",
         returnUrl: `${SERVER_URL}/payment/bankpay/result`,

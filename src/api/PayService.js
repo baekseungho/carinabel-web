@@ -22,7 +22,7 @@ class PayService {
     }
 
     requestBankPay(data, token) {
-        return axios.post("/bankpay/request", data, {
+        return axios.post(`${API_URL_PAYMENT}/bankpay/request`, data, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
