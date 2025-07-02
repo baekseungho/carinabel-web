@@ -57,22 +57,8 @@
                                 />
                                 <span class="customCheckboxLabel">
                                     <span>
-                                        <a
-                                            href="/file/카리나벨 이용약관.pdf"
-                                            target="_blank"
-                                            class="termsLink"
-                                            @click="hasViewedTerms = true"
-                                        >
-                                            이용약관
-                                        </a>
-                                        및
-                                        <a
-                                            href="/file/카리나벨 개인정보취급방침.pdf"
-                                            target="_blank"
-                                            class="termsLink"
-                                            @click="hasViewedPrivacy = true"
-                                        >
-                                            개인정보 처리방침
+                                        <a href="#" class="termsLink" @click.prevent="handleOpenBothDocs">
+                                            이용약관 및 개인정보 처리방침
                                         </a>
                                         에 동의합니다.
                                     </span>
@@ -173,7 +159,13 @@ const copyAddress = () => {
         .then(() => alert("주소가 복사되었습니다."))
         .catch(() => alert("복사에 실패했습니다."));
 };
+const handleOpenBothDocs = () => {
+    window.open("/file/카리나벨 이용약관.pdf", "_blank");
+    window.open("/file/카리나벨 개인정보취급방침.pdf", "_blank");
 
+    hasViewedTerms.value = true;
+    hasViewedPrivacy.value = true;
+};
 const handleTermsCheckboxChange = (event) => {
     if (!hasViewedTerms.value && !hasViewedPrivacy.value) {
         alert("이용약관과 개인정보 처리방침을 모두 열람해주세요.");
@@ -360,14 +352,13 @@ const handleSubmit = () => {
 }
 .termsLink {
     color: #333;
-    text-decoration: none;
+    text-decoration: underline; /* ✅ 기본 밑줄 표시 */
     font-weight: 600;
-    transition: color 0.2s, text-decoration 0.2s;
+    transition: color 0.2s ease;
 }
 
 .termsLink:hover {
     color: #cc8a94;
-    text-decoration: underline;
 }
 
 .customCheckboxLabel::before {
