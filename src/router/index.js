@@ -157,13 +157,13 @@ const routes = [
         path: "/notices",
         name: "Notices",
         component: Notices,
-        // meta: { maintenance: true },
+        meta: { maintenance: true },
     },
     {
         path: "/notice/:id",
         name: "NoticeDetail",
         component: NoticeDetail,
-        // meta: { maintenance: true },
+        meta: { maintenance: true },
     },
 
     // 관리자 페이지

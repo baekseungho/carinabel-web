@@ -13,9 +13,9 @@
                 </div>
             </div>
             <div class="actionButtons">
-                <button class="themaBgColor3">구매확정</button>
+                <!-- <button class="themaBgColor3">구매확정</button> -->
                 <button class="themaBgColor4" @click="goToQna">문의하기</button>
-                <button class="themaBgColor5">상품평쓰기</button>
+                <!-- <button class="themaBgColor5">상품평쓰기</button> -->
             </div>
         </div>
 
