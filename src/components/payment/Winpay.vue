@@ -8,7 +8,7 @@
 
 <script setup>
 import { ref } from "vue";
-import PayService from "@/api/payService";
+import PayService from "@/api/SimplePayService.js";
 import { openBankPayWallet } from "@/utils/bankpayUtil"; // 팝업 띄우는 유틸 함수
 
 const props = defineProps({
@@ -19,7 +19,7 @@ const props = defineProps({
     disabled: Boolean,
 });
 
-const SERVER_URL = "http://localhost:5000";
+const SERVER_URL = window.location.origin;
 const jwtToken = localStorage.getItem("token");
 
 function generateTid() {
