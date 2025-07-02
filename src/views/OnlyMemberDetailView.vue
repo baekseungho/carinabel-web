@@ -121,30 +121,30 @@ function buyProduct(product) {
 
     const amount = product.memberPrice * quantity.value;
 
-    // const updatePromise = AuthService.updateUserProfile(userId, amount, token);
-    // const orderPromise = OrderService.createOrder(
-    //     {
-    //         userId,
-    //         productName: product.koreanName,
-    //         amount,
-    //         quantity: quantity.value,
-    //         imagePath: product.imagePath,
-    //         status: "결제완료",
-    //     },
-    //     token
-    // );
+    const updatePromise = AuthService.updateUserProfile(userId, amount, token);
+    const orderPromise = OrderService.createOrder(
+        {
+            userId,
+            productName: product.koreanName,
+            amount,
+            quantity: quantity.value,
+            imagePath: product.imagePath,
+            status: "결제완료",
+        },
+        token
+    );
 
-    // Promise.all([updatePromise, orderPromise])
-    //     .then(([userRes, orderRes]) => {
-    //         alert(`${product.koreanName}를 ${quantity.value}개 구매했습니다.`);
-    //         store.dispatch("login", userRes.data);
-    //         getProduct();
-    //     })
-    //     .catch((error) => {
-    //         console.error("❌ 구매 실패:", error);
-    //         const message = error.response?.data?.message || "구매에 실패했습니다.";
-    //         alert(message);
-    //     });
+    Promise.all([updatePromise, orderPromise])
+        .then(([userRes, orderRes]) => {
+            alert(`${product.koreanName}를 ${quantity.value}개 구매했습니다.`);
+            store.dispatch("login", userRes.data);
+            getProduct();
+        })
+        .catch((error) => {
+            console.error("❌ 구매 실패:", error);
+            const message = error.response?.data?.message || "구매에 실패했습니다.";
+            alert(message);
+        });
 }
 const addToCart = (productId) => {
     const token = localStorage.getItem("token");

@@ -1,11 +1,7 @@
 <template>
     <div>
-        <button
-            class="buyProductButton"
-            @click="initiateBankPay"
-            :disabled="disabled"
-        >
-            결제하기
+        <button style="font-size: 8px" class="buyProductButton" @click="initiateBankPay" :disabled="disabled">
+            결제TEST
         </button>
     </div>
 </template>
