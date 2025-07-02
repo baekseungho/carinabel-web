@@ -6,7 +6,11 @@
 
         <div class="productDetailWrapper">
             <div class="productImageWrapper">
-                <img :src="product.imagePath || '/img/default.jpg'" :alt="product.koreanName" class="productImage" />
+                <img
+                    :src="product.imagePath || '/img/default.jpg'"
+                    :alt="product.koreanName"
+                    class="productImage"
+                />
             </div>
 
             <div class="productInfoWrapper">
@@ -18,12 +22,23 @@
                 <p class="productVolume">재고: {{ product.stock || 0 }}개</p>
 
                 <p class="productPrice">
-                    <template v-if="product.consumerPrice !== product.memberPrice">
-                        <span class="consumerPrice">소비자가: {{ formatPrice(product.consumerPrice) }}원</span>
-                        <span class="memberPrice">회원가: {{ formatPrice(product.memberPrice) }}원</span>
+                    <template
+                        v-if="product.consumerPrice !== product.memberPrice"
+                    >
+                        <span class="consumerPrice"
+                            >소비자가:
+                            {{ formatPrice(product.consumerPrice) }}원</span
+                        >
+                        <span class="memberPrice"
+                            >회원가:
+                            {{ formatPrice(product.memberPrice) }}원</span
+                        >
                     </template>
                     <template v-else>
-                        <span class="memberPrice">가격: {{ formatPrice(product.memberPrice) }}원</span>
+                        <span class="memberPrice"
+                            >가격:
+                            {{ formatPrice(product.memberPrice) }}원</span
+                        >
                     </template>
                 </p>
 
@@ -47,13 +62,32 @@
                     </div>
                 </div>
                 <div class="buyBtnBox">
-                    <button class="buyProductButton" @click="buyProduct(product)" :disabled="product.stock === 0">
+                    <button
+                        class="buyProductButton"
+                        @click="buyProduct(product)"
+                        :disabled="product.stock === 0"
+                    >
                         구매하기
                     </button>
-                    <button class="buyProductButton" @click="addToCart(product._id)" :disabled="product.stock === 0">
+                    <button
+                        class="buyProductButton"
+                        @click="addToCart(product._id)"
+                        :disabled="product.stock === 0"
+                    >
                         장바구니에 담기
                     </button>
+                </div>
+                <div class="btnBox">
                     <Winpay
+                        :productName="product.koreanName"
+                        :amount="product.memberPrice * quantity"
+                        :quantity="quantity"
+                        :userInfo="user"
+                        :disabled="product.stock === 0"
+                    />
+                </div>
+                <div class="btnBox">
+                    <KiwoomPay
                         :productName="product.koreanName"
                         :amount="product.memberPrice * quantity"
                         :quantity="quantity"
@@ -64,7 +98,11 @@
             </div>
         </div>
         <div class="productDaildescription">
-            <img :src="product.detailImage || '/img/default.jpg'" :alt="product.koreanName" class="productImage" />
+            <img
+                :src="product.detailImage || '/img/default.jpg'"
+                :alt="product.koreanName"
+                class="productImage"
+            />
         </div>
     </div>
 </template>
@@ -78,7 +116,7 @@ import OrderService from "@/api/OrderService";
 import ProductService from "@/api/ProductService.js";
 import CartService from "@/api/CartService.js";
 import Winpay from "@/components/payment/Winpay.vue";
-
+import KiwoomPay from "@/components/payment/KiwoompayView.vue";
 const store = useStore();
 const route = useRoute();
 const router = useRouter();
@@ -142,7 +180,8 @@ function buyProduct(product) {
         })
         .catch((error) => {
             console.error("❌ 구매 실패:", error);
-            const message = error.response?.data?.message || "구매에 실패했습니다.";
+            const message =
+                error.response?.data?.message || "구매에 실패했습니다.";
             alert(message);
         });
 }
@@ -299,7 +338,7 @@ function decreaseQuantity() {
 .buyBtnBox {
     display: flex;
     width: 100%;
-    /* justify-content: space-between; */
+    justify-content: space-between;
 }
 .buyProductButton {
     background-color: #cc8a94;
@@ -312,7 +351,13 @@ function decreaseQuantity() {
     cursor: pointer;
     transition: background-color 0.2s;
     align-self: flex-start;
-    margin-right: 12px;
+    /* margin-right: 12px; */
+}
+.buyProductButton:first-child {
+    width: 49%;
+}
+.buyProductButton:last-child {
+    width: 49%;
 }
 .buyProductButton:hover {
     background-color: #c97582;
@@ -374,7 +419,7 @@ function decreaseQuantity() {
     }
 
     .buyProductButton {
-        font-size: 1rem;
+        font-size: 0.8rem;
         padding: 12px 24px;
     }
 
