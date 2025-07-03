@@ -47,4 +47,10 @@ onBeforeUnmount(() => {
 .scrollTopButton:hover {
     background-color: #ca717f;
 }
+
+@media (max-width: 600px) {
+    .scrollTopButton {
+        visibility: hidden;
+    }
+}
 </style>
