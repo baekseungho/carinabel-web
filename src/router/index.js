@@ -16,6 +16,7 @@ import ProductView from "@/views/ProductView.vue";
 import ProductDetail from "@/views/ProductDetail.vue";
 import Onlymember from "@/views/OnlyMemberView.vue";
 import OnlymemberDetail from "@/views/OnlyMemberDetailView.vue";
+import OrderComplete from "@/views/OrderCompleteView.vue";
 import Kit from "@/views/KitView.vue";
 import KitDetail from "@/views/KitDetailView.vue";
 import AboutView from "@/views/AboutView.vue";
@@ -91,6 +92,15 @@ const routes = [
             requiresAuth: true,
         },
     },
+    {
+        path: "/order-complete/:id",
+        name: "OrderComplete",
+        component: OrderComplete,
+        meta: {
+            requiresAuth: true,
+        },
+    },
+
     {
         path: "/products/kits/:id",
         name: "KitDetail",

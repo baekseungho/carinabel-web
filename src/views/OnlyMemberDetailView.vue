@@ -6,11 +6,7 @@
 
         <div class="productDetailWrapper">
             <div class="productImageWrapper">
-                <img
-                    :src="product.imagePath || '/img/default.jpg'"
-                    :alt="product.koreanName"
-                    class="productImage"
-                />
+                <img :src="product.imagePath || '/img/default.jpg'" :alt="product.koreanName" class="productImage" />
             </div>
 
             <div class="productInfoWrapper">
@@ -22,23 +18,12 @@
                 <p class="productVolume">재고: {{ product.stock || 0 }}개</p>
 
                 <p class="productPrice">
-                    <template
-                        v-if="product.consumerPrice !== product.memberPrice"
-                    >
-                        <span class="consumerPrice"
-                            >소비자가:
-                            {{ formatPrice(product.consumerPrice) }}원</span
-                        >
-                        <span class="memberPrice"
-                            >회원가:
-                            {{ formatPrice(product.memberPrice) }}원</span
-                        >
+                    <template v-if="product.consumerPrice !== product.memberPrice">
+                        <span class="consumerPrice">소비자가: {{ formatPrice(product.consumerPrice) }}원</span>
+                        <span class="memberPrice">회원가: {{ formatPrice(product.memberPrice) }}원</span>
                     </template>
                     <template v-else>
-                        <span class="memberPrice"
-                            >가격:
-                            {{ formatPrice(product.memberPrice) }}원</span
-                        >
+                        <span class="memberPrice">가격: {{ formatPrice(product.memberPrice) }}원</span>
                     </template>
                 </p>
 
@@ -62,18 +47,10 @@
                     </div>
                 </div>
                 <div class="buyBtnBox">
-                    <button
-                        class="buyProductButton"
-                        @click="buyProduct(product)"
-                        :disabled="product.stock === 0"
-                    >
+                    <button class="buyProductButton" @click="buyProduct(product)" :disabled="product.stock === 0">
                         구매하기
                     </button>
-                    <button
-                        class="buyProductButton"
-                        @click="addToCart(product._id)"
-                        :disabled="product.stock === 0"
-                    >
+                    <button class="buyProductButton" @click="addToCart(product._id)" :disabled="product.stock === 0">
                         장바구니에 담기
                     </button>
                 </div>
@@ -88,21 +65,16 @@
                 </div>
                 <div class="btnBox">
                     <KiwoomPay
-                        :productName="product.koreanName"
-                        :amount="product.memberPrice * quantity"
-                        :quantity="quantity"
+                        :product="product"
                         :userInfo="user"
+                        :quantity="quantity"
                         :disabled="product.stock === 0"
                     />
                 </div>
             </div>
         </div>
         <div class="productDaildescription">
-            <img
-                :src="product.detailImage || '/img/default.jpg'"
-                :alt="product.koreanName"
-                class="productImage"
-            />
+            <img :src="product.detailImage || '/img/default.jpg'" :alt="product.koreanName" class="productImage" />
         </div>
     </div>
 </template>
@@ -119,6 +91,7 @@ import Winpay from "@/components/payment/Winpay.vue";
 import KiwoomPay from "@/components/payment/KiwoompayView.vue";
 const store = useStore();
 const route = useRoute();
+
 const router = useRouter();
 const product = ref({});
 const isAuthenticated = computed(() => store.getters.isAuthenticated);
@@ -176,12 +149,13 @@ function buyProduct(product) {
         .then(([userRes, orderRes]) => {
             alert(`${product.koreanName}를 ${quantity.value}개 구매했습니다.`);
             store.dispatch("login", userRes.data);
+
             getProduct();
+            router.push(`/order-complete/${orderRes.data._id}`);
         })
         .catch((error) => {
             console.error("❌ 구매 실패:", error);
-            const message =
-                error.response?.data?.message || "구매에 실패했습니다.";
+            const message = error.response?.data?.message || "구매에 실패했습니다.";
             alert(message);
         });
 }

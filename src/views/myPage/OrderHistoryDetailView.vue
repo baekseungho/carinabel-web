@@ -13,9 +13,10 @@
                 </div>
             </div>
             <div class="actionButtons">
-                <!-- <button class="themaBgColor3">구매확정</button> -->
                 <button class="themaBgColor4" @click="goToQna">문의하기</button>
-                <!-- <button class="themaBgColor5">상품평쓰기</button> -->
+                <!-- <button class="themaBgColor3">구매확정</button> -->
+
+                <button class="themaBgColor5" @click="cancelOrder">주문취소</button>
             </div>
         </div>
 
@@ -101,6 +102,34 @@ const fetchOrderDetail = () => {
         })
         .catch((err) => {
             console.error("❌ 주문 상세 조회 실패:", err);
+        });
+};
+
+// 👉 주문 취소 로직
+const cancelOrder = () => {
+    console.log(order.value);
+    if (!confirm("정말 주문을 취소하시겠습니까?")) return;
+
+    const payload = {
+        payMethod:
+            order.value.payment?.method === "카카오페이"
+                ? "KAKAOPAY"
+                : order.value.payment?.method === "네이버페이"
+                ? "NAVERPAY"
+                : order.value.payment?.method || "KAKAOPAY", // 기본값 KAKAOPAY
+        trxId: order.value.trxId || "", // 실제로는 결제 시 저장
+        amount: order.value.product?.amount,
+        cancelReason: "고객 요청 취소", // ✅ 취소 사유
+    };
+
+    OrderService.cancelOrder(orderId, payload, token)
+        .then((res) => {
+            alert(res.data.message || "주문이 취소되었습니다.");
+            router.push("/mypage/order-history");
+        })
+        .catch((err) => {
+            console.error("❌ 주문 취소 실패:", err);
+            alert(err.response?.data?.message || "주문 취소에 실패했습니다.");
         });
 };
 

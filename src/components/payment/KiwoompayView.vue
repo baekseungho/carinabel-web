@@ -1,79 +1,112 @@
 <template>
     <div class="kiwoomPayButtons">
-        <button
-            class="payBtn naver"
-            @click="callPay('NAVERPAY')"
-            :disabled="disabled"
-        >
+        <button class="payBtn naver" @click="callPay('NAVERPAY')" :disabled="disabled">
             <i class="fab fa-neos icon" /> 네이버페이
         </button>
-        <button
-            class="payBtn kakao"
-            @click="callPay('KAKAOPAY')"
-            :disabled="disabled"
-        >
+        <button class="payBtn kakao" @click="callPay('KAKAOPAY')" :disabled="disabled">
             <i class="fas fa-comment icon" /> 카카오페이
         </button>
     </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import AuthService from "@/api/AuthService";
+import OrderService from "@/api/OrderService";
+
+const router = useRouter();
+const store = useStore();
 
 const props = defineProps({
-    productName: String,
-    amount: Number,
-    quantity: Number,
+    product: Object,
     userInfo: Object,
+    quantity: Number,
     disabled: Boolean,
 });
 
-const callPay = (payMethod) => {
-    console.log(props.productName);
-    const orderNo = new Date()
-        .toISOString()
-        .replace(/[-:.TZ]/g, "")
-        .slice(0, 14); // YYYYMMDDHHMMSS
-    const params = {
-        PAYMETHOD: payMethod, // "NAVERPAY" or "KAKAOPAY"
-        TYPE: "P",
-        CPID: "CTS15178", // 테스트용 가맹점 ID
-        ORDERNO: orderNo,
-        PRODUCTTYPE: "1", // 실물상품
-        // AMOUNT: props.amount.toString(),
-        AMOUNT: 100,
+const callPay = async (payMethod) => {
+    const userId = props.userInfo?._id;
+    const token = props.userInfo?.token;
 
-        PRODUCTNAME: props.productName,
-        PRODUCTCODE: "TESTPD01",
-        USERID: props.userInfo?._id || "GUEST",
-        RESERVEDSTRING: "",
-        HOMEURL: "https://www.naver.com", // 실제 결제 완료 후 이동할 URL
-        TAXFREECD: "00",
-        TELNO2: "0",
-    };
-
-    const form = document.createElement("form");
-    form.setAttribute("method", "post");
-    form.setAttribute("action", "https://apitest.kiwoompay.co.kr/pay/link");
-    form.setAttribute("target", "KIWOOMPAY");
-    form.setAttribute("accept-charset", "euc-kr");
-
-    window.open("", "KIWOOMPAY", "width=468,height=750");
-
-    for (const key in params) {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = key;
-        input.value = params[key];
-        form.appendChild(input);
+    if (!userId || !token) {
+        alert("로그인이 필요합니다.");
+        return;
     }
 
-    document.body.appendChild(form);
-    form.submit();
-    document.body.removeChild(form); // 제출 후 제거
+    try {
+        const amount = props.product.memberPrice * props.quantity;
+
+        // ✅ 먼저 회원 누적 금액 업데이트
+        const updatePromise = AuthService.updateUserProfile(userId, amount, token);
+
+        // ✅ 주문 미리 생성 (상태: "입금대기")
+        const orderPromise = OrderService.createOrder(
+            {
+                userId,
+                productName: props.product.koreanName,
+                amount,
+                quantity: props.quantity,
+                imagePath: props.product.imagePath,
+                status: "입금대기", // 미리 생성 시 입금대기
+            },
+            token
+        );
+
+        const [userRes, orderRes] = await Promise.all([updatePromise, orderPromise]);
+        store.dispatch("login", userRes.data);
+
+        const orderId = orderRes.data._id;
+        const homeUrl = `${window.location.origin}/order-complete/${orderId}`;
+
+        // ✅ 결제창 호출
+        const orderNo = new Date()
+            .toISOString()
+            .replace(/[-:.TZ]/g, "")
+            .slice(0, 14);
+        const params = {
+            PAYMETHOD: payMethod,
+            TYPE: "P",
+            CPID: "CTS15178",
+            ORDERNO: orderNo,
+            PRODUCTTYPE: "1",
+            // AMOUNT: amount.toString(),
+            AMOUNT: 100,
+            PRODUCTNAME: props.product.koreanName,
+            PRODUCTCODE: "TESTPD01",
+            USERID: userId,
+            RESERVEDSTRING: "",
+            HOMEURL: homeUrl,
+            TAXFREECD: "00",
+            TELNO2: "0",
+        };
+
+        const form = document.createElement("form");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", "https://apitest.kiwoompay.co.kr/pay/link");
+        form.setAttribute("target", "KIWOOMPAY");
+        form.setAttribute("accept-charset", "euc-kr");
+
+        window.open("", "KIWOOMPAY", "width=468,height=750");
+
+        for (const key in params) {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = key;
+            input.value = params[key];
+            form.appendChild(input);
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    } catch (error) {
+        console.error("❌ 결제 준비 실패:", error);
+        const message = error.response?.data?.message || "결제 준비에 실패했습니다.";
+        alert(message);
+    }
 };
 </script>
-
 <style scoped>
 .kiwoomPayButtons {
     display: flex;

@@ -50,6 +50,16 @@ class OrderService {
             },
         });
     }
+    confirmOrder(orderId, token) {
+        return axios.post(`${API_URL}/confirm/${orderId}`, null, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+    }
+    cancelOrder(orderId, payload, token) {
+        return axios.post(`${API_URL}/cancel/${orderId}`, payload, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+    }
 }
 
 export default new OrderService();
