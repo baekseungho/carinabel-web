@@ -86,6 +86,7 @@ const cancel = () => {
 .qnaCreatePage {
     max-width: 700px;
     margin: 0 auto;
+    margin-top: 60px;
     padding: 32px;
     background: #fff;
     border-radius: 12px;
@@ -165,5 +166,8 @@ const cancel = () => {
 .cancelBtn {
     background-color: #bbb;
     color: #fff;
+}
+.cancelBtn:hover {
+    background-color: #888;
 }
 </style>
