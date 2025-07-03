@@ -454,5 +454,11 @@ function decreaseQuantity() {
     .buyProductButton {
         width: 100%;
     }
+    .buyProductButton:first-child {
+        width: 100%;
+    }
+    .buyProductButton:last-child {
+        width: 100%;
+    }
 }
 </style>

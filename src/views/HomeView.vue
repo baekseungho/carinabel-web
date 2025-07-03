@@ -2,7 +2,7 @@
     <section class="home">
         <Banner />
         <div class="">
-            <div class="product-grid">
+            <div class="productGrid">
                 상품및 홍보할 공간
                 <ProductCard v-for="product in products" :key="product.id" :product="product" />
             </div>
@@ -27,7 +27,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.product-grid {
+.productGrid {
     display: flex;
     /* flex-wrap: wrap; */
     /* gap: 20px; */
@@ -38,5 +38,11 @@ onMounted(() => {
     align-items: center;
     justify-content: center;
     font-size: 4rem;
+}
+
+@media (max-width: 600px) {
+    .productGrid {
+        font-size: 2rem;
+    }
 }
 </style>
