@@ -102,7 +102,7 @@ const handleLogin = () => {
                 localStorage.removeItem("savedMemberId");
             }
 
-            router.push("/");
+            router.push("/products/onlymember");
         })
         .catch((error) => {
             console.error(error);

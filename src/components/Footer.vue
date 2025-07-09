@@ -34,14 +34,14 @@
                             <a href="/mypage/members" class="clickable withDivider"> 회원 조회</a>
                         </li>
                         <li>
-                            <a href="#" class="clickable">탈퇴신청</a>
+                            <a href="/mypage/withdraw" class="clickable">탈퇴신청</a>
                         </li>
                     </ul>
                 </div>
 
                 <ul class="footerCompanyInfo">
                     <li>(주)카리나벨</li>
-                    <li>대표이사: 주재현</li>
+                    <li>대표이사: 신은영</li>
                     <li>사업자등록번호: 443-19-01421</li>
                     <li>통신판매업신고: 2022-대전유성-0937</li>
                     <li>주소: 대전광역시 은구비남로7번길 73, 3층 301호</li>
