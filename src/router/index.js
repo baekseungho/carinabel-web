@@ -12,6 +12,7 @@ import InquiriesView from "@/views/myPage/InquiriesView.vue";
 import AddressView from "@/views/myPage/AddressView.vue";
 import OrderHistoryView from "@/views/myPage/OrderHistoryView.vue";
 import OrderHistoryDetailView from "@/views/myPage/OrderHistoryDetailView.vue";
+import WithdrawView from "@/views/myPage/WithdrawView.vue";
 import ProductView from "@/views/ProductView.vue";
 import ProductDetail from "@/views/ProductDetail.vue";
 import Onlymember from "@/views/OnlyMemberView.vue";
@@ -36,6 +37,7 @@ import AdminLoginView from "@/adminViews/AdminLoginView.vue";
 import AdminCreateView from "@/adminViews/AdminCreateView.vue";
 import AdminDashboardView from "@/adminViews/AdminDashboardView.vue";
 import AdminMemberManageView from "@/adminViews/AdminMemberManageView.vue";
+import AdminWithdrawnMemberManageView from "@/adminViews/AdminWithdrawnMemberManageView.vue";
 import AdminOrderManageView from "@/adminViews/AdminOrderManageView.vue";
 import DeliveryStatusView from "@/adminViews/DeliveryStatusView.vue";
 import ProductManageView from "@/adminViews/ProductManagerView.vue";
@@ -135,6 +137,11 @@ const routes = [
                 name: "InquiriesView",
                 component: InquiriesView,
             },
+            {
+                path: "withdraw",
+                name: "WithdrawView",
+                component: WithdrawView,
+            },
         ],
     },
     { path: "/about/greeting", name: "Greeting", component: Greeting },
@@ -206,6 +213,12 @@ const routes = [
                 path: "members",
                 name: "AdminMemberManageView",
                 component: AdminMemberManageView,
+                meta: { requiresAdmin: true, hideHeaderFooter: true },
+            },
+            {
+                path: "withdraw",
+                name: "AdminWithdrawnMemberManageView",
+                component: AdminWithdrawnMemberManageView,
                 meta: { requiresAdmin: true, hideHeaderFooter: true },
             },
             {

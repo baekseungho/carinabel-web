@@ -137,6 +137,23 @@ class AdminService {
             { headers: { Authorization: `Bearer ${token}` } }
         );
     }
+
+    getWithdrawnUsers(params, token) {
+        return axios.get("/admin/withdrawn-users", {
+            headers: { Authorization: `Bearer ${token}` },
+            params,
+        });
+    }
+
+    restoreUser(userId, token) {
+        return axios.put(
+            `/admin/restore/${userId}`,
+            {},
+            {
+                headers: { Authorization: `Bearer ${token}` },
+            }
+        );
+    }
 }
 
 export default new AdminService();

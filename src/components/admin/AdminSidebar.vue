@@ -26,6 +26,9 @@
                 <li>
                     <router-link to="/admin/answer" active-class="active">QnA</router-link>
                 </li>
+                <li>
+                    <router-link to="/admin/withdraw" active-class="active">탈퇴회원 리스트</router-link>
+                </li>
             </ul>
         </nav>
     </aside>

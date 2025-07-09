@@ -46,6 +46,16 @@ class UserService {
             headers: { Authorization: `Bearer ${token}` },
         });
     }
+
+    withdrawAccount(token, reason) {
+        return axios.put(
+            `${API_URL}/withdraw`,
+            { reason },
+            {
+                headers: { Authorization: `Bearer ${token}` },
+            }
+        );
+    }
 }
 
 export default new UserService();
