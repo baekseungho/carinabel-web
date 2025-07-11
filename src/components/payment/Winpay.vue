@@ -1,84 +1,166 @@
 <template>
-    <div>
-        <button style="font-size: 8px" class="buyProductButton" @click="initiateBankPay" :disabled="disabled">
-            결제TEST
-        </button>
+    <div class="buyProductButton">
+        <button class="payBtn" @click="startCardPayment">카드결제</button>
     </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import PayService from "@/api/SimplePayService.js";
-import { openBankPayWallet } from "@/utils/bankpayUtil"; // 팝업 띄우는 유틸 함수
+import { computed } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import AuthService from "@/api/AuthService";
+import OrderService from "@/api/OrderService";
 
 const props = defineProps({
-    productName: String,
-    amount: Number,
-    quantity: Number,
-    userInfo: Object, // { userId, fullName, email }
+    product: Object,
+    quantity: {
+        type: Number,
+        default: 1,
+    },
+    userInfo: Object,
     disabled: Boolean,
 });
 
-const SERVER_URL = window.location.origin;
-const jwtToken = localStorage.getItem("token");
+const router = useRouter();
+const store = useStore();
 
-function generateTid() {
-    const now = new Date();
-    const yyyyMMddHHmmss = now
-        .toISOString()
-        .replace(/[-T:\.Z]/g, "")
-        .substring(0, 14);
-    const rand = Math.floor(Math.random() * 100000)
-        .toString()
-        .padStart(5, "0");
-    return `ORDER_${yyyyMMddHHmmss}${rand}`;
-}
+const payUrl = "https://apitest.kiwoompay.co.kr/pay/link"; // 개발
+// const payUrl = " https://api.kiwoompay.co.kr/pay/link"; // 운영
+const server = "LIVE";
+const cpid = "CTS15178";
+const tmnid = "WGP329355";
+const authkey = "pk_9d09-2da619-d50-63aa9";
 
-const initiateBankPay = () => {
-    const tid = generateTid();
+const totalAmount = computed(() => {
+    // return 100;
+    return (props.product.memberPrice || 0) * props.quantity;
+});
 
-    const requestData = {
-        tid,
-        amt: props.amount,
-        goodsName: props.productName,
-        productType: "00", // 실물
-        payMethod: "BPAY",
-        ordNm: props.userInfo.fullName || "비회원",
-        email: props.userInfo.email || "test@example.com",
-        returnUrl: `${SERVER_URL}/payment/bankpay/result`,
-    };
+const orderNo = `${cpid}_${new Date().getTime()}`;
 
-    PayService.requestBankPay(requestData, jwtToken)
-        .then((res) => {
-            const data = res.data;
-            if (data.success) {
-                const urlData = JSON.parse(data.paymentUrl);
-                openBankPayWallet(urlData, tid); // 뱅크페이 전용 팝업 실행
-            } else {
-                alert(`결제 실패: ${data.message}`);
-            }
-        })
-        .catch((err) => {
-            console.error("❌ 결제 오류:", err);
-            alert("결제 요청 중 오류가 발생했습니다.");
-        });
+// 로그인한 사용자 정보
+const userId = props.userInfo?._id || "guest";
+const userName = props.userInfo?.name || "비회원";
+const email = props.userInfo?.email || "guest@example.com";
+const token = props.userInfo?.token;
+
+const startCardPayment = async () => {
+    if (!userId || !token) {
+        alert("로그인이 필요합니다.");
+        return;
+    }
+
+    try {
+        // ✅ 1. 회원 누적금액 업데이트 & 주문 생성
+        const updatePromise = AuthService.updateUserProfile(userId, totalAmount.value, token);
+        const orderPromise = OrderService.createOrder(
+            {
+                userId,
+                productName: props.product.koreanName,
+                amount: totalAmount.value,
+                quantity: props.quantity,
+                imagePath: props.product.imagePath,
+                status: "결제완료",
+            },
+            token
+        );
+        const [userRes, orderRes] = await Promise.all([updatePromise, orderPromise]);
+        store.dispatch("login", userRes.data);
+
+        const orderId = orderRes.data._id;
+
+        // ✅ 2. 결제 완료 후 이동할 페이지
+        const homeUrl = `${window.location.origin}/order-complete/${orderId}`;
+        const failUrl = `${window.location.origin}/payment/fail`;
+
+        // ✅ 3. 결제 요청 파라미터 세팅
+        const params = {
+            SERVER: server,
+            TYPE: "P",
+            PAYMETHOD: "CARD",
+            CPID: cpid,
+            RESERVEDSTRING: tmnid,
+            // KEY: authkey,
+            ORDERNO: orderNo,
+            PRODUCTTYPE: "1",
+            TAXFREECD: "00",
+            BILLTYPE: "1",
+            AMOUNT: totalAmount.value.toString(),
+            PRODUCTNAME: props.product.koreanName,
+            PRODUCTCODE: props.product._id,
+            USERID: userId,
+            USERNAME: userName,
+            EMAIL: email,
+            HOMEURL: homeUrl,
+            FAILURL: failUrl,
+        };
+
+        // ✅ 4. 결제 form 전송 (EUC-KR 인코딩)
+        const form = document.createElement("form");
+        form.setAttribute("method", "POST");
+        form.setAttribute("action", payUrl);
+        form.setAttribute("target", "KIWOOMPAY");
+        form.setAttribute("accept-charset", "euc-kr");
+
+        window.open("", "KIWOOMPAY", "width=468,height=750");
+
+        for (const key in params) {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = key;
+            input.value = params[key];
+            form.appendChild(input);
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    } catch (error) {
+        console.error("❌ 결제 준비 실패:", error);
+        const message = error.response?.data?.message || "결제 준비에 실패했습니다.";
+        alert(message);
+    }
 };
-
-// ✅ 팝업 닫힘 후 결과 확인
-function checkPaymentResult(tid) {
-    PayService.checkPaymentResult(tid, jwtToken)
-        .then((res) => {
-            const data = res.data;
-            if (data.success) {
-                alert("결제가 성공적으로 완료되었습니다.");
-                // ✅ 후처리 (예: 주문 저장, 이동 등)
-            } else {
-                alert(`결제 실패: ${data.message}`);
-            }
-        })
-        .catch((err) => {
-            console.error("❌ 결제 결과 확인 실패:", err);
-            alert("결제 결과 확인 중 오류가 발생했습니다.");
-        });
-}
 </script>
+
+<style scoped>
+.buyProductButton {
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.buyProductButton {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.payBtn {
+    padding: 4px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.payBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.payBtn .icon {
+    font-size: 18px;
+}
+</style>

@@ -55,22 +55,16 @@
                     </button>
                 </div>
                 <div class="btnBox">
-                    <Winpay
-                        :productName="product.koreanName"
-                        :amount="product.memberPrice * quantity"
-                        :quantity="quantity"
-                        :userInfo="user"
-                        :disabled="product.stock === 0"
-                    />
+                    <Winpay :product="product" :quantity="quantity" :userInfo="user" />
                 </div>
-                <div class="btnBox">
+                <!-- <div class="btnBox">
                     <KiwoomPay
                         :product="product"
                         :userInfo="user"
                         :quantity="quantity"
                         :disabled="product.stock === 0"
                     />
-                </div>
+                </div> -->
             </div>
         </div>
         <div class="productDaildescription">
