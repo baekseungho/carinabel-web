@@ -43,6 +43,18 @@ class OrderService {
         });
     }
 
+    updateOrderStatus(orderId, status, token) {
+        return axios.put(
+            `/orders/update-status/${orderId}`,
+            { status },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+    }
+
     getOrderDetail(orderId, token) {
         return axios.get(`${API_URL}/detail/${orderId}`, {
             headers: {
@@ -59,6 +71,22 @@ class OrderService {
         return axios.post(`${API_URL}/cancel/${orderId}`, payload, {
             headers: { Authorization: `Bearer ${token}` },
         });
+    }
+
+    // getPaymentStatus(tid, jwtToken) {
+    //     return axios.get(`/payment/status/${tid}`, {
+    //         baseURL: "https://api.kiwoompay.co.kr/api", // 윈페이 API
+    //         headers: {
+    //             Authorization: `Bearer ${jwtToken}`,
+    //         },
+    //     });
+    // }
+
+    getPaymentStatus(orderNo, jwtToken) {
+        return axios.get(`/payment/status/${orderNo}?token=${jwtToken}`);
+    }
+    getWinpayJwtToken() {
+        return axios.get("/payment/token");
     }
 }
 
