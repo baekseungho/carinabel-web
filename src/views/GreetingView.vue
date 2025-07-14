@@ -4,11 +4,11 @@
             <div class="executivePhotos">
                 <div class="executiveWrapper">
                     <img
-                        src="/img/executive1.jpg"
-                        alt="대표 주재현"
+                        src="/img/executive2.jpg"
+                        alt="대표사업자 신은영"
                         class="executivePhoto"
                     />
-                    <p class="executiveName">대표이사 주재현</p>
+                    <p class="executiveName">대표사업자 신은영</p>
                 </div>
             </div>
             <div class="greetingMessage">
@@ -39,7 +39,7 @@
                     당신의 모든 순간이 향기로 기억되는 특별한 하루가 되기를
                     진심으로 기원합니다.
                 </p>
-                <h2 class="themaColor3">대표이사 주재현 올림</h2>
+                <h2 class="themaColor3">대표사업자 신은영 올림</h2>
             </div>
         </div>
     </div>

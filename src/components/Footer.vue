@@ -20,28 +20,43 @@
                 <div class="footerLinks">
                     <ul>
                         <li>
-                            <a href="/file/카리나벨 개인정보취급방침.pdf" target="_blank" class="clickable withDivider">
+                            <a
+                                href="/file/카리나벨 개인정보취급방침.pdf"
+                                target="_blank"
+                                class="clickable withDivider"
+                            >
                                 개인정보처리방침
                             </a>
                         </li>
                         <li>
-                            <a href="/file/카리나벨 이용약관.pdf" target="_blank" class="clickable withDivider">
+                            <a
+                                href="/file/카리나벨 이용약관.pdf"
+                                target="_blank"
+                                class="clickable withDivider"
+                            >
                                 이용 약관
                             </a>
                         </li>
 
                         <li>
-                            <a href="/mypage/members" class="clickable withDivider"> 회원 조회</a>
+                            <a
+                                href="/mypage/members"
+                                class="clickable withDivider"
+                            >
+                                회원 조회</a
+                            >
                         </li>
                         <li>
-                            <a href="/mypage/withdraw" class="clickable">탈퇴신청</a>
+                            <a href="/mypage/withdraw" class="clickable"
+                                >탈퇴신청</a
+                            >
                         </li>
                     </ul>
                 </div>
 
                 <ul class="footerCompanyInfo">
                     <li>(주)카리나벨</li>
-                    <li>대표이사: 신은영</li>
+                    <li>대표사업자: 신은영</li>
                     <li>사업자등록번호: 443-19-01421</li>
                     <li>통신판매업신고: 2022-대전유성-0937</li>
                     <li>주소: 대전광역시 은구비남로7번길 73, 3층 301호</li>
