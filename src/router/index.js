@@ -50,7 +50,8 @@ import AdminReferralView from "@/adminViews/AdminReferralEarningsView.vue";
 import store from "@/store";
 
 const routes = [
-    { path: "/", name: "Home", component: HomeView },
+    { path: "/", redirect: "/products/onlymember" },
+    // { path: "/", name: "Home", component: HomeView },
 
     {
         path: "/login",

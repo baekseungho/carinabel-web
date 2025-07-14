@@ -47,15 +47,20 @@
                     </div>
                 </div>
                 <div class="buyBtnBox">
-                    <button class="buyProductButton" @click="buyProduct(product)" :disabled="product.stock === 0">
-                        구매하기
-                    </button>
+                    <Winpay :product="product" :quantity="quantity" :userInfo="user" />
                     <button class="buyProductButton" @click="addToCart(product._id)" :disabled="product.stock === 0">
                         장바구니에 담기
                     </button>
                 </div>
                 <div class="btnBox">
-                    <Winpay :product="product" :quantity="quantity" :userInfo="user" />
+                    <button
+                        style="margin-top: 16px"
+                        class="buyProductButton"
+                        @click="buyProduct(product)"
+                        :disabled="product.stock === 0"
+                    >
+                        테스트구매
+                    </button>
                 </div>
                 <!-- <div class="btnBox">
                     <KiwoomPay
