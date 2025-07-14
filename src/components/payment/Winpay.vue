@@ -78,8 +78,8 @@ const startCardPayment = async () => {
             PRODUCTTYPE: "2",
             TAXFREECD: "00",
             BILLTYPE: "1",
-            // AMOUNT: totalAmount.value.toString(),
-            AMOUNT: 100,
+            AMOUNT: totalAmount.value.toString(),
+            // AMOUNT: 100,
 
             PRODUCTNAME: props.product.koreanName,
             PRODUCTCODE: props.product._id,
@@ -117,26 +117,30 @@ const startCardPayment = async () => {
                 clearInterval(checkInterval);
 
                 try {
-                    // ✅ 윈페이 토큰 받아오기
+                    // ✅ 토큰 받아오기
                     const tokenRes = await OrderService.getWinpayJwtToken();
                     const winpayJwtToken = tokenRes.data.token;
 
-                    // ✅ 올바른 토큰을 사용하여 결제 결과 확인
+                    // ✅ 결제 상태 확인
                     const res = await OrderService.getPaymentStatus(orderNumber, winpayJwtToken);
                     const result = res.data;
 
-                    if (result.success && result.message === "결제 성공") {
-                        // 결제 성공
+                    if (result.success && result.status === "승인") {
+                        // ✅ 결제 성공
                         await OrderService.updateOrderStatus(orderId, "결제완료", token);
                         await AuthService.updateUserProfile(userId, totalAmount.value, token);
                         router.push(`/order-complete/${orderId}`);
                     } else {
-                        alert("❌ 결제가 정상적으로 처리되지 않았습니다.");
-                        console.warn("윈페이 응답:", result);
+                        // ✅ 결제 실패 or 미결제 → 주문 삭제
+                        await OrderService.deleteUnpaidOrder(orderId, token);
+                        alert("결제가 완료되지 않아 주문이 취소되었습니다.");
                     }
                 } catch (err) {
-                    console.error("❌ 결제 확인 API 실패:", err);
-                    alert("결제 결과 확인에 실패했습니다.");
+                    console.error("❌ 결제 확인 실패:", err);
+                    alert("결제 확인 중 오류 발생 (주문을 취소합니다).");
+
+                    // 실패해도 주문 삭제 시도
+                    await OrderService.deleteUnpaidOrder(orderId, token);
                 }
             }
         }, 1000);

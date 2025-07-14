@@ -88,6 +88,13 @@ class OrderService {
     getWinpayJwtToken() {
         return axios.get("/payment/token");
     }
+    deleteUnpaidOrder(orderId, token) {
+        return axios.delete(`/orders/delete-unpaid/${orderId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    }
 }
 
 export default new OrderService();
