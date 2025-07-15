@@ -22,11 +22,10 @@ const props = defineProps({
 const router = useRouter();
 const store = useStore();
 
-const payUrl = "https://apitest.kiwoompay.co.kr/pay/link"; // 개발
-// const payUrl = " https://api.kiwoompay.co.kr/pay/link"; // 운영
-const server = "DEV";
+// const payUrl = "https://apitest.kiwoompay.co.kr/pay/link"; // 개발
+const payUrl = " https://api.kiwoompay.co.kr/pay/link"; // 운영
+const server = "LIVE";
 const cpid = "CWP11504";
-const testcpid = " CTS15178";
 const tmnid = "WGP329355";
 
 const totalAmount = computed(() => {
@@ -48,7 +47,7 @@ const startCardPayment = async () => {
     }
 
     try {
-        // ✅ 1. 주문 생성 (입금대기)
+        // ✅ 1. 주문 생성만 먼저 진행 (status: 결제대기)
         const orderRes = await OrderService.createOrder(
             {
                 userId,
@@ -62,35 +61,36 @@ const startCardPayment = async () => {
         );
 
         const orderId = orderRes.data._id;
-        const orderNumber = orderRes.data.orderNumber;
+        const orderNumber = orderRes.data.orderNumber; // 결제창 식별용
 
-        // ✅ 2. 결제 완료 시 이동 주소
+        // ✅ 2. 결제 완료 후 이동할 페이지
         const homeUrl = `${window.location.origin}/order-complete/${orderId}`;
         const failUrl = `${window.location.origin}/payment/fail`;
 
-        // ✅ 3. 결제 파라미터 구성
+        // ✅ 3. 결제창 호출 파라미터 준비
         const params = {
             SERVER: server,
             TYPE: "P",
             PAYMETHOD: "CARD",
-            CPID: testcpid,
-            // RESERVEDSTRING: tmnid,
+            CPID: cpid,
+            RESERVEDSTRING: tmnid,
             ORDERNO: orderNumber,
             PRODUCTTYPE: "2",
             TAXFREECD: "00",
             BILLTYPE: "1",
-            // AMOUNT: totalAmount.value.toString(),
-            AMOUNT: "100",
+            AMOUNT: totalAmount.value.toString(),
+            // AMOUNT: 100,
+
             PRODUCTNAME: props.product.koreanName,
             PRODUCTCODE: props.product._id,
             USERID: userId,
             USERNAME: userName,
             EMAIL: email,
-            HOMEURL: homeUrl,
+            // HOMEURL: homeUrl,
             FAILURL: failUrl,
         };
 
-        // ✅ 4. 결제창 열기
+        // ✅ 4. 결제창 팝업 띄우기
         const paymentWindow = window.open("", "KIWOOMPAY", "width=468,height=750");
 
         const form = document.createElement("form");
@@ -111,19 +111,36 @@ const startCardPayment = async () => {
         form.submit();
         document.body.removeChild(form);
 
-        // ✅ 5. 결제창 닫힘 감지 → 결제 안 하고 닫은 경우 주문 삭제
+        // ✅ 5. 결제창 닫힘 감지 후 상태 업데이트 + 누적금액 업데이트
         const checkInterval = setInterval(async () => {
             if (paymentWindow.closed) {
                 clearInterval(checkInterval);
 
-                // ✅ 결제 성공 시에는 /order-complete/:id 로 리디렉션되므로
-                // 여기에 도달했다는 건 결제 안 하고 닫았다는 의미
                 try {
-                    await OrderService.deleteUnpaidOrder(orderId, token);
-                    alert("결제가 완료되지 않아 주문이 취소되었습니다.");
+                    // ✅ 토큰 받아오기
+                    const tokenRes = await OrderService.getWinpayJwtToken();
+                    const winpayJwtToken = tokenRes.data.token;
+
+                    // ✅ 결제 상태 확인
+                    const res = await OrderService.getPaymentStatus(orderNumber, winpayJwtToken);
+                    const result = res.data;
+
+                    if (result.success && result.status === "승인") {
+                        // ✅ 결제 성공
+                        await OrderService.updateOrderStatus(orderId, "결제완료", token);
+                        await AuthService.updateUserProfile(userId, totalAmount.value, token);
+                        router.push(`/order-complete/${orderId}`);
+                    } else {
+                        // ✅ 결제 실패 or 미결제 → 주문 삭제
+                        await OrderService.deleteUnpaidOrder(orderId, token);
+                        alert("결제가 완료되지 않아 주문이 취소되었습니다.");
+                    }
                 } catch (err) {
-                    console.error("❌ 주문 삭제 실패:", err);
-                    alert("결제 취소 처리 중 오류가 발생했습니다.");
+                    console.error("❌ 결제 확인 실패:", err);
+                    alert("결제 확인 중 오류 발생 (주문을 취소합니다).");
+
+                    // 실패해도 주문 삭제 시도
+                    await OrderService.deleteUnpaidOrder(orderId, token);
                 }
             }
         }, 1000);
@@ -134,7 +151,14 @@ const startCardPayment = async () => {
     }
 };
 
-onMounted(() => {});
+onMounted(async () => {
+    const tokenRes = await OrderService.getWinpayJwtToken();
+    const winpayJwtToken = tokenRes.data.token;
+    console.log(winpayJwtToken);
+    const res = await OrderService.getPaymentStatus("0000000089", winpayJwtToken);
+    const result = res.data;
+    console.log(result);
+});
 </script>
 
 <style scoped>

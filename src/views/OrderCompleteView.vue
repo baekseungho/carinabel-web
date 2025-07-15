@@ -40,6 +40,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import OrderService from "@/api/OrderService";
+import AuthService from "@/api/AuthService";
 import { useStore } from "vuex";
 
 const order = ref(null);
@@ -47,6 +48,7 @@ const route = useRoute();
 const router = useRouter();
 const store = useStore();
 const orderId = route.params.id;
+
 const formatDate = (dateStr) => {
     const date = new Date(dateStr);
     return date.toLocaleString("ko-KR", {
@@ -66,29 +68,37 @@ const goHome = () => {
     router.push("/");
 };
 
-onMounted(() => {
-    const orderId = route.params.id;
-    console.log(orderId);
+onMounted(async () => {
     const token = localStorage.getItem("token");
-    console.log("ㅎㅇㅎㅇ");
-    if (!orderId || !token) {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!orderId || !token || !user) {
         alert("잘못된 접근입니다.");
         router.push("/");
         return;
     }
 
-    OrderService.getOrderDetail(orderId, token)
-        .then((res) => {
-            order.value = res.data;
-            console.log(order.value);
-        })
-        .catch((err) => {
-            console.error("❌ 주문 정보 불러오기 실패:", err);
-            alert("주문 정보를 불러올 수 없습니다.");
-            router.push("/");
-        });
+    try {
+        // ✅ 1. 주문 상세 가져오기
+        const res = await OrderService.getOrderDetail(orderId, token);
+        order.value = res.data;
+
+        // ✅ 2. 상태가 입금대기인 경우만 → 결제완료 처리
+        if (order.value.status === "입금대기") {
+            // 주문 상태 변경
+            await OrderService.updateOrderStatus(orderId, "결제완료", token);
+
+            // 누적 금액 업데이트
+            await AuthService.updateUserProfile(user._id, order.value.amount, token);
+        }
+    } catch (err) {
+        console.error("❌ 주문 처리 실패:", err);
+        alert("주문 정보를 처리할 수 없습니다.");
+        router.push("/");
+    }
 });
 </script>
+
 <style scoped>
 .orderCompleteContainer {
     max-width: 700px;
