@@ -44,6 +44,7 @@ import ProductManageView from "@/adminViews/ProductManagerView.vue";
 import KitManageView from "@/adminViews/AdminKitManageView.vue";
 import AnswerManagerView from "@/adminViews/AnswerManagerView.vue";
 import AdminShippingView from "@/adminViews/AdminShippingView.vue";
+import NoticeManagerView from "@/adminViews/AdminNoticeView.vue";
 import AdminQnaView from "@/adminViews/AdminQnaView.vue";
 import AdminReferralView from "@/adminViews/AdminReferralEarningsView.vue";
 
@@ -175,13 +176,13 @@ const routes = [
         path: "/notices",
         name: "Notices",
         component: Notices,
-        meta: { maintenance: true },
+        // meta: { maintenance: true },
     },
     {
         path: "/notice/:id",
         name: "NoticeDetail",
         component: NoticeDetail,
-        meta: { maintenance: true },
+        // meta: { maintenance: true },
     },
 
     // 관리자 페이지
@@ -250,6 +251,12 @@ const routes = [
                 path: "answer",
                 name: "AnswerManagerView",
                 component: AnswerManagerView,
+                meta: { requiresAdmin: true, hideHeaderFooter: true },
+            },
+            {
+                path: "notice",
+                name: "NoticeManagerView",
+                component: NoticeManagerView,
                 meta: { requiresAdmin: true, hideHeaderFooter: true },
             },
             {

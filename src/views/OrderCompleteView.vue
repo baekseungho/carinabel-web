@@ -1,7 +1,10 @@
 <template>
     <div class="orderCompleteContainer" v-if="order">
         <div class="productPreview">
-            <img :src="order.product.imagePath" :alt="order.product.productName" />
+            <img
+                :src="order.product.imagePath"
+                :alt="order.product.productName"
+            />
         </div>
 
         <div class="completeMessage">
@@ -13,10 +16,17 @@
             <h2>주문 정보</h2>
             <ul>
                 <li><strong>주문번호:</strong> {{ order.orderNumber }}</li>
-                <li><strong>주문일시:</strong> {{ formatDate(order.createdAt) }}</li>
-                <li><strong>상품명:</strong> {{ order.product.productName }}</li>
+                <li>
+                    <strong>주문일시:</strong> {{ formatDate(order.createdAt) }}
+                </li>
+                <li>
+                    <strong>상품명:</strong> {{ order.product.productName }}
+                </li>
                 <li><strong>수량:</strong> {{ order.product.quantity }}개</li>
-                <li><strong>결제금액:</strong> {{ formatPrice(order.product.amount) }}원</li>
+                <li>
+                    <strong>결제금액:</strong>
+                    {{ formatPrice(order.product.amount) }}원
+                </li>
                 <li><strong>결제수단:</strong> {{ order.payment.method }}</li>
                 <li><strong>결제상태:</strong> {{ order.status }}</li>
             </ul>
@@ -25,10 +35,15 @@
         <div class="orderCard">
             <h2>배송지 정보</h2>
             <ul>
-                <li><strong>수령인:</strong> {{ order.delivery.recipientName }}</li>
+                <li>
+                    <strong>수령인:</strong> {{ order.delivery.recipientName }}
+                </li>
                 <li><strong>연락처:</strong> {{ order.user.phone }}</li>
                 <li><strong>우편번호:</strong> {{ order.delivery.zipCode }}</li>
-                <li><strong>주소:</strong> {{ order.delivery.address }} {{ order.delivery.detailAddress }}</li>
+                <li>
+                    <strong>주소:</strong> {{ order.delivery.address }}
+                    {{ order.delivery.detailAddress }}
+                </li>
                 <li><strong>배송 메모:</strong> {{ order.delivery.memo }}</li>
             </ul>
         </div>
@@ -83,13 +98,21 @@ onMounted(async () => {
         const res = await OrderService.getOrderDetail(orderId, token);
         order.value = res.data;
 
-        // ✅ 2. 상태가 입금대기인 경우만 → 결제완료 처리
+        // ✅ 2. 상태가 입금대기인 경우 → 결제완료 처리
         if (order.value.status === "입금대기") {
-            // 주문 상태 변경
+            // 주문 상태 서버 업데이트
             await OrderService.updateOrderStatus(orderId, "결제완료", token);
 
+            // 프론트 상태도 직접 반영
+            order.value.status = "결제완료";
+
             // 누적 금액 업데이트
-            await AuthService.updateUserProfile(user._id, order.value.amount, token);
+            await AuthService.updateUserProfile(
+                user._id,
+                order.value.product.amount,
+                token
+            );
+            localStorage.setItem("paidOrder", orderId);
         }
     } catch (err) {
         console.error("❌ 주문 처리 실패:", err);

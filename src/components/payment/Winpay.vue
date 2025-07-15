@@ -33,8 +33,6 @@ const totalAmount = computed(() => {
     return (props.product.memberPrice || 0) * props.quantity;
 });
 
-const orderNo = `${cpid}_${new Date().getTime()}`;
-
 // 로그인한 사용자 정보
 const userId = props.userInfo?._id || "guest";
 const userName = props.userInfo?.name || "비회원";
@@ -73,14 +71,14 @@ const startCardPayment = async () => {
             SERVER: server,
             TYPE: "P",
             PAYMETHOD: "CARD",
-            CPID: testcpid,
+            CPID: "CTS15178",
             // RESERVEDSTRING: tmnid,
             ORDERNO: orderNumber,
-            PRODUCTTYPE: "2",
+            PRODUCTTYPE: "1",
             TAXFREECD: "00",
             BILLTYPE: "1",
             // AMOUNT: totalAmount.value.toString(),
-            AMOUNT: "100",
+            AMOUNT: 100,
             PRODUCTNAME: props.product.koreanName,
             PRODUCTCODE: props.product._id,
             USERID: userId,
@@ -91,7 +89,11 @@ const startCardPayment = async () => {
         };
 
         // ✅ 4. 결제창 열기
-        const paymentWindow = window.open("", "KIWOOMPAY", "width=468,height=750");
+        const paymentWindow = window.open(
+            "",
+            "KIWOOMPAY",
+            "width=468,height=750"
+        );
 
         const form = document.createElement("form");
         form.setAttribute("method", "POST");
@@ -111,13 +113,20 @@ const startCardPayment = async () => {
         form.submit();
         document.body.removeChild(form);
 
-        // ✅ 5. 결제창 닫힘 감지 → 결제 안 하고 닫은 경우 주문 삭제
+        // ✅ 5. 결제창 닫힘 감지
         const checkInterval = setInterval(async () => {
             if (paymentWindow.closed) {
                 clearInterval(checkInterval);
 
-                // ✅ 결제 성공 시에는 /order-complete/:id 로 리디렉션되므로
-                // 여기에 도달했다는 건 결제 안 하고 닫았다는 의미
+                const paidOrderId = localStorage.getItem("paidOrder");
+                localStorage.removeItem("paidOrder");
+
+                if (paidOrderId === orderId) {
+                    // ✅ 결제 성공으로 창이 닫힌 경우 → 아무것도 안 함
+                    return;
+                }
+
+                // ✅ 결제 안 하고 창 닫은 경우 → 주문 삭제
                 try {
                     await OrderService.deleteUnpaidOrder(orderId, token);
                     alert("결제가 완료되지 않아 주문이 취소되었습니다.");
@@ -129,7 +138,8 @@ const startCardPayment = async () => {
         }, 1000);
     } catch (error) {
         console.error("❌ 결제 준비 실패:", error);
-        const message = error.response?.data?.message || "결제 준비에 실패했습니다.";
+        const message =
+            error.response?.data?.message || "결제 준비에 실패했습니다.";
         alert(message);
     }
 };

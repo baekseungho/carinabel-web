@@ -4,12 +4,16 @@
             <div class="back bigIcon"></div>
         </div>
 
-        <div class="noticeDetailWrapper">
+        <div class="noticeDetailWrapper" v-if="notice">
             <h1>{{ notice.title }}</h1>
             <p class="noticeDate">{{ notice.date }}</p>
             <div class="noticeContent">
                 <p>{{ notice.content }}</p>
             </div>
+        </div>
+
+        <div v-else class="noNoticeMessage">
+            <p>공지사항을 찾을 수 없습니다.</p>
         </div>
     </div>
 </template>
@@ -17,78 +21,90 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useStore } from "vuex";
+
+import NoticeService from "@/api/NoticeService";
 
 const route = useRoute();
 const router = useRouter();
-const notice = ref({});
+const store = useStore();
+const token = store.state.token.token;
 
-// 더미 데이터 (나중에 백엔드 연동 예정)
-const notices = [
-    { id: 1, title: "공지사항 1", content: "공지사항 내용 1", date: "2025-05-19" },
-    { id: 2, title: "공지사항 2", content: "공지사항 내용 2", date: "2025-05-18" },
-    { id: 3, title: "공지사항 3", content: "공지사항 내용 3", date: "2025-05-17" },
-    { id: 4, title: "공지사항 4", content: "공지사항 내용 4", date: "2025-05-16" },
-    { id: 5, title: "공지사항 5", content: "공지사항 내용 5", date: "2025-05-15" },
-];
+const notice = ref(null);
+
+// 공지 상세 가져오기
+const fetchNoticeDetail = () => {
+    const id = route.params.id;
+
+    NoticeService.getNoticeDetail(id, token)
+        .then((res) => {
+            notice.value = res.data;
+        })
+        .catch((err) => {
+            console.error("❌ 공지사항 상세 조회 실패:", err);
+            notice.value = null;
+        });
+};
+
+const goBack = () => {
+    router.push("/notices");
+};
 
 onMounted(() => {
-    const id = Number(route.params.id);
-    notice.value = notices.find((n) => n.id === id) || {
-        title: "글을 찾을 수 없습니다",
-        content: "해당 글이 존재하지 않습니다.",
-        date: "",
-    };
+    fetchNoticeDetail();
 });
-
-function goBack() {
-    router.push("/notices");
-}
 </script>
-
 <style scoped>
 .noticeDetailContainer {
-    padding: 40px 20px;
-    background-color: #f7f7f7;
+    padding: 60px 30px;
+    /* background-color: #fafafa; */
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: center;
     position: relative;
 }
+
 .noticeDetailWrapper {
     max-width: 1000px;
     width: 100%;
     background-color: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-    padding: 40px;
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+    padding: 48px 60px;
     position: relative;
+    transition: all 0.3s ease;
 }
+
 .noticeDetailWrapper h1 {
-    font-size: 2.2rem;
-    color: #333;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #cc8a94;
-    padding-bottom: 10px;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c2c2c;
+    margin-bottom: 28px;
+    border-bottom: 3px solid #cc8a94;
+    padding-bottom: 14px;
 }
+
 .noticeDate {
     font-size: 1rem;
-    color: #777;
-    margin-bottom: 20px;
+    color: #999;
+    margin-bottom: 32px;
 }
+
 .noticeContent {
-    font-size: 1.2rem;
-    color: #555;
-    line-height: 1.8;
+    font-size: 1.125rem;
+    color: #444;
+    line-height: 2;
+    white-space: pre-line;
 }
+
 .backButton {
     position: absolute;
-    top: 20px;
+    top: 8px;
     left: 20px;
     background-color: transparent;
     color: #333;
-    padding: 10px 20px;
+    padding: 10px 12px;
     font-size: 14px;
-    border: none;
+    border: 1px solid #eee;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s;
@@ -97,5 +113,44 @@ function goBack() {
 .backButton:hover {
     background-color: #cc8a94;
     color: #fff;
+}
+
+/* ✅ 반응형: 태블릿 이하 (≤1200px) */
+@media (max-width: 1200px) {
+    .noticeDetailWrapper {
+        padding: 40px 32px;
+    }
+
+    .noticeDetailWrapper h1 {
+        font-size: 2rem;
+    }
+
+    .noticeContent {
+        font-size: 1rem;
+    }
+    .backButton {
+        top: 4px;
+        left: 10px;
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+}
+
+/* ✅ 반응형: 모바일 이하 (≤600px) */
+@media (max-width: 600px) {
+    .noticeDetailWrapper {
+        padding: 32px 20px;
+        border-radius: 16px;
+    }
+
+    .noticeDetailWrapper h1 {
+        font-size: 1.6rem;
+        padding-bottom: 10px;
+    }
+
+    .noticeContent {
+        font-size: 0.95rem;
+        line-height: 1.7;
+    }
 }
 </style>
