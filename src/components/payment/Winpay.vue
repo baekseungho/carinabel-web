@@ -27,7 +27,7 @@ const payUrl = "https://apitest.kiwoompay.co.kr/pay/link"; // 개발
 // const payUrl = " https://api.kiwoompay.co.kr/pay/link"; // 운영
 const server = "DEV";
 const cpid = "CWP11504";
-const testcpid = " CTS15178";
+const testcpid = "CTS15178";
 const tmnid = "WGP329355";
 
 const totalAmount = computed(() => {
@@ -47,16 +47,126 @@ const startCardPayment = async () => {
     }
 
     try {
-        // ✅ 1. 주문 생성 (입금대기)
+        // 🛒 1. 주문 유형이 장바구니일 경우
+        if (props.orderType === "cart") {
+            // 장바구니 상품 정보 준비
+            const simplifiedCartItems = props.product.map((item) => ({
+                productId: item.productId._id,
+                quantity: item.quantity,
+            }));
+
+            const firstProductName =
+                props.product[0]?.productId.koreanName || "상품";
+            const extraCount = props.product.length - 1;
+            const productName =
+                extraCount > 0
+                    ? `${firstProductName} 외 ${extraCount}개`
+                    : firstProductName;
+
+            const totalQuantity = props.product.reduce(
+                (sum, item) => sum + item.quantity,
+                0
+            );
+
+            const totalPrice = props.product.reduce(
+                (sum, item) => sum + item.price * item.quantity,
+                0
+            );
+
+            const orderRes = await OrderService.createOrder(
+                {
+                    userId,
+                    productName,
+                    imagePath: props.product[0]?.productId.imagePath || "",
+                    amount: totalPrice,
+                    quantity: totalQuantity,
+                    status: "입금대기",
+                    orderType: "cart",
+                    cartItems: simplifiedCartItems,
+                },
+                token
+            );
+
+            const orderId = orderRes.data._id;
+            const orderNumber = orderRes.data.orderNumber;
+
+            const homeUrl = `${window.location.origin}/order-complete/${orderId}`;
+            const failUrl = `${window.location.origin}/payment/fail`;
+
+            const params = {
+                SERVER: server,
+                TYPE: "P",
+                PAYMETHOD: "CARD",
+                CPID: "CTS15178",
+                ORDERNO: orderNumber,
+                PRODUCTTYPE: "1",
+                TAXFREECD: "00",
+                BILLTYPE: "1",
+                // AMOUNT: totalPrice.toString(), // 실제 금액
+                AMOUNT: 100, // 테스트용
+                PRODUCTNAME: productName,
+                PRODUCTCODE: "cart-mixed",
+                USERID: userId,
+                USERNAME: userName,
+                EMAIL: email,
+                HOMEURL: homeUrl,
+                FAILURL: failUrl,
+            };
+
+            const paymentWindow = window.open(
+                "",
+                "KIWOOMPAY",
+                "width=468,height=750"
+            );
+
+            const form = document.createElement("form");
+            form.setAttribute("method", "POST");
+            form.setAttribute("action", payUrl);
+            form.setAttribute("target", "KIWOOMPAY");
+            form.setAttribute("accept-charset", "euc-kr");
+
+            for (const key in params) {
+                const input = document.createElement("input");
+                input.type = "hidden";
+                input.name = key;
+                input.value = params[key];
+                form.appendChild(input);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+
+            const checkInterval = setInterval(async () => {
+                if (paymentWindow.closed) {
+                    clearInterval(checkInterval);
+
+                    const paidOrderId = localStorage.getItem("paidOrder");
+                    localStorage.removeItem("paidOrder");
+
+                    if (paidOrderId === orderId) return;
+
+                    try {
+                        await OrderService.deleteUnpaidOrder(orderId, token);
+                        alert("결제가 완료되지 않아 주문이 취소되었습니다.");
+                    } catch (err) {
+                        console.error("❌ 주문 삭제 실패:", err);
+                        alert("결제 취소 처리 중 오류가 발생했습니다.");
+                    }
+                }
+            }, 1000);
+
+            return; // ✅ cart 흐름은 여기서 종료
+        }
+
+        // 💧 oil 또는 🧴 kit 주문 처리 (기존 그대로 유지)
         const orderRes = await OrderService.createOrder(
             {
                 userId,
                 productName:
-                    props.orderType == "oil"
+                    props.orderType === "oil"
                         ? props.product.koreanName
-                        : props.orderType === "kit"
-                        ? props.product.kitName
-                        : "",
+                        : props.product.kitName,
                 amount: totalAmount.value,
                 quantity: props.quantity,
                 imagePath: props.product.imagePath,
@@ -69,29 +179,25 @@ const startCardPayment = async () => {
         const orderId = orderRes.data._id;
         const orderNumber = orderRes.data.orderNumber;
 
-        // ✅ 2. 결제 완료 시 이동 주소
         const homeUrl = `${window.location.origin}/order-complete/${orderId}`;
         const failUrl = `${window.location.origin}/payment/fail`;
 
-        // ✅ 3. 결제 파라미터 구성
         const params = {
             SERVER: server,
             TYPE: "P",
             PAYMETHOD: "CARD",
             CPID: "CTS15178",
-            // RESERVEDSTRING: tmnid,
             ORDERNO: orderNumber,
             PRODUCTTYPE: "1",
             TAXFREECD: "00",
             BILLTYPE: "1",
             // AMOUNT: totalAmount.value.toString(),
             AMOUNT: 100,
+
             PRODUCTNAME:
-                props.orderType == "oil"
+                props.orderType === "oil"
                     ? props.product.koreanName
-                    : props.orderType === "kit"
-                    ? props.product.kitName
-                    : "",
+                    : props.product.kitName,
             PRODUCTCODE: props.product._id,
             USERID: userId,
             USERNAME: userName,
@@ -100,8 +206,11 @@ const startCardPayment = async () => {
             FAILURL: failUrl,
         };
 
-        // ✅ 4. 결제창 열기
-        const paymentWindow = window.open("", "KIWOOMPAY", "width=468,height=750");
+        const paymentWindow = window.open(
+            "",
+            "KIWOOMPAY",
+            "width=468,height=750"
+        );
 
         const form = document.createElement("form");
         form.setAttribute("method", "POST");
@@ -121,7 +230,6 @@ const startCardPayment = async () => {
         form.submit();
         document.body.removeChild(form);
 
-        // ✅ 5. 결제창 닫힘 감지
         const checkInterval = setInterval(async () => {
             if (paymentWindow.closed) {
                 clearInterval(checkInterval);
@@ -129,12 +237,8 @@ const startCardPayment = async () => {
                 const paidOrderId = localStorage.getItem("paidOrder");
                 localStorage.removeItem("paidOrder");
 
-                if (paidOrderId === orderId) {
-                    // ✅ 결제 성공으로 창이 닫힌 경우 → 아무것도 안 함
-                    return;
-                }
+                if (paidOrderId === orderId) return;
 
-                // ✅ 결제 안 하고 창 닫은 경우 → 주문 삭제
                 try {
                     await OrderService.deleteUnpaidOrder(orderId, token);
                     alert("결제가 완료되지 않아 주문이 취소되었습니다.");
@@ -146,7 +250,8 @@ const startCardPayment = async () => {
         }, 1000);
     } catch (error) {
         console.error("❌ 결제 준비 실패:", error);
-        const message = error.response?.data?.message || "결제 준비에 실패했습니다.";
+        const message =
+            error.response?.data?.message || "결제 준비에 실패했습니다.";
         alert(message);
     }
 };

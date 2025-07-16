@@ -57,7 +57,7 @@ import { useRoute, useRouter } from "vue-router";
 import OrderService from "@/api/OrderService";
 import AuthService from "@/api/AuthService";
 import { useStore } from "vuex";
-
+import CartService from "@/api/CartService";
 const order = ref(null);
 const route = useRoute();
 const router = useRouter();
@@ -100,18 +100,28 @@ onMounted(async () => {
 
         // ✅ 2. 상태가 입금대기인 경우 → 결제완료 처리
         if (order.value.status === "입금대기") {
-            // 주문 상태 서버 업데이트
             await OrderService.updateOrderStatus(orderId, "결제완료", token);
-
-            // 프론트 상태도 직접 반영
             order.value.status = "결제완료";
 
-            // 누적 금액 업데이트
-            await AuthService.updateUserProfile(
+            // ✅ 3. 누적 금액 업데이트 및 Vuex 반영
+            const userRes = await AuthService.updateUserProfile(
                 user._id,
-                order.value.product.amount,
+                order.value.product.amount, // ✅ order.value.product.amount → order.value.amount로 변경 권장
                 token
             );
+            console.log("주문완료", userRes);
+            store.dispatch("login", userRes.data); // ✅ UI 업데이트
+
+            // ✅ 4. 장바구니 주문이면 장바구니 비우기
+            if (order.value.orderType === "cart") {
+                try {
+                    await CartService.clearCart(token);
+                    console.log("🛒 장바구니 비우기 완료");
+                } catch (clearErr) {
+                    console.warn("🛒 장바구니 비우기 실패:", clearErr);
+                }
+            }
+
             localStorage.setItem("paidOrder", orderId);
         }
     } catch (err) {

@@ -16,8 +16,12 @@
                     <h2 class="cartItemTitle">
                         {{ item.productId.koreanName }}
                     </h2>
-                    <p class="cartItemVolume">용량: {{ item.productId.volume }}ml</p>
-                    <p class="cartItemPrice">회원가: {{ formatPrice(item.price) }}원</p>
+                    <p class="cartItemVolume">
+                        용량: {{ item.productId.volume }}ml
+                    </p>
+                    <p class="cartItemPrice">
+                        회원가: {{ formatPrice(item.price) }}원
+                    </p>
                     <div class="cartItemQuantity">
                         <button @click="decreaseQuantity(item)">
                             <i class="fas fa-minus"></i>
@@ -28,7 +32,10 @@
                         </button>
                     </div>
 
-                    <button class="removeItemButton" @click="deleteItem(item._id)">
+                    <button
+                        class="removeItemButton"
+                        @click="deleteItem(item._id)"
+                    >
                         <div class="x smallIcon"></div>
                         삭제
                     </button>
@@ -43,7 +50,29 @@
                 총 금액:
                 <span class="totalPrice">{{ formatPrice(totalPrice) }}원</span>
             </p>
-            <button class="checkoutButton" @click="buyCart()">주문하기</button>
+            <div style="width: 100%; display: flex; justify-content: end">
+                <div
+                    style="
+                        display: flex;
+                        width: 30%;
+                        align-items: center;
+                        justify-content: space-between;
+                    "
+                >
+                    <div style="width: 49%">
+                        <Winpay
+                            style="width: 100%"
+                            :product="cartItems"
+                            :quantity="quantity"
+                            :userInfo="user"
+                            orderType="cart"
+                        />
+                    </div>
+                    <button class="checkoutButton" @click="buyCart()">
+                        주문하기
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -54,9 +83,11 @@ import CartService from "@/api/CartService.js";
 import AuthService from "@/api/AuthService.js";
 import OrderService from "@/api/OrderService.js";
 import { useStore } from "vuex";
-
+import Winpay from "@/components/payment/Winpay.vue";
 const cartItems = ref([]);
 const store = useStore();
+const user = ref(JSON.parse(localStorage.getItem("user")));
+
 const token = localStorage.getItem("token");
 function formatPrice(price) {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -133,7 +164,10 @@ const buyCart = async () => {
     }));
     const firstProductName = cartItems.value[0]?.productId.koreanName || "상품";
     const extraCount = cartItems.value.length - 1;
-    const productName = extraCount > 0 ? `${firstProductName} 외 ${extraCount}개` : firstProductName;
+    const productName =
+        extraCount > 0
+            ? `${firstProductName} 외 ${extraCount}개`
+            : firstProductName;
     try {
         // 주문 생성 (cart type)
         const orderRes = await OrderService.createOrder(
@@ -142,7 +176,10 @@ const buyCart = async () => {
                 productName,
                 imagePath: cartItems.value[0]?.productId.imagePath || "",
                 amount: totalPrice.value,
-                quantity: cartItems.value.reduce((sum, item) => sum + item.quantity, 0),
+                quantity: cartItems.value.reduce(
+                    (sum, item) => sum + item.quantity,
+                    0
+                ),
                 status: "입금대기", // 결제 전 상태
                 orderType: "cart",
                 cartItems: simplifiedCartItems,
@@ -169,7 +206,9 @@ const buyCart = async () => {
     }
 };
 // 📝 총 금액 계산
-const totalPrice = computed(() => cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0));
+const totalPrice = computed(() =>
+    cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
+);
 
 onMounted(() => {
     getCartList();
@@ -313,8 +352,9 @@ onMounted(() => {
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    margin-top: 20px;
+    /* margin-top: 20px; */
     transition: background-color 0.2s;
+    width: 49%;
 }
 
 .checkoutButton:hover {
