@@ -17,6 +17,7 @@ const props = defineProps({
     },
     userInfo: Object,
     disabled: Boolean,
+    orderType: String,
 });
 
 const router = useRouter();
@@ -50,11 +51,17 @@ const startCardPayment = async () => {
         const orderRes = await OrderService.createOrder(
             {
                 userId,
-                productName: props.product.koreanName,
+                productName:
+                    props.orderType == "oil"
+                        ? props.product.koreanName
+                        : props.orderType === "kit"
+                        ? props.product.kitName
+                        : "",
                 amount: totalAmount.value,
                 quantity: props.quantity,
                 imagePath: props.product.imagePath,
                 status: "입금대기",
+                orderType: props.orderType,
             },
             token
         );
@@ -79,7 +86,12 @@ const startCardPayment = async () => {
             BILLTYPE: "1",
             // AMOUNT: totalAmount.value.toString(),
             AMOUNT: 100,
-            PRODUCTNAME: props.product.koreanName,
+            PRODUCTNAME:
+                props.orderType == "oil"
+                    ? props.product.koreanName
+                    : props.orderType === "kit"
+                    ? props.product.kitName
+                    : "",
             PRODUCTCODE: props.product._id,
             USERID: userId,
             USERNAME: userName,
@@ -89,11 +101,7 @@ const startCardPayment = async () => {
         };
 
         // ✅ 4. 결제창 열기
-        const paymentWindow = window.open(
-            "",
-            "KIWOOMPAY",
-            "width=468,height=750"
-        );
+        const paymentWindow = window.open("", "KIWOOMPAY", "width=468,height=750");
 
         const form = document.createElement("form");
         form.setAttribute("method", "POST");
@@ -138,13 +146,14 @@ const startCardPayment = async () => {
         }, 1000);
     } catch (error) {
         console.error("❌ 결제 준비 실패:", error);
-        const message =
-            error.response?.data?.message || "결제 준비에 실패했습니다.";
+        const message = error.response?.data?.message || "결제 준비에 실패했습니다.";
         alert(message);
     }
 };
 
-onMounted(() => {});
+onMounted(() => {
+    console.log(props);
+});
 </script>
 
 <style scoped>

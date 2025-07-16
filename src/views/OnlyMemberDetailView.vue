@@ -47,7 +47,7 @@
                     </div>
                 </div>
                 <div class="buyBtnBox">
-                    <Winpay :product="product" :quantity="quantity" :userInfo="user" />
+                    <Winpay :product="product" :quantity="quantity" :userInfo="user" orderType="oil" />
                     <button class="buyProductButton" @click="addToCart(product._id)" :disabled="product.stock === 0">
                         장바구니에 담기
                     </button>

@@ -16,12 +16,8 @@
                     <h2 class="cartItemTitle">
                         {{ item.productId.koreanName }}
                     </h2>
-                    <p class="cartItemVolume">
-                        용량: {{ item.productId.volume }}ml
-                    </p>
-                    <p class="cartItemPrice">
-                        회원가: {{ formatPrice(item.price) }}원
-                    </p>
+                    <p class="cartItemVolume">용량: {{ item.productId.volume }}ml</p>
+                    <p class="cartItemPrice">회원가: {{ formatPrice(item.price) }}원</p>
                     <div class="cartItemQuantity">
                         <button @click="decreaseQuantity(item)">
                             <i class="fas fa-minus"></i>
@@ -32,10 +28,7 @@
                         </button>
                     </div>
 
-                    <button
-                        class="removeItemButton"
-                        @click="deleteItem(item._id)"
-                    >
+                    <button class="removeItemButton" @click="deleteItem(item._id)">
                         <div class="x smallIcon"></div>
                         삭제
                     </button>
@@ -123,7 +116,7 @@ const deleteItem = (itemId) => {
         });
 };
 
-function buyCart() {
+const buyCart = async () => {
     if (!totalPrice.value) {
         alert("장바구니가 비어있습니다.");
         return;
@@ -133,46 +126,50 @@ function buyCart() {
     const userId = user._id;
     const token = user.token;
 
-    // 1️⃣ 수당/등급 업데이트
-    AuthService.updateUserProfile(userId, totalPrice.value, token)
-        .then((response) => {
-            // 2️⃣ 주문기록 → 장바구니 아이템마다
-            const orderPromises = cartItems.value.map((item) => {
-                console.log(
-                    "🛒 주문 생성용 데이터:",
-                    item.productId.koreanName,
-                    item.price,
-                    item.quantity
-                );
-                return OrderService.createOrder(
-                    {
-                        userId,
-                        productName: item.productId.koreanName, // ✅ 이 값이 undefined면 에러 발생
-                        imagePath: item.productId.imagePath,
-                        amount: item.price * item.quantity,
-                        quantity: item.quantity,
-                        status: "결제완료",
-                    },
-                    token
-                );
-            });
+    // 장바구니 상품 정보를 cartItems 배열로 정리
+    const simplifiedCartItems = cartItems.value.map((item) => ({
+        productId: item.productId._id,
+        quantity: item.quantity,
+    }));
+    const firstProductName = cartItems.value[0]?.productId.koreanName || "상품";
+    const extraCount = cartItems.value.length - 1;
+    const productName = extraCount > 0 ? `${firstProductName} 외 ${extraCount}개` : firstProductName;
+    try {
+        // 주문 생성 (cart type)
+        const orderRes = await OrderService.createOrder(
+            {
+                userId,
+                productName,
+                imagePath: cartItems.value[0]?.productId.imagePath || "",
+                amount: totalPrice.value,
+                quantity: cartItems.value.reduce((sum, item) => sum + item.quantity, 0),
+                status: "입금대기", // 결제 전 상태
+                orderType: "cart",
+                cartItems: simplifiedCartItems,
+            },
+            token
+        );
 
-            return Promise.all(orderPromises).then(() => {
-                alert("장바구니 상품들을 구매했습니다.");
-                store.dispatch("login", response.data);
-                getCartList(); // 장바구니 비우기
+        // 주문 생성 성공 후 결제창 호출 등의 로직 이어서 작성
+        const orderId = orderRes.data._id;
+        console.log("✅ 주문 생성 완료:", orderId);
+        alert("장바구니 상품들을 구매했습니다.");
+        CartService.clearCart(token)
+            .then((response) => {
+                console.log(response);
+                getCartList();
+            })
+            .catch((error) => {
+                console.error(error);
+                alert("상품 삭제에 실패했습니다.");
             });
-        })
-        .catch((error) => {
-            console.error("❌ 장바구니 구매 실패:", error);
-            alert("구매에 실패했습니다.");
-        });
-}
-
+    } catch (err) {
+        console.error("❌ 장바구니 주문 생성 실패:", err);
+        alert("장바구니 주문 생성에 실패했습니다.");
+    }
+};
 // 📝 총 금액 계산
-const totalPrice = computed(() =>
-    cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
-);
+const totalPrice = computed(() => cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0));
 
 onMounted(() => {
     getCartList();

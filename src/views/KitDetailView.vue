@@ -6,11 +6,7 @@
 
         <div class="productDetailWrapper">
             <div class="productImageWrapper">
-                <img
-                    :src="kit.imagePath || '/img/default.jpg'"
-                    :alt="kit.kitName"
-                    class="productImage"
-                />
+                <img :src="kit.imagePath || '/img/default.jpg'" :alt="kit.kitName" class="productImage" />
             </div>
 
             <div class="productInfoWrapper">
@@ -21,19 +17,14 @@
                 <p class="productVolume">구성품:</p>
                 <ul>
                     <li v-for="(item, index) in kit.products" :key="index">
-                        - {{ item.productInfo.koreanName }} ×
-                        {{ item.quantity }} (재고:
+                        - {{ item.productInfo.koreanName }} × {{ item.quantity }} (재고:
                         {{ item.productInfo.stock || 0 }}개)
                     </li>
                 </ul>
 
-                <p class="productVolume">
-                    총 구성 원가: {{ formatPrice(kit.originalPrice) }}원
-                </p>
+                <p class="productVolume">총 구성 원가: {{ formatPrice(kit.originalPrice) }}원</p>
                 <p class="productPrice">
-                    <span class="memberPrice"
-                        >회원가: {{ formatPrice(kit.memberPrice) }}원</span
-                    >
+                    <span class="memberPrice">회원가: {{ formatPrice(kit.memberPrice) }}원</span>
                 </p>
 
                 <div class="productQuantity">
@@ -50,13 +41,8 @@
                 </div>
 
                 <div class="buyBtnBox">
-                    <button
-                        class="buyProductButton"
-                        @click="buyKit"
-                        :disabled="!isStockAvailable"
-                    >
-                        구매하기
-                    </button>
+                    <Winpay :product="kit" :quantity="quantity" :userInfo="user" orderType="kit" />
+                    <button class="buyProductButton" @click="buyKit" :disabled="!isStockAvailable">테스트구매</button>
                 </div>
             </div>
         </div>
@@ -70,6 +56,7 @@ import ProductService from "@/api/ProductService.js";
 import AuthService from "@/api/AuthService";
 import OrderService from "@/api/OrderService";
 import { useStore } from "vuex";
+import Winpay from "@/components/payment/Winpay.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -77,7 +64,7 @@ const store = useStore();
 const token = localStorage.getItem("token");
 const kit = ref({ products: [] });
 const quantity = ref(1);
-
+const user = ref(JSON.parse(localStorage.getItem("user")));
 const getKit = () => {
     ProductService.getKit(route.params.id, token)
         .then((res) => {
@@ -99,9 +86,7 @@ function formatPrice(price) {
 
 // 모든 구성품이 수량만큼 재고가 충분한지 확인
 const isStockAvailable = computed(() => {
-    return kit.value.products.every(
-        (item) => item.productInfo.stock >= item.quantity * quantity.value
-    );
+    return kit.value.products.every((item) => item.productInfo.stock >= item.quantity * quantity.value);
 });
 
 function increaseQuantity() {
@@ -146,9 +131,7 @@ function buyKit() {
             );
         })
         .then(() => {
-            alert(
-                `${kit.value.kitName} 키트를 ${quantity.value}개 구매했습니다.`
-            );
+            alert(`${kit.value.kitName} 키트를 ${quantity.value}개 구매했습니다.`);
             getKit(); // 재고 다시 불러오기
         })
         .catch((err) => {

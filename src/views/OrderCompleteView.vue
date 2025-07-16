@@ -27,7 +27,7 @@
                     <strong>결제금액:</strong>
                     {{ formatPrice(order.product.amount) }}원
                 </li>
-                <li><strong>결제수단:</strong> {{ order.payment.method }}</li>
+                <!-- <li><strong>결제수단:</strong> {{ order.payment.method }}</li> -->
                 <li><strong>결제상태:</strong> {{ order.status }}</li>
             </ul>
         </div>
