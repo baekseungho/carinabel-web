@@ -43,10 +43,10 @@ class OrderService {
         });
     }
 
-    updateOrderStatus(orderId, status, token) {
+    updateOrderStatus(orderId, status, token, reason = "") {
         return axios.put(
             `/orders/update-status/${orderId}`,
-            { status },
+            { status, reason },
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -54,7 +54,6 @@ class OrderService {
             }
         );
     }
-
     getOrderDetail(orderId, token) {
         return axios.get(`${API_URL}/detail/${orderId}`, {
             headers: {

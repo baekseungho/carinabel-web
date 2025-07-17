@@ -16,7 +16,7 @@
                 <button class="themaBgColor4" @click="goToQna">문의하기</button>
                 <!-- <button class="themaBgColor3">구매확정</button> -->
 
-                <button class="themaBgColor5" @click="cancelOrder">주문취소</button>
+                <button class="themaBgColor5" @click="showCancelModal = true">주문취소</button>
             </div>
         </div>
 
@@ -81,6 +81,13 @@
         <div class="footerButtons">
             <button class="confirmBtn" @click="goBack">확인</button>
         </div>
+        <OrderCancelModal
+            v-if="showCancelModal"
+            :order-id="order._id"
+            :token="token"
+            @close="showCancelModal = false"
+            @submitted="handleCancelSuccess"
+        />
     </div>
 </template>
 
@@ -88,13 +95,13 @@
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import OrderService from "@/api/OrderService";
-
+import OrderCancelModal from "@/components/myPage/OrderCancelModal.vue";
 const route = useRoute();
 const router = useRouter();
 const token = localStorage.getItem("token");
 const orderId = route.params.id;
 const order = ref({});
-
+const showCancelModal = ref(false);
 const fetchOrderDetail = () => {
     OrderService.getOrderDetail(orderId, token)
         .then((res) => {
@@ -166,7 +173,11 @@ const goToQna = () => {
         },
     });
 };
-
+const handleCancelSuccess = (updatedOrder) => {
+    order.value = updatedOrder;
+    showCancelModal.value = false;
+    fetchOrderDetail();
+};
 onMounted(fetchOrderDetail);
 </script>
 
