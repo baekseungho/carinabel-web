@@ -154,6 +154,28 @@ class AdminService {
             }
         );
     }
+
+    // 1. 취소대기 주문 목록 조회
+    getPendingCancelOrders(token) {
+        return axios.get("/admin/cancel-pending", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    }
+
+    // 2. 관리자 주문 취소 처리
+    cancelOrderAsAdmin(orderId, trxId, token) {
+        return axios.post(
+            `/admin/orders/cancel/${orderId}`,
+            { trxId },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+    }
 }
 
 export default new AdminService();

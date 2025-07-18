@@ -46,6 +46,7 @@ import AnswerManagerView from "@/adminViews/AnswerManagerView.vue";
 import AdminShippingView from "@/adminViews/AdminShippingView.vue";
 import NoticeManagerView from "@/adminViews/AdminNoticeView.vue";
 import AdminQnaView from "@/adminViews/AdminQnaView.vue";
+import AdminOrderCancleView from "@/adminViews/AdminOrderCancleView.vue";
 import AdminReferralView from "@/adminViews/AdminReferralEarningsView.vue";
 
 import store from "@/store";
@@ -275,6 +276,12 @@ const routes = [
                 path: "qna",
                 name: "AdminQnaView",
                 component: AdminQnaView,
+                meta: { requiresAdmin: true, hideHeaderFooter: true },
+            },
+            {
+                path: "cancle",
+                name: "AdminOrderCancleView",
+                component: AdminOrderCancleView,
                 meta: { requiresAdmin: true, hideHeaderFooter: true },
             },
         ],
