@@ -55,23 +55,13 @@ const startCardPayment = async () => {
                 quantity: item.quantity,
             }));
 
-            const firstProductName =
-                props.product[0]?.productId.koreanName || "상품";
+            const firstProductName = props.product[0]?.productId.koreanName || "상품";
             const extraCount = props.product.length - 1;
-            const productName =
-                extraCount > 0
-                    ? `${firstProductName} 외 ${extraCount}개`
-                    : firstProductName;
+            const productName = extraCount > 0 ? `${firstProductName} 외 ${extraCount}개` : firstProductName;
 
-            const totalQuantity = props.product.reduce(
-                (sum, item) => sum + item.quantity,
-                0
-            );
+            const totalQuantity = props.product.reduce((sum, item) => sum + item.quantity, 0);
 
-            const totalPrice = props.product.reduce(
-                (sum, item) => sum + item.price * item.quantity,
-                0
-            );
+            const totalPrice = props.product.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
             const orderRes = await OrderService.createOrder(
                 {
@@ -102,8 +92,8 @@ const startCardPayment = async () => {
                 PRODUCTTYPE: "1",
                 TAXFREECD: "00",
                 BILLTYPE: "1",
-                // AMOUNT: totalPrice.toString(), // 실제 금액
-                AMOUNT: 100, // 테스트용
+                AMOUNT: totalPrice.toString(), // 실제 금액
+                // AMOUNT: 100, // 테스트용
                 PRODUCTNAME: productName,
                 PRODUCTCODE: "cart-mixed",
                 USERID: userId,
@@ -113,11 +103,7 @@ const startCardPayment = async () => {
                 FAILURL: failUrl,
             };
 
-            const paymentWindow = window.open(
-                "",
-                "KIWOOMPAY",
-                "width=468,height=750"
-            );
+            const paymentWindow = window.open("", "KIWOOMPAY", "width=468,height=750");
 
             const form = document.createElement("form");
             form.setAttribute("method", "POST");
@@ -163,10 +149,7 @@ const startCardPayment = async () => {
         const orderRes = await OrderService.createOrder(
             {
                 userId,
-                productName:
-                    props.orderType === "oil"
-                        ? props.product.koreanName
-                        : props.product.kitName,
+                productName: props.orderType === "oil" ? props.product.koreanName : props.product.kitName,
                 amount: totalAmount.value,
                 quantity: props.quantity,
                 imagePath: props.product.imagePath,
@@ -191,13 +174,9 @@ const startCardPayment = async () => {
             PRODUCTTYPE: "1",
             TAXFREECD: "00",
             BILLTYPE: "1",
-            // AMOUNT: totalAmount.value.toString(),
-            AMOUNT: 100,
-
-            PRODUCTNAME:
-                props.orderType === "oil"
-                    ? props.product.koreanName
-                    : props.product.kitName,
+            AMOUNT: totalAmount.value.toString(),
+            // AMOUNT: 100,
+            PRODUCTNAME: props.orderType === "oil" ? props.product.koreanName : props.product.kitName,
             PRODUCTCODE: props.product._id,
             USERID: userId,
             USERNAME: userName,
@@ -206,11 +185,7 @@ const startCardPayment = async () => {
             FAILURL: failUrl,
         };
 
-        const paymentWindow = window.open(
-            "",
-            "KIWOOMPAY",
-            "width=468,height=750"
-        );
+        const paymentWindow = window.open("", "KIWOOMPAY", "width=468,height=750");
 
         const form = document.createElement("form");
         form.setAttribute("method", "POST");
@@ -250,8 +225,7 @@ const startCardPayment = async () => {
         }, 1000);
     } catch (error) {
         console.error("❌ 결제 준비 실패:", error);
-        const message =
-            error.response?.data?.message || "결제 준비에 실패했습니다.";
+        const message = error.response?.data?.message || "결제 준비에 실패했습니다.";
         alert(message);
     }
 };
