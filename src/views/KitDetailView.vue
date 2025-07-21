@@ -42,7 +42,7 @@
 
                 <div class="buyBtnBox">
                     <Winpay :product="kit" :quantity="quantity" :userInfo="user" orderType="kit" />
-                    <button class="buyProductButton" @click="buyKit" :disabled="!isStockAvailable">테스트구매</button>
+                    <!-- <button class="buyProductButton" @click="buyKit" :disabled="!isStockAvailable">테스트구매</button> -->
                 </div>
             </div>
         </div>
