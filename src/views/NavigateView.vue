@@ -5,44 +5,17 @@
                 <div id="map" class="mapWrapper"></div>
                 <div class="contactForm">
                     <h2>Contact With Us</h2>
-                    <p>
-                        If you have any questions please feel free to contact
-                        with us.
-                    </p>
+                    <p>If you have any questions please feel free to contact with us.</p>
                     <form @submit.prevent="sendmemberId">
                         <div class="inputGroup">
-                            <input
-                                v-model="company"
-                                type="text"
-                                placeholder="회사명"
-                                required
-                            />
-                            <input
-                                v-model="name"
-                                type="text"
-                                placeholder="담당자명"
-                                required
-                            />
+                            <input v-model="company" type="text" placeholder="회사명" required />
+                            <input v-model="name" type="text" placeholder="담당자명" required />
                         </div>
                         <div class="inputGroup">
-                            <input
-                                v-model="phone"
-                                type="text"
-                                placeholder="연락처"
-                                required
-                            />
-                            <input
-                                v-model="memberId"
-                                type="memberId"
-                                placeholder="회원번호"
-                                required
-                            />
+                            <input v-model="phone" type="text" placeholder="연락처" required />
+                            <input v-model="memberId" type="memberId" placeholder="회원번호" required />
                         </div>
-                        <textarea
-                            v-model="message"
-                            placeholder="문의내용"
-                            required
-                        ></textarea>
+                        <textarea v-model="message" placeholder="문의내용" required></textarea>
                         <button type="submit" class="submitButton">Send</button>
                     </form>
                 </div>
@@ -83,10 +56,10 @@ function initializeMap() {
     const marker = new google.maps.Marker({
         position: { lat: 36.3755, lng: 127.31636 },
         map,
-        title: "(주)카리나벨",
+        title: "카리나벨",
     });
     const infoWindow = new google.maps.InfoWindow({
-        content: "<strong>(주)카리나벨</strong>",
+        content: "<strong>카리나벨</strong>",
     });
 
     // 마커 클릭 없이 바로 정보창 열기
@@ -101,8 +74,7 @@ function initializeMap() {
 onMounted(() => {
     if (!window.google || !window.google.maps) {
         const script = document.createElement("script");
-        script.src =
-            "https://maps.googleapis.com/maps/api/js?key=AIzaSyDcNgrHakFpf9NDhsoORSAfTg3vAoBWUMc";
+        script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDcNgrHakFpf9NDhsoORSAfTg3vAoBWUMc";
         script.async = true;
         script.defer = true;
         script.onload = initializeMap;

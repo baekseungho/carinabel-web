@@ -47,9 +47,9 @@ const navigate = (link) => router.push(link);
 
 const menus = [
     { name: "정보 관리", link: "/mypage/info", icon: "fa-solid fa-user" },
-    { name: "회원 관리", link: "/mypage/members", icon: "fa-solid fa-users" },
+    // { name: "회원 관리", link: "/mypage/members", icon: "fa-solid fa-users" },
     { name: "주문 관리", link: "/mypage/orders", icon: "fa-solid fa-box" },
-    { name: "수당 관리", link: "/mypage/referral", icon: "fa-solid fa-coins" },
+    // { name: "수당 관리", link: "/mypage/referral", icon: "fa-solid fa-coins" },
     { name: "배송지 관리", link: "/mypage/address", icon: "fa-solid fa-truck" },
     { name: "주문 내역", link: "/mypage/order-history", icon: "fa-solid fa-receipt" },
     { name: "문의 내역", link: "/mypage/inquiries", icon: "fa-solid fa-question-circle" },
