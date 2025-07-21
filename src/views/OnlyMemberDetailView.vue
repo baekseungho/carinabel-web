@@ -6,11 +6,7 @@
 
         <div class="productDetailWrapper">
             <div class="productImageWrapper">
-                <img
-                    :src="product.imagePath || '/img/default.jpg'"
-                    :alt="product.koreanName"
-                    class="productImage"
-                />
+                <img :src="product.imagePath || '/img/default.jpg'" :alt="product.koreanName" class="productImage" />
             </div>
 
             <div class="productInfoWrapper">
@@ -22,23 +18,12 @@
                 <p class="productVolume">재고: {{ product.stock || 0 }}개</p>
 
                 <p class="productPrice">
-                    <template
-                        v-if="product.consumerPrice !== product.memberPrice"
-                    >
-                        <span class="consumerPrice"
-                            >소비자가:
-                            {{ formatPrice(product.consumerPrice) }}원</span
-                        >
-                        <span class="memberPrice"
-                            >회원가:
-                            {{ formatPrice(product.memberPrice) }}원</span
-                        >
+                    <template v-if="product.consumerPrice !== product.memberPrice">
+                        <span class="consumerPrice">소비자가: {{ formatPrice(product.consumerPrice) }}원</span>
+                        <span class="memberPrice">회원가: {{ formatPrice(product.memberPrice) }}원</span>
                     </template>
                     <template v-else>
-                        <span class="memberPrice"
-                            >가격:
-                            {{ formatPrice(product.memberPrice) }}원</span
-                        >
+                        <span class="memberPrice">가격: {{ formatPrice(product.memberPrice) }}원</span>
                     </template>
                 </p>
 
@@ -62,21 +47,12 @@
                     </div>
                 </div>
                 <div class="buyBtnBox">
-                    <Winpay
-                        :product="product"
-                        :quantity="quantity"
-                        :userInfo="user"
-                        orderType="oil"
-                    />
-                    <button
-                        class="buyProductButton"
-                        @click="addToCart(product._id)"
-                        :disabled="product.stock === 0"
-                    >
+                    <Winpay :product="product" :quantity="quantity" :userInfo="user" orderType="oil" />
+                    <button class="buyProductButton" @click="addToCart(product._id)" :disabled="product.stock === 0">
                         장바구니에 담기
                     </button>
                 </div>
-                <div class="btnBox">
+                <!-- <div class="btnBox">
                     <button
                         style="margin-top: 16px"
                         class="buyProductButton"
@@ -85,7 +61,7 @@
                     >
                         테스트구매
                     </button>
-                </div>
+                </div> -->
                 <!-- <div class="btnBox">
                     <KiwoomPay
                         :product="product"
@@ -97,11 +73,7 @@
             </div>
         </div>
         <div class="productDaildescription">
-            <img
-                :src="product.detailImage || '/img/default.jpg'"
-                :alt="product.koreanName"
-                class="productImage"
-            />
+            <img :src="product.detailImage || '/img/default.jpg'" :alt="product.koreanName" class="productImage" />
         </div>
     </div>
 </template>
@@ -184,8 +156,7 @@ function buyProduct(product) {
         })
         .catch((error) => {
             console.error("❌ 구매 실패:", error);
-            const message =
-                error.response?.data?.message || "구매에 실패했습니다.";
+            const message = error.response?.data?.message || "구매에 실패했습니다.";
             alert(message);
         });
 }
