@@ -165,13 +165,19 @@ class AdminService {
     }
 
     // 2. 관리자 주문 취소 처리
-    cancelOrderAsAdmin(orderId, trxId, token) {
+    cancelOrderAsAdmin(orderNumber, payload, token) {
         return axios.post(
-            `/admin/orders/cancel/${orderId}`,
-            { trxId },
+            `/admin/cancel-order/${orderNumber}`,
+            {
+                trxId: payload.trxId,
+                amount: payload.amount,
+                reason: payload.reason,
+                payMethod: "CARD", // 고정
+            },
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
                 },
             }
         );

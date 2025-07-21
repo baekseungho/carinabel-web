@@ -23,9 +23,9 @@ const props = defineProps({
 const router = useRouter();
 const store = useStore();
 
-const payUrl = "https://apitest.kiwoompay.co.kr/pay/link"; // 개발
-// const payUrl = " https://api.kiwoompay.co.kr/pay/link"; // 운영
-const server = "DEV";
+// const payUrl = "https://apitest.kiwoompay.co.kr/pay/link"; // 개발
+const payUrl = " https://api.kiwoompay.co.kr/pay/link"; // 운영
+const server = "LIVE";
 const cpid = "CWP11504";
 const testcpid = "CTS15178";
 const tmnid = "WGP329355";
@@ -87,7 +87,8 @@ const startCardPayment = async () => {
                 SERVER: server,
                 TYPE: "P",
                 PAYMETHOD: "CARD",
-                CPID: "CTS15178",
+                CPID: cpid,
+                RESERVEDSTRING: tmnid,
                 ORDERNO: orderNumber,
                 PRODUCTTYPE: "1",
                 TAXFREECD: "00",
@@ -170,6 +171,7 @@ const startCardPayment = async () => {
             TYPE: "P",
             PAYMETHOD: "CARD",
             CPID: "CTS15178",
+            RESERVEDSTRING: tmnid,
             ORDERNO: orderNumber,
             PRODUCTTYPE: "1",
             TAXFREECD: "00",

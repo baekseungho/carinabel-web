@@ -68,8 +68,21 @@ const cancelOrder = async (orderId) => {
     const confirm = window.confirm("정말로 이 주문을 취소하시겠습니까?");
     if (!confirm) return;
 
+    const targetOrder = orders.value.find((o) => o._id === orderId);
+    if (!targetOrder) {
+        alert("주문 정보를 찾을 수 없습니다.");
+        return;
+    }
+
+    const payload = {
+        trxId,
+        amount: targetOrder.amount,
+        reason: targetOrder.reason || "관리자 수동 취소",
+    };
+
     try {
-        const res = await AdminService.cancelOrderAsAdmin(orderId, trxId, token);
+        // 🔄 여기서 orderId 대신 orderNumber 사용
+        await AdminService.cancelOrderAsAdmin("0000000089", payload, token);
         alert("✅ 주문이 성공적으로 취소되었습니다.");
         await fetchOrders();
     } catch (err) {
