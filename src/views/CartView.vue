@@ -45,6 +45,8 @@
             </p>
             <div style="width: 100%; display: flex; justify-content: end">
                 <div style="display: flex; width: 30%; align-items: center; justify-content: space-between">
+                    <div style="width: 49%"></div>
+                    <!-- <button class="checkoutButton" @click="buyCart()">주문하기</button> -->
                     <div style="width: 49%">
                         <Winpay
                             style="width: 100%"
@@ -54,9 +56,6 @@
                             orderType="cart"
                         />
                     </div>
-                    <!-- <button class="checkoutButton" @click="buyCart()">
-                        주문하기
-                    </button> -->
                 </div>
             </div>
         </div>
