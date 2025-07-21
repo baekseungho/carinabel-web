@@ -30,9 +30,9 @@
                             </a>
                         </li>
 
-                        <li>
+                        <!-- <li>
                             <a href="/mypage/members" class="clickable withDivider"> 회원 조회</a>
-                        </li>
+                        </li> -->
                         <li>
                             <a href="/mypage/withdraw" class="clickable">탈퇴신청</a>
                         </li>
