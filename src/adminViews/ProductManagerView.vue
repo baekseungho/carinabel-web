@@ -33,7 +33,7 @@
             <ul>
                 <li style="display: flex; align-items: center" v-for="product in products" :key="product._id">
                     <img
-                        style="width: 40px; height: 80px"
+                        style="width: 60px; height: 80px"
                         :src="product.imagePath"
                         alt="상품 이미지"
                         class="productThumbnail"

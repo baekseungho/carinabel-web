@@ -46,7 +46,8 @@ import AnswerManagerView from "@/adminViews/AnswerManagerView.vue";
 import AdminShippingView from "@/adminViews/AdminShippingView.vue";
 import NoticeManagerView from "@/adminViews/AdminNoticeView.vue";
 import AdminQnaView from "@/adminViews/AdminQnaView.vue";
-import AdminOrderCancleView from "@/adminViews/AdminOrderCancleView.vue";
+import AdminManualInputView from "@/adminViews/AdminManualInputView.vue";
+import AdminManualOrderView from "@/adminViews/AdminManualInputView.vue";
 import AdminReferralView from "@/adminViews/AdminReferralEarningsView.vue";
 
 import store from "@/store";
@@ -280,8 +281,14 @@ const routes = [
             },
             {
                 path: "cancle",
-                name: "AdminOrderCancleView",
-                component: AdminOrderCancleView,
+                name: "AdminManualInputView",
+                component: AdminManualInputView,
+                meta: { requiresAdmin: true, hideHeaderFooter: true },
+            },
+            {
+                path: "menual",
+                name: "AdminManualOrderView",
+                component: AdminManualOrderView,
                 meta: { requiresAdmin: true, hideHeaderFooter: true },
             },
         ],

@@ -182,6 +182,21 @@ class AdminService {
             }
         );
     }
+
+    // 🔧 관리자 수기 회원가입
+    manualRegister(userData, token) {
+        return axios.post("/admin/manual-register", userData, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    }
+
+    manualOrder(orderData, token) {
+        return axios.post("/admin/manual-order", orderData, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+    }
 }
 
 export default new AdminService();

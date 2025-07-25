@@ -22,7 +22,13 @@
                         </div>
                         <div class="inputGroup">
                             <label for="phone">휴대폰 번호</label>
-                            <input type="text" id="phone" v-model="phone" placeholder="휴대폰 번호를 입력하세요." />
+                            <input
+                                type="text"
+                                id="phone"
+                                :value="formattedPhone"
+                                @input="formatPhoneInput"
+                                placeholder="휴대폰 번호를 입력하세요."
+                            />
                         </div>
                         <div class="inputGroup">
                             <label for="birthday">생년월일</label>
@@ -116,7 +122,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import router from "@/router";
 import AuthService from "@/api/AuthService";
 
@@ -134,10 +140,31 @@ const detailAddress = ref("");
 const referrermemberId = ref("");
 const hasViewedTerms = ref(false);
 const hasViewedPrivacy = ref(false);
+const formattedPhone = computed(() => {
+    const raw = phone.value;
+    if (raw.length <= 3) return raw;
+    if (raw.length <= 7) return `${raw.slice(0, 3)}-${raw.slice(3)}`;
+    return `${raw.slice(0, 3)}-${raw.slice(3, 7)}-${raw.slice(7, 11)}`;
+});
+
 const goHome = () => {
     router.push("/");
 };
 
+const formatPhoneInput = (event) => {
+    // 숫자만 추출
+    let raw = event.target.value.replace(/\D/g, "");
+
+    // 11자 초과 방지
+    if (raw.length > 11) {
+        raw = raw.slice(0, 11);
+    }
+
+    phone.value = raw;
+
+    // 실제 input value도 강제로 포맷 적용
+    event.target.value = formattedPhone.value;
+};
 const searchAddress = () => {
     new window.daum.Postcode({
         oncomplete: function (data) {

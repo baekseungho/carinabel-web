@@ -30,6 +30,9 @@
                     <router-link to="/admin/answer" active-class="active">QnA</router-link>
                 </li>
                 <li>
+                    <router-link to="/admin/menual" active-class="active">수기 입력</router-link>
+                </li>
+                <li>
                     <router-link to="/admin/cancle" active-class="active">주문 취소</router-link>
                 </li>
                 <li>
