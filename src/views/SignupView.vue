@@ -1,7 +1,7 @@
 <template>
     <div class="signupPageContainer">
         <div class="signupBackground">
-            <img src="/img/background_login.png" alt="Signup Background" class="backgroundImage" />
+            <img src="/img/background_login.webp" alt="Signup Background" class="backgroundImage" />
             <div class="signupOverlay"></div>
         </div>
         <div class="signupContent">

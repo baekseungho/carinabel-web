@@ -1,7 +1,7 @@
 <template>
     <div class="loginPageContainer">
         <div class="loginBackground">
-            <img src="/img/background_adminlogin.png" alt="Admin Login Background" class="backgroundImage" />
+            <img src="/img/background_adminlogin.webp" alt="Admin Login Background" class="backgroundImage" />
             <div class="loginOverlay"></div>
         </div>
         <div class="loginContent">

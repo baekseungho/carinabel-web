@@ -3,7 +3,7 @@
         <div class="storyContent">
             <div class="storyImageWrapper">
                 <img
-                    src="/img/A_photograph_captures_a_young_woman_with_fair_skin.png"
+                    src="/img/A_photograph_captures_a_young_woman_with_fair_skin.webp"
                     alt="생명력을 담은 향기"
                     class="storyImage"
                 />
