@@ -10,11 +10,12 @@ class CartService {
             },
         });
     }
-    addToCart(productId, token) {
+    addToCart(productId, token, quantity = 1) {
         return axios.post(
             `${API_URL_CART}/add`,
             {
                 productId: productId,
+                quantity: quantity,
             },
             {
                 headers: {

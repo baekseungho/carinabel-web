@@ -1,60 +1,39 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "@/views/HomeView.vue";
-import Login from "@/views/LoginView.vue";
-import Signup from "@/views/SignupView.vue";
-import Cart from "@/views/CartView.vue";
-import MyPageView from "@/views/MyPageView.vue";
-import InfoView from "@/views/myPage/InfoView.vue";
-import MemberManageView from "@/views/myPage/MemberManageView.vue";
-import EarningStatsView from "@/views/myPage/EarningStats.vue";
-import OrderManageView from "@/views/myPage/OrderManageView.vue";
-import InquiriesView from "@/views/myPage/InquiriesView.vue";
-import AddressView from "@/views/myPage/AddressView.vue";
-import OrderHistoryView from "@/views/myPage/OrderHistoryView.vue";
-import OrderHistoryDetailView from "@/views/myPage/OrderHistoryDetailView.vue";
-import WithdrawView from "@/views/myPage/WithdrawView.vue";
-import ProductView from "@/views/ProductView.vue";
-import ProductDetail from "@/views/ProductDetail.vue";
-import Onlymember from "@/views/OnlyMemberView.vue";
-import OnlymemberDetail from "@/views/OnlyMemberDetailView.vue";
-import OrderComplete from "@/views/OrderCompleteView.vue";
-import Kit from "@/views/KitView.vue";
-import KitDetail from "@/views/KitDetailView.vue";
-import AboutView from "@/views/AboutView.vue";
-import ContactView from "@/views/ContactView.vue";
-import Greeting from "@/views/GreetingView.vue";
-import Story from "@/views/StoryView.vue";
-import Navigate from "@/views/NavigateView.vue";
-import Events from "@/views/EventsView.vue";
-import Lectures from "@/views/LecturesView.vue";
-import QnA from "@/views/QnAView.vue";
-import QnACreate from "@/views/QnACreateView.vue";
-import QnADetail from "@/views/QnADetailView.vue";
-import Notices from "@/views/NoticesView.vue";
-import NoticeDetail from "@/views/NoticeDetailView.vue";
-import AdminLayout from "@/adminViews/AdminLayout.vue";
-import AdminLoginView from "@/adminViews/AdminLoginView.vue";
-import AdminCreateView from "@/adminViews/AdminCreateView.vue";
-import AdminDashboardView from "@/adminViews/AdminDashboardView.vue";
-import AdminMemberManageView from "@/adminViews/AdminMemberManageView.vue";
-import AdminWithdrawnMemberManageView from "@/adminViews/AdminWithdrawnMemberManageView.vue";
-import AdminOrderManageView from "@/adminViews/AdminOrderManageView.vue";
-import DeliveryStatusView from "@/adminViews/DeliveryStatusView.vue";
-import ProductManageView from "@/adminViews/ProductManagerView.vue";
-import KitManageView from "@/adminViews/AdminKitManageView.vue";
-import AnswerManagerView from "@/adminViews/AnswerManagerView.vue";
-import AdminShippingView from "@/adminViews/AdminShippingView.vue";
-import NoticeManagerView from "@/adminViews/AdminNoticeView.vue";
-import AdminQnaView from "@/adminViews/AdminQnaView.vue";
-import AdminManualInputView from "@/adminViews/AdminManualInputView.vue";
-import AdminManualOrderView from "@/adminViews/AdminManualInputView.vue";
-import AdminReferralView from "@/adminViews/AdminReferralEarningsView.vue";
+const view = (name) => () => import(`../views/${name}.vue`);
+const myPageView = (name) => () => import(`../views/myPage/${name}.vue`);
+const adminView = (name) => () => import(`../adminViews/${name}.vue`);
+
+const HomeView = view("HomeView");
+const Login = view("LoginView"); const Signup = view("SignupView"); const Cart = view("CartView");
+const MyPageView = view("MyPageView"); const InfoView = myPageView("InfoView");
+const MemberManageView = myPageView("MemberManageView"); const EarningStatsView = myPageView("EarningStats");
+const OrderManageView = myPageView("OrderManageView"); const InquiriesView = myPageView("InquiriesView");
+const AddressView = myPageView("AddressView"); const OrderHistoryView = myPageView("OrderHistoryView");
+const OrderHistoryDetailView = myPageView("OrderHistoryDetailView"); const WithdrawView = myPageView("WithdrawView");
+const ProductView = view("ProductView"); const ProductDetail = view("ProductDetail");
+const Onlymember = view("OnlyMemberView"); const OnlymemberDetail = view("OnlyMemberDetailView");
+const OrderComplete = view("OrderCompleteView"); const Kit = view("KitView"); const KitDetail = view("KitDetailView");
+const AboutView = view("AboutView"); const Greeting = view("GreetingView");
+const Story = view("StoryView"); const Navigate = view("NavigateView"); const Events = view("EventsView");
+const Lectures = view("LecturesView"); const QnA = view("QnAView"); const QnACreate = view("QnACreateView");
+const QnADetail = view("QnADetailView"); const Notices = view("NoticesView"); const NoticeDetail = view("NoticeDetailView");
+const ServicePreparing = view("ServicePreparingView"); const NotFound = view("NotFoundView");
+const AdminLayout = adminView("AdminLayout"); const AdminLoginView = adminView("AdminLoginView");
+const AdminCreateView = adminView("AdminCreateView"); const AdminDashboardView = adminView("AdminDashboardView");
+const AdminMemberManageView = adminView("AdminMemberManageView");
+const AdminWithdrawnMemberManageView = adminView("AdminWithdrawnMemberManageView");
+const AdminOrderManageView = adminView("AdminOrderManageView"); const DeliveryStatusView = adminView("DeliveryStatusView");
+const ProductManageView = adminView("ProductManagerView"); const KitManageView = adminView("AdminKitManageView");
+const AnswerManagerView = adminView("AnswerManagerView"); const AdminShippingView = adminView("AdminShippingView");
+const NoticeManagerView = adminView("AdminNoticeView"); const AdminQnaView = adminView("AdminQnaView");
+const AdminManualInputView = adminView("AdminManualInputView"); const AdminManualOrderView = AdminManualInputView;
+const AdminReferralView = adminView("AdminReferralEarningsView");
 
 import store from "@/store";
+import { getStoredToken } from "@/utils/storage";
 
 const routes = [
-    { path: "/", redirect: "/products/onlymember" },
-    // { path: "/", name: "Home", component: HomeView },
+    { path: "/", name: "Home", component: HomeView },
 
     {
         path: "/login",
@@ -119,6 +98,7 @@ const routes = [
     {
         path: "/mypage",
         component: MyPageView, // 여기에 SideMenu 항상 존재
+        meta: { requiresAuth: true },
         children: [
             {
                 path: "",
@@ -152,7 +132,6 @@ const routes = [
     { path: "/about/story", name: "Story", component: Story },
     { path: "/about/navigate", name: "Navigate", component: Navigate },
     { path: "/about", name: "About", component: AboutView },
-    { path: "/contact", name: "Contact", component: ContactView },
 
     // ⚠️ 서비스 준비중 페이지들
     {
@@ -167,12 +146,13 @@ const routes = [
         component: Lectures,
         meta: { maintenance: true },
     },
+    { path: "/service-preparing", name: "ServicePreparing", component: ServicePreparing },
     {
         path: "/qna",
         name: "QnA",
         component: QnA,
     },
-    { path: "/qna/create", name: "QnACreate", component: QnACreate },
+    { path: "/qna/create", name: "QnACreate", component: QnACreate, meta: { requiresAuth: true } },
     { path: "/qna/:id", name: "QnADetail", component: QnADetail },
     {
         path: "/notices",
@@ -293,33 +273,37 @@ const routes = [
             },
         ],
     },
+    { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },
 ];
 
 const router = createRouter({
     history: createWebHistory(),
     routes,
+    scrollBehavior(to, from, savedPosition) {
+        if (savedPosition) return savedPosition;
+        if (to.hash) return { el: to.hash, behavior: "smooth" };
+        return { top: 0 };
+    },
 });
 
 // ❗ 전역 네비게이션 가드
 
 router.beforeEach((to, from, next) => {
     if (to.meta.maintenance) {
-        alert("서비스 준비중입니다.");
-        return next("/");
+        return next({ name: "ServicePreparing", query: { from: to.fullPath } });
     }
 
     // 일반 사용자 인증
     if (to.meta.requiresAuth) {
-        const token = localStorage.getItem("token");
+        const token = getStoredToken();
         if (!token || !store.getters.isAuthenticated) {
-            alert("로그인이 필요한 페이지입니다.");
-            return next("/login");
+            return next({ name: "Login", query: { redirect: to.fullPath, reason: "auth" } });
         }
     }
 
     // 관리자 전용 접근
     if (to.meta.requiresAdmin) {
-        const user = JSON.parse(localStorage.getItem("user"));
+        const user = store.state.user;
         if (!user || user.role !== "admin") {
             alert("관리자만 접근할 수 있는 페이지입니다.");
             return next("/admin/login");
@@ -330,3 +314,32 @@ router.beforeEach((to, from, next) => {
 });
 
 export default router;
+
+const pageTitles = {
+    Home: "카리나벨 | 자연의 생명력을 담은 에센셜 오일",
+    Products: "에센셜 오일",
+    ProductDetail: "상품 상세",
+    Onlymember: "에센셜 오일",
+    OnlymemberDetail: "상품 상세",
+    Kit: "키트 컬렉션",
+    KitDetail: "키트 상세",
+    Cart: "장바구니",
+    Login: "로그인",
+    Signup: "회원가입",
+    MyPageMain: "마이페이지",
+    Greeting: "인사말",
+    Story: "브랜드 스토리",
+    Navigate: "찾아오시는 길",
+    Notices: "공지사항",
+    NoticeDetail: "공지사항 상세",
+    QnA: "Q&A",
+    QnACreate: "문의 작성",
+    QnADetail: "문의 상세",
+    ServicePreparing: "서비스 준비 중",
+    NotFound: "페이지를 찾을 수 없습니다",
+};
+
+router.afterEach((to) => {
+    const title = pageTitles[to.name] || "카리나벨";
+    document.title = title.includes("카리나벨") ? title : `${title} | 카리나벨`;
+});

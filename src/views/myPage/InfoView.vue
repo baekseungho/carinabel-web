@@ -72,8 +72,9 @@
 import { ref, onMounted } from "vue";
 import UserService from "@/api/UserService";
 import EditAccountModal from "@/components/myPage/EditAccountModal.vue";
+import { getStoredToken, getStoredUser } from "@/utils/storage";
 const profile = ref({});
-const token = JSON.parse(localStorage.getItem("user"))?.token;
+const token = getStoredToken();
 const showModal = ref(false);
 function formatDate(dateStr) {
     const date = new Date(dateStr);
@@ -100,9 +101,8 @@ function formatBirthday(dateStr) {
 }
 
 const getProfile = () => {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = getStoredUser();
     if (!user?._id) return;
-    console.log(token);
     UserService.getUserProfile(token)
         .then((response) => {
             profile.value = response.data;

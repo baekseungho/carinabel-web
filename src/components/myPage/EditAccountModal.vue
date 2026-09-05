@@ -38,10 +38,11 @@
 <script setup>
 import { ref } from "vue";
 import UserService from "@/api/UserService";
+import { getStoredToken, getStoredUser } from "@/utils/storage";
 
 const emit = defineEmits(["close", "updated"]);
-const user = JSON.parse(localStorage.getItem("user"));
-const token = user?.token;
+const user = getStoredUser();
+const token = getStoredToken();
 
 const bankName = ref("");
 const accountNumber = ref("");

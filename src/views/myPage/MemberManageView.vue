@@ -57,11 +57,12 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import UserService from "@/api/UserService";
+import { getStoredToken, getStoredUser } from "@/utils/storage";
 
 const network = ref({ center: {}, parent: null, children: [] });
 const period = ref("전체");
-const user = JSON.parse(localStorage.getItem("user"));
-const token = JSON.parse(localStorage.getItem("user")).token;
+const user = getStoredUser();
+const token = getStoredToken();
 
 const fetchNetwork = () => {
     if (!user?._id) return;

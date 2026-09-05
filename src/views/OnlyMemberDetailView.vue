@@ -1,465 +1,53 @@
 <template>
-    <div class="productDetailContainer">
-        <div class="backButton" @click="goBack">
-            <div class="back normalIcon"></div>
-        </div>
+    <div class="detail-page">
+        <div class="page-shell breadcrumbs"><RouterLink to="/">홈</RouterLink><i class="fa-solid fa-chevron-right"></i><RouterLink to="/products/onlymember">에센셜 오일</RouterLink><i class="fa-solid fa-chevron-right"></i><span>{{ product.koreanName || '제품 상세' }}</span></div>
 
-        <div class="productDetailWrapper">
-            <div class="productImageWrapper">
-                <img :src="product.imagePath || '/img/default.jpg'" :alt="product.koreanName" class="productImage" />
-            </div>
-
-            <div class="productInfoWrapper">
-                <h1 class="productTitle">
-                    {{ product.koreanName }}
-                    <span class="productName">{{ product.productName }}</span>
-                </h1>
-                <p class="productVolume">용량: {{ product.volume || 0 }}ml</p>
-                <p class="productVolume">재고: {{ product.stock || 0 }}개</p>
-
-                <p class="productPrice">
-                    <template v-if="product.consumerPrice !== product.memberPrice">
-                        <span class="consumerPrice">소비자가: {{ formatPrice(product.consumerPrice) }}원</span>
-                        <span class="memberPrice">회원가: {{ formatPrice(product.memberPrice) }}원</span>
-                    </template>
-                    <template v-else>
-                        <span class="memberPrice">가격: {{ formatPrice(product.memberPrice) }}원</span>
-                    </template>
-                </p>
-
-                <!-- <div class="productDescription">
-                    <h2>제품 설명</h2>
-                    <p>
-                        {{ product.description }}
-                    </p>
-                </div> -->
-
-                <div class="productQuantity">
-                    <label>수량:</label>
-                    <div class="quantityControls">
-                        <button @click="decreaseQuantity">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                        <span>{{ quantity }}</span>
-                        <button @click="increaseQuantity">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    </div>
+        <section v-if="isLoading" class="detail-layout page-shell loading"><div></div><div><span></span><span></span><span></span></div></section>
+        <section v-else-if="loadError" class="error-state page-shell"><i class="fa-solid fa-triangle-exclamation"></i><h1>상품 정보를 불러오지 못했습니다.</h1><p>잠시 후 다시 시도해 주세요.</p><button @click="getProduct">다시 불러오기</button></section>
+        <template v-else>
+            <section class="detail-layout page-shell">
+                <div class="gallery"><div class="image-stage"><span v-if="product.stock === 0" class="sold-badge">SOLD OUT</span><img :src="product.imagePath || '/img/defalut_product.png'" :alt="product.koreanName" /></div><p><i class="fa-solid fa-magnifying-glass-plus"></i> 제품 이미지는 실제 색상과 차이가 있을 수 있습니다.</p></div>
+                <div class="product-info">
+                    <p class="eyebrow">KARINABEL ESSENTIAL OIL</p>
+                    <h1>{{ product.koreanName }}</h1><p class="english-name">{{ product.productName }}</p>
+                    <div class="rating-note"><span><i class="fa-solid fa-leaf"></i> 엄선된 에센셜 오일</span><span>{{ product.volume || 0 }}ml</span></div>
+                    <div class="price-box"><div v-if="hasDiscount" class="price-row muted"><span>소비자가</span><del>{{ formatPrice(product.consumerPrice) }}원</del></div><div class="price-row main"><span>{{ hasDiscount ? '회원가' : '판매가' }}</span><strong>{{ formatPrice(product.memberPrice || product.consumerPrice) }}원</strong></div><p v-if="hasDiscount"><i class="fa-solid fa-circle-check"></i> 회원 전용 혜택이 적용된 가격입니다.</p></div>
+                    <dl class="product-meta"><div><dt>용량</dt><dd>{{ product.volume || 0 }}ml</dd></div><div><dt>배송</dt><dd>택배 배송 · 결제 시 안내</dd></div><div><dt>재고</dt><dd :class="{ danger: product.stock === 0 }">{{ product.stock === 0 ? '품절' : `${product.stock || 0}개 남음` }}</dd></div></dl>
+                    <div class="quantity-row"><span>수량</span><div class="quantity-control"><button type="button" aria-label="수량 줄이기" :disabled="quantity <= 1" @click="decreaseQuantity"><i class="fa-solid fa-minus"></i></button><strong>{{ quantity }}</strong><button type="button" aria-label="수량 늘리기" :disabled="product.stock === 0 || quantity >= product.stock" @click="increaseQuantity"><i class="fa-solid fa-plus"></i></button></div></div>
+                    <div class="total"><span>총 상품금액</span><strong>{{ formatPrice(totalPrice) }}원</strong></div>
+                    <div class="purchase-actions" :class="{ disabled: product.stock === 0 }"><button class="cart-button" type="button" :disabled="product.stock === 0 || addingToCart" @click="addToCart"><i class="fa-solid fa-bag-shopping"></i>{{ addingToCart ? '담는 중...' : '장바구니' }}</button><Winpay class="payment-button" :product="product" :quantity="quantity" :userInfo="user" :disabled="product.stock === 0" orderType="oil" /></div>
+                    <p class="external-note">현재 카드결제 선택 시 제휴 쇼핑몰로 이동합니다.</p>
                 </div>
-                <div class="buyBtnBox">
-                    <Winpay :product="product" :quantity="quantity" :userInfo="user" orderType="oil" />
-                    <button class="buyProductButton" @click="addToCart(product._id)" :disabled="product.stock === 0">
-                        장바구니에 담기
-                    </button>
-                </div>
-                <!-- <div class="btnBox">
-                    <button
-                        style="margin-top: 16px"
-                        class="buyProductButton"
-                        @click="buyProduct(product)"
-                        :disabled="product.stock === 0"
-                    >
-                        테스트구매
-                    </button>
-                </div> -->
-                <!-- <div class="btnBox">
-                    <KiwoomPay
-                        :product="product"
-                        :userInfo="user"
-                        :quantity="quantity"
-                        :disabled="product.stock === 0"
-                    />
-                </div> -->
-            </div>
-        </div>
-        <div class="productDaildescription">
-            <img :src="product.detailImage || '/img/default.jpg'" :alt="product.koreanName" class="productImage" />
-        </div>
+            </section>
+
+            <section class="detail-description"><div class="page-shell"><div class="description-heading"><p class="eyebrow">PRODUCT STORY</p><h2>{{ product.koreanName }}을 소개합니다.</h2></div><p v-if="product.description" class="description-text">{{ product.description }}</p><img v-if="product.detailImage" :src="product.detailImage" :alt="`${product.koreanName} 상세 설명`" /></div></section>
+            <section class="service-info page-shell"><article><i class="fa-solid fa-box-open"></i><div><h3>안전한 포장</h3><p>제품이 손상되지 않도록 꼼꼼하게 포장합니다.</p></div></article><article><i class="fa-solid fa-headset"></i><div><h3>구매 상담</h3><p>제품 관련 문의는 Q&amp;A에서 도와드립니다.</p></div></article><article><i class="fa-solid fa-rotate-left"></i><div><h3>교환 및 반품</h3><p>상품 수령 후 정책에 따라 신속히 처리합니다.</p></div></article></section>
+        </template>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useStore } from "vuex";
-import AuthService from "@/api/AuthService";
-import OrderService from "@/api/OrderService";
 import ProductService from "@/api/ProductService.js";
 import CartService from "@/api/CartService.js";
 import Winpay from "@/components/payment/Winpay.vue";
-import KiwoomPay from "@/components/payment/KiwoompayView.vue";
-const store = useStore();
-const route = useRoute();
+import { getStoredUser } from "@/utils/storage";
 
-const router = useRouter();
-const product = ref({});
-const isAuthenticated = computed(() => store.getters.isAuthenticated);
-const token = localStorage.getItem("token");
-const user = ref(JSON.parse(localStorage.getItem("user")));
-const quantity = ref(1); // 수량 상태 추가
-
-const getProduct = () => {
-    console.log(route.params.id, token);
-    ProductService.getProduct(route.params.id, token)
-        .then((response) => {
-            console.log("성공:", response.data);
-            product.value = response.data;
-        })
-        .catch((error) => {
-            console.error(error);
-            alert("데이터를 불러오는데 실패하였습니다.");
-        });
-};
-
-onMounted(() => {
-    getProduct();
-});
-
-function formatPrice(price) {
-    if (!price) return "0";
-    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-function buyProduct(product) {
-    const userId = user.value?._id;
-    const token = user.value?.token;
-
-    if (!userId || !token) {
-        alert("로그인이 필요합니다.");
-        return;
-    }
-
-    const amount = product.memberPrice * quantity.value;
-
-    const updatePromise = AuthService.updateUserProfile(userId, amount, token);
-    const orderPromise = OrderService.createOrder(
-        {
-            userId,
-            productName: product.koreanName,
-            amount,
-            quantity: quantity.value,
-            imagePath: product.imagePath,
-            status: "결제완료",
-            orderType: "oil",
-        },
-        token
-    );
-
-    Promise.all([updatePromise, orderPromise])
-        .then(([userRes, orderRes]) => {
-            alert(`${product.koreanName}를 ${quantity.value}개 구매했습니다.`);
-            console.log(userRes, "뭐진");
-            store.dispatch("login", userRes.data);
-
-            getProduct();
-            router.push(`/order-complete/${orderRes.data._id}`);
-        })
-        .catch((error) => {
-            console.error("❌ 구매 실패:", error);
-            const message = error.response?.data?.message || "구매에 실패했습니다.";
-            alert(message);
-        });
-}
-const addToCart = (productId) => {
-    const token = localStorage.getItem("token");
-
-    CartService.addToCart(productId, token)
-        .then((response) => {
-            console.log("성공:", response.data);
-            alert("장바구니에 추가되었습니다.");
-        })
-        .catch((error) => {
-            console.error(error);
-            alert("데이터를 불러오는데 실패하였습니다.");
-        });
-};
-
-function goBack() {
-    router.push("/products/onlymember");
-}
-
-function increaseQuantity() {
-    if (quantity.value < product.value.stock) {
-        quantity.value++;
-    } else {
-        alert(`최대 주문 가능 수량은 ${product.value.stock}개입니다.`);
-    }
-}
-
-function decreaseQuantity() {
-    if (quantity.value > 1) quantity.value--;
-}
+const route = useRoute(); const router = useRouter();
+const product = ref({}); const quantity = ref(1); const isLoading = ref(true); const loadError = ref(false); const addingToCart = ref(false);
+const user = ref(getStoredUser());
+const hasDiscount = computed(() => product.value.memberPrice && product.value.consumerPrice && product.value.memberPrice !== product.value.consumerPrice);
+const totalPrice = computed(() => (product.value.memberPrice || product.value.consumerPrice || 0) * quantity.value);
+const formatPrice = (price) => Number(price || 0).toLocaleString("ko-KR");
+const getProduct = async () => { isLoading.value = true; loadError.value = false; try { const response = await ProductService.getProduct(route.params.id, localStorage.getItem("token")); product.value = response.data; } catch (error) { console.error(error); loadError.value = true; } finally { isLoading.value = false; } };
+const increaseQuantity = () => { if (quantity.value < Number(product.value.stock || 0)) quantity.value += 1; };
+const decreaseQuantity = () => { if (quantity.value > 1) quantity.value -= 1; };
+const addToCart = async () => { if (!localStorage.getItem("token")) { router.push({name:"Login",query:{redirect:route.fullPath,reason:"auth"}}); return; } if(addingToCart.value||product.value.stock===0)return; addingToCart.value = true; try { await CartService.addToCart(product.value._id, localStorage.getItem("token"), quantity.value); alert(`${quantity.value}개를 장바구니에 담았습니다.`); } catch (error) { console.error(error); alert("장바구니에 담지 못했습니다. 잠시 후 다시 시도해 주세요."); } finally { addingToCart.value = false; } };
+onMounted(getProduct);
 </script>
 
 <style scoped>
-.productDetailContainer {
-    padding: 40px 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    background-color: #f7f7f7;
-}
-.backButton {
-    position: absolute;
-    top: 8px;
-    left: 20px;
-    background-color: transparent;
-    color: #333;
-    padding: 10px 12px;
-    font-size: 14px;
-    border: 1px solid #eee;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
-    z-index: 10;
-}
-.backButton:hover {
-    background-color: #cc8a94;
-    color: #fff;
-}
-.productDetailWrapper {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 40px;
-    max-width: 1000px;
-    width: 100%;
-    padding: 40px;
-    background-color: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-.productImageWrapper {
-    flex: 1;
-    min-width: 300px;
-    max-width: 500px;
-    overflow: hidden;
-    border-radius: 20px;
-    background-color: #f7f7f7;
-}
-.productImage {
-    width: 100%;
-    object-fit: contain;
-    border-radius: 20px;
-}
-.productInfoWrapper {
-    position: relative;
-    flex: 1;
-    min-width: 300px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-}
-.productTitle {
-    font-size: 2.2rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #333;
-}
-.productName {
-    display: block;
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: #777;
-    margin-top: 5px;
-}
-.productNameInline {
-    display: inline-block;
-    font-size: 1.2rem;
-    font-weight: normal;
-    color: #888;
-    margin-left: 4px;
-}
-
-.quantityControls i {
-    font-size: 14px;
-}
-.productVolume {
-    font-size: 1.2rem;
-    color: #666;
-    margin-bottom: 10px;
-}
-.productPrice {
-    margin-bottom: 20px;
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: #444;
-}
-.consumerPrice {
-    text-decoration: line-through;
-    color: #888;
-    margin-right: 10px;
-}
-.memberPrice {
-    margin-right: 10px;
-    color: #cc8a94;
-}
-.productDescription {
-    margin-bottom: 20px;
-}
-.productDescription h2 {
-    font-size: 1.8rem;
-    margin-bottom: 10px;
-    color: #333;
-}
-.productDescription p {
-    font-size: 1.2rem;
-    color: #555;
-
-    white-space: pre-wrap;
-}
-.buyBtnBox {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-}
-.buyProductButton {
-    background-color: #cc8a94;
-    color: #fff;
-    padding: 15px 30px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    align-self: flex-start;
-    /* margin-right: 12px; */
-}
-.buyProductButton:first-child {
-    width: 49%;
-}
-.buyProductButton:last-child {
-    width: 49%;
-}
-.buyProductButton:hover {
-    background-color: #c97582;
-}
-
-.buyProductButton:disabled {
-    background-color: #ccc;
-    color: #666;
-    cursor: not-allowed;
-    opacity: 0.7;
-    pointer-events: none;
-}
-
-.productQuantity {
-    margin: 20px 0;
-    font-size: 18px;
-    color: #444;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.quantityControls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.quantityControls button {
-    background-color: #cc8a94;
-    border: none;
-    /* padding: 8px 12px; */
-    height: 32px;
-    width: 32px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.quantityControls button:hover {
-    background-color: #ca717f;
-}
-
-@media (max-width: 1200px) {
-    .productDetailWrapper {
-        padding: 24px;
-    }
-
-    .productTitle {
-        font-size: 1.8rem;
-    }
-
-    .productPrice {
-        font-size: 1.2rem;
-    }
-
-    .buyProductButton {
-        font-size: 0.8rem;
-        padding: 12px 24px;
-    }
-
-    .productQuantity {
-        font-size: 1rem;
-    }
-}
-
-@media (max-width: 600px) {
-    .productDetailContainer {
-        padding: 20px 10px;
-    }
-
-    .backButton {
-        top: 4px;
-        left: 10px;
-        padding: 4px 8px;
-        font-size: 12px;
-    }
-
-    .productTitle {
-        font-size: 1.4rem;
-        text-align: center;
-    }
-    .productVolume {
-        text-align: center;
-    }
-    .productName {
-        font-size: 1rem;
-    }
-
-    .productPrice {
-        font-size: 1rem;
-        text-align: center;
-    }
-
-    .buyBtnBox {
-        flex-direction: column;
-        gap: 10px;
-        align-items: stretch;
-    }
-    .productQuantity {
-        display: flex;
-        justify-content: center;
-    }
-    .productImageWrapper {
-        min-width: 100%;
-    }
-
-    .productInfoWrapper {
-        min-width: 100%;
-    }
-
-    .productDaildescription .productImage {
-        width: 100%;
-        height: auto;
-    }
-    .buyProductButton {
-        width: 100%;
-    }
-    .buyProductButton:first-child {
-        width: 100%;
-    }
-    .buyProductButton:last-child {
-        width: 100%;
-    }
-}
+.detail-page{background:#fff}.breadcrumbs{display:flex;align-items:center;gap:10px;padding-top:28px;color:#9a9195;font-size:.72rem}.breadcrumbs i{font-size:.48rem}.breadcrumbs span{color:#554c50}.detail-layout{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(380px,.92fr);gap:clamp(50px,7vw,100px);padding-block:45px 110px}.image-stage{position:relative;aspect-ratio:1/1.08;display:grid;place-items:center;background:#f7f5f2}.image-stage img{width:90%;height:90%;object-fit:contain}.gallery>p{margin-top:11px;color:#a0989c;font-size:.68rem}.gallery>p i{margin-right:6px}.sold-badge{position:absolute;top:18px;left:18px;z-index:2;padding:8px 11px;color:#fff;background:#665b60;font-size:.65rem;letter-spacing:.12em}.product-info{padding-top:20px}.product-info h1{margin-top:13px;font-family:Georgia,"Noto Serif KR",serif;font-size:clamp(2.2rem,3.5vw,3.5rem);font-weight:400;letter-spacing:-.045em}.english-name{margin-top:2px;color:#9f959a;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase}.rating-note{display:flex;justify-content:space-between;margin-top:24px;padding-bottom:20px;border-bottom:1px solid var(--color-line);color:var(--color-muted);font-size:.76rem}.rating-note i{margin-right:6px;color:var(--color-accent)}.price-box{padding:25px 0;border-bottom:1px solid var(--color-line)}.price-row{display:flex;align-items:center;justify-content:space-between}.price-row span{color:var(--color-muted);font-size:.82rem}.price-row.muted del{color:#a69da1;font-size:.85rem}.price-row.main{margin-top:5px}.price-row.main strong{color:var(--color-brand-dark);font-size:1.55rem}.price-box>p{margin-top:12px;color:#9a737c;font-size:.7rem}.price-box>p i{margin-right:5px}.product-meta{padding:18px 0;border-bottom:1px solid var(--color-line)}.product-meta div{display:grid;grid-template-columns:90px 1fr;padding:5px 0;font-size:.78rem}.product-meta dt{color:#9c9397}.product-meta dd{color:#554d51}.danger{color:#b15e68!important}.quantity-row{display:flex;align-items:center;justify-content:space-between;padding:22px 0}.quantity-row>span{font-size:.82rem}.quantity-control{display:grid;grid-template-columns:38px 44px 38px;height:38px;border:1px solid var(--color-line)}.quantity-control button{border:0;background:#fff;color:#655b60;cursor:pointer}.quantity-control button:disabled{color:#d2cccf;cursor:not-allowed}.quantity-control strong{display:grid;place-items:center;border-inline:1px solid var(--color-line);font-size:.82rem}.total{display:flex;align-items:center;justify-content:space-between;padding:21px;background:var(--color-warm)}.total span{font-size:.82rem;font-weight:700}.total strong{font-size:1.55rem;color:var(--color-brand-dark)}.purchase-actions{display:grid;grid-template-columns:.8fr 1.2fr;gap:9px;margin-top:14px}.cart-button{height:54px;border:1px solid var(--color-brand);color:var(--color-brand);background:#fff;font-weight:700;cursor:pointer}.cart-button i{margin-right:9px}.purchase-actions :deep(.buyProductButton){width:100%!important;height:54px;padding:0!important;display:grid;place-items:center;border-radius:0!important;background:var(--color-brand-dark)!important;font-size:.92rem!important}.purchase-actions.disabled{opacity:.5;pointer-events:none}.external-note{margin-top:10px;color:#a0989c;text-align:right;font-size:.65rem}.detail-description{padding-block:100px;background:var(--color-warm)}.description-heading{text-align:center}.description-heading h2{margin-top:12px;font-family:Georgia,"Noto Serif KR",serif;font-size:clamp(1.8rem,3vw,2.7rem);font-weight:400}.description-text{max-width:800px;margin:42px auto 0;color:#655d61;line-height:2;white-space:pre-line}.detail-description img{max-width:900px;width:100%;margin:55px auto 0}.service-info{display:grid;grid-template-columns:repeat(3,1fr);padding-block:65px}.service-info article{display:flex;align-items:center;gap:18px;padding:12px 35px;border-right:1px solid var(--color-line)}.service-info article:last-child{border:0}.service-info i{color:var(--color-accent);font-size:1.35rem}.service-info h3{font-size:.86rem}.service-info p{margin-top:2px;color:var(--color-muted);font-size:.7rem}.loading>div{height:600px;background:#f4f1ef;animation:pulse 1.3s infinite}.loading>div:last-child{padding-top:50px;background:transparent}.loading span{display:block;width:80%;height:25px;margin-bottom:25px;background:#f4f1ef}.loading span:nth-child(2){width:55%;height:50px}.error-state{padding-block:130px;text-align:center}.error-state i{color:var(--color-accent);font-size:2rem}.error-state h1{margin:15px 0 5px;font-size:1.25rem}.error-state p{color:var(--color-muted)}.error-state button{margin-top:25px;padding:11px 20px;border:1px solid var(--color-brand);color:var(--color-brand);background:#fff;cursor:pointer}@keyframes pulse{50%{opacity:.45}}
+@media(max-width:900px){.detail-layout{grid-template-columns:1fr;gap:35px}.image-stage{max-height:650px}.product-info{padding-top:0}.service-info{grid-template-columns:1fr}.service-info article{border-right:0;border-bottom:1px solid var(--color-line)}}@media(max-width:600px){.breadcrumbs{padding-top:18px}.detail-layout{padding-block:25px 70px}.image-stage{aspect-ratio:1/1}.product-info h1{font-size:2.2rem}.purchase-actions{grid-template-columns:1fr}.detail-description{padding-block:70px}.description-text{font-size:.86rem}.service-info{padding-block:40px}.service-info article{padding:20px 5px}.loading>div{height:380px}}
 </style>

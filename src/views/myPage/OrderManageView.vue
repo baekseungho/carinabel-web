@@ -65,10 +65,11 @@
 import { ref, computed, onMounted, watch } from "vue";
 import OrderService from "@/api/OrderService";
 import Pagination from "@/components/common/Pagination.vue";
+import { getStoredToken, getStoredUser } from "@/utils/storage";
 const activeTab = ref("default");
 const orders = ref([]);
-const token = JSON.parse(localStorage.getItem("user"))?.token;
-const user = JSON.parse(localStorage.getItem("user"));
+const token = getStoredToken();
+const user = getStoredUser();
 
 const selectedStatus = ref("all");
 const currentPage = ref(1);

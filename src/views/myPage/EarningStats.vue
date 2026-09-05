@@ -54,11 +54,12 @@
 import { ref, computed, onMounted } from "vue";
 import UserService from "@/api/UserService";
 import ReferralDetailModal from "@/components/myPage/ReferralDetailModal.vue";
+import { getStoredToken, getStoredUser } from "@/utils/storage";
 
 const stats = ref(null);
 const selectedMonth = ref("전체");
-const user = JSON.parse(localStorage.getItem("user"));
-const token = user?.token;
+const user = getStoredUser();
+const token = getStoredToken();
 const isModalVisible = ref(false);
 const selectedMonthDetail = ref("");
 const monthDetails = ref([]);

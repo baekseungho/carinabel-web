@@ -1,5 +1,5 @@
 <template>
-    <button v-show="showTopButton" class="scrollTopButton" @click="scrollToTop">▲<br />TOP</button>
+    <Transition name="top-fade"><button v-show="showTopButton" class="scrollTopButton" type="button" aria-label="페이지 맨 위로 이동" @click="scrollToTop"><i class="fa-solid fa-arrow-up"></i><span>TOP</span></button></Transition>
 </template>
 
 <script setup>
@@ -32,25 +32,34 @@ onBeforeUnmount(() => {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background-color: #cc8a94;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    background-color: var(--color-brand-dark);
     color: #fff;
     font-size: 12px;
     text-align: center;
-    border: 1px solid #ddd;
+    border: 0;
     cursor: pointer;
     z-index: 999;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 24px rgba(50, 35, 43, 0.2);
     transition: opacity 0.3s, background-color 0.3s;
     outline: none;
 }
 
 .scrollTopButton:hover {
-    background-color: #ca717f;
+    background-color: var(--color-brand);
 }
+.scrollTopButton i{font-size:10px}.scrollTopButton span{font-size:9px;letter-spacing:.08em}.top-fade-enter-active,.top-fade-leave-active{transition:.2s}.top-fade-enter-from,.top-fade-leave-to{opacity:0;transform:translateY(8px)}
 
 @media (max-width: 600px) {
     .scrollTopButton {
-        visibility: hidden;
+        right: 16px;
+        bottom: 16px;
+        width: 44px;
+        height: 44px;
     }
 }
 </style>

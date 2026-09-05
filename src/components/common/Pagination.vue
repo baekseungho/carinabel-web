@@ -115,30 +115,31 @@ const goToLastGroup = () => {
 .pagination {
     display: flex;
     justify-content: center;
-    gap: 6px;
-    margin-top: 24px;
+    gap: 4px;
+    margin-top: 38px;
 }
 .pageBtn {
-    padding: 8px 14px;
-    font-size: 15px;
-    border: none;
-    border-radius: 6px;
+    padding: 0;
+    font-size: 12px;
+    border: 1px solid transparent;
+    border-radius: 0;
     cursor: pointer;
-    background-color: #eee;
+    background-color: #fff;
     transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 36px;
-    height: 36px;
+    min-width: 34px;
+    height: 34px;
 }
 .pageBtn i {
     font-size: 14px;
 }
 .pageBtn.active {
-    background-color: #cc8a94;
+    background-color: var(--color-brand-dark, #563f4c);
     color: white;
 }
+.pageBtn:hover:not(:disabled):not(.active) { border-color: var(--color-line, #e9e2df); color: var(--color-brand, #866577); }
 .pageBtn:disabled {
     opacity: 0.5;
     cursor: not-allowed;

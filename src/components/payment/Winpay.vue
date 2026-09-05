@@ -1,5 +1,5 @@
 <template>
-  <div class="buyProductButton" @click="temporaryPayment">카드결제</div>
+  <button class="buyProductButton" type="button" :disabled="disabled" @click="temporaryPayment">엔지엔몰에서 구매하기 <i class="fa-solid fa-arrow-up-right-from-square"></i></button>
 </template>
 
 <script setup>
@@ -25,7 +25,7 @@ const route = useRoute();
 const store = useStore();
 
 // const payUrl = "https://apitest.kiwoompay.co.kr/pay/link"; // 개발
-const payUrl = " https://api.kiwoompay.co.kr/pay/link"; // 운영
+const payUrl = "https://api.kiwoompay.co.kr/pay/link"; // 운영
 const server = "LIVE";
 const cpid = "CWP11504";
 const testcpid = "CTS15178";
@@ -37,15 +37,17 @@ const totalAmount = computed(() => {
 
 // 로그인한 사용자 정보
 const userId = props.userInfo?._id || "guest";
-const userName = props.userInfo?.name || "비회원";
+const userName = props.userInfo?.fullName || props.userInfo?.name || "비회원";
 const email = props.userInfo?.email || "guest@example.com";
-const token = props.userInfo?.token;
+const token = props.userInfo?.token || localStorage.getItem("token");
 
 const temporaryPayment = () => {
+  if (props.disabled) return;
   alert("현재 엔지엔몰에서만 구매가 가능합니다. 엔지엔몰로 이동합니다.");
   window.open(
     "https://ngnmall.com/pc/product/category-list?prdCtgIdx=25",
-    "_blank"
+    "_blank",
+    "noopener,noreferrer"
   );
 };
 
@@ -261,38 +263,35 @@ const startCardPayment = async () => {
   }
 };
 
-onMounted(() => {
-  console.log(props);
-});
 </script>
 
 <style scoped>
 .buyProductButton {
-  background-color: #cc8a94;
+  width: 100%;
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-brand-dark, #563f4c), #765766);
   color: #fff;
-  padding: 15px 30px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  border: none;
-  border-radius: 10px;
+  padding: 14px 24px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: 1px solid transparent;
+  border-radius: 2px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
   text-align: center;
-  align-self: flex-start;
-  /* margin-right: 12px; */
 }
 .buyProductButton button {
   width: 100%;
   height: 100%;
 }
-.buyProductButton:first-child {
-  width: 49%;
-}
-.buyProductButton:last-child {
-  width: 49%;
-}
 .buyProductButton:hover {
-  background-color: #c97582;
+  background: linear-gradient(135deg, #49353f, #674b59);
+  box-shadow: 0 10px 24px rgba(70, 48, 59, 0.22);
+  transform: translateY(-1px);
 }
 
 .buyProductButton:disabled {

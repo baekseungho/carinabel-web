@@ -1,259 +1,191 @@
 <template>
-    <div class="navigateContainer">
-        <div class="navigateContent">
-            <div class="mapFormWrapper">
-                <div id="map" class="mapWrapper"></div>
-                <div class="contactForm">
-                    <h2>Contact With Us</h2>
-                    <p>If you have any questions please feel free to contact with us.</p>
-                    <form @submit.prevent="sendmemberId">
-                        <div class="inputGroup">
-                            <input v-model="company" type="text" placeholder="회사명" required />
-                            <input v-model="name" type="text" placeholder="담당자명" required />
-                        </div>
-                        <div class="inputGroup">
-                            <input v-model="phone" type="text" placeholder="연락처" required />
-                            <input v-model="memberId" type="memberId" placeholder="회원번호" required />
-                        </div>
-                        <textarea v-model="message" placeholder="문의내용" required></textarea>
-                        <button type="submit" class="submitButton">Send</button>
-                    </form>
-                </div>
-            </div>
-            <div class="contactInfoWrapper">
-                <div class="contactInfo themaBgColor2">
-                    <i class="fas fa-phone-alt iconWhite"></i>
-                    042.488.9302
-                </div>
-                <div class="contactInfo themaBgColor2">
-                    <i class="fas fa-map-marker-alt iconWhite"></i>
-                    대전 유성구 은구비남로7번길 73 3층
-                </div>
-                <div class="contactInfo themaBgColor2">
-                    <i class="fas fa-envelope iconWhite"></i>
-                    karinable@karinabel.com
-                </div>
-            </div>
+  <main class="about-page">
+    <section class="location-hero">
+      <div class="page-shell">
+        <p class="eyebrow">VISIT KARINABEL</p>
+        <h1>카리나벨로<br />찾아오시는 길</h1>
+      </div>
+    </section>
+    <nav class="about-tabs">
+      <RouterLink to="/about/greeting">인사말</RouterLink
+      ><RouterLink to="/about/story">브랜드 스토리</RouterLink
+      ><RouterLink to="/about/navigate">찾아오시는 길</RouterLink>
+    </nav>
+    <section class="location-section page-shell">
+      <div class="location-heading">
+        <p class="eyebrow">LOCATION</p>
+        <h2>카리나벨 본사</h2>
+        <p>
+          방문 전 고객센터로 연락해 주시면 더욱 편리하게 안내받으실 수 있습니다.
+        </p>
+      </div>
+      <div class="location-grid">
+        <div class="location-map">
+          <iframe
+            title="카리나벨 본사 위치"
+            src="https://www.google.com/maps?q=36.3755,127.31636&z=17&output=embed"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
         </div>
-    </div>
+        <div class="location-info">
+          <article>
+            <span><i class="fa-solid fa-location-dot"></i></span>
+            <div>
+              <small>ADDRESS</small
+              ><strong>대전광역시 유성구 은구비남로7번길 73</strong>
+              <p>3층 301호 카리나벨</p>
+            </div>
+          </article>
+          <article>
+            <span><i class="fa-solid fa-phone"></i></span>
+            <div>
+              <small>CONTACT</small><a href="tel:042-822-2581">042-822-2581</a>
+              <p>FAX 042-822-2582</p>
+            </div>
+          </article>
+          <article>
+            <span><i class="fa-regular fa-envelope"></i></span>
+            <div>
+              <small>EMAIL</small
+              ><a href="mailto:karinabel@naver.com">karinabel@naver.com</a>
+            </div>
+          </article>
+          <article>
+            <span><i class="fa-regular fa-clock"></i></span>
+            <div>
+              <small>OPENING HOURS</small><strong>평일 09:00 — 18:00</strong>
+              <p>주말 및 공휴일 휴무</p>
+            </div>
+          </article>
+          <a
+            class="map-link"
+            href="https://map.naver.com/p/search/대전광역시%20유성구%20은구비남로7번길%2073"
+            target="_blank"
+            rel="noopener"
+            >네이버 지도에서 길찾기 <i class="fa-solid fa-arrow-right"></i
+          ></a>
+        </div>
+      </div>
+    </section>
+  </main>
 </template>
-
-<script setup>
-import { onMounted, ref } from "vue";
-
-const company = ref("");
-const name = ref("");
-const phone = ref("");
-const memberId = ref("");
-const message = ref("");
-
-function initializeMap() {
-    const map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 36.3755, lng: 127.31636 },
-        zoom: 17,
-    });
-
-    const marker = new google.maps.Marker({
-        position: { lat: 36.3755, lng: 127.31636 },
-        map,
-        title: "카리나벨",
-    });
-    const infoWindow = new google.maps.InfoWindow({
-        content: "<strong>카리나벨</strong>",
-    });
-
-    // 마커 클릭 없이 바로 정보창 열기
-    infoWindow.open(map, marker);
-
-    // 마커 클릭 시 정보창 다시 열기 (선택 사항)
-    marker.addListener("click", () => {
-        infoWindow.open(map, marker);
-    });
+<style>
+.location-hero {
+  padding: 110px 0;
+  color: #fff;
+  background:
+    linear-gradient(90deg, rgba(38, 27, 32, 0.72), rgba(38, 27, 32, 0.1)),
+    url("/banner/2.jpg") center/cover;
 }
-
-onMounted(() => {
-    if (!window.google || !window.google.maps) {
-        const script = document.createElement("script");
-        script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDcNgrHakFpf9NDhsoORSAfTg3vAoBWUMc";
-        script.async = true;
-        script.defer = true;
-        script.onload = initializeMap;
-        document.head.appendChild(script);
-    } else {
-        initializeMap();
-    }
-});
-
-function sendmemberId() {
-    const mailto = `mailto:vudrkd1580@naver.com?subject=문의사항 (${company.value})&body=회사명: ${company.value}%0D%0A담당자명: ${name.value}%0D%0A연락처: ${phone.value}%0D%0A회원번호: ${memberId.value}%0D%0A문의내용: ${message.value}`;
-    window.location.href = mailto;
+.location-hero h1 {
+  margin-top: 15px;
+  font-family: Georgia, "Noto Serif KR", serif;
+  font-size: clamp(2.8rem, 5vw, 4.6rem);
+  font-weight: 400;
+  line-height: 1.25;
 }
-</script>
-
-<style scoped>
-.navigateContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 60px 20px;
-    background-color: #f7f7f7;
+.location-section {
+  padding-block: 95px 120px;
 }
-.navigateContent {
-    max-width: 1200px;
-    width: 100%;
-    background-color: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-    padding: 40px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 40px;
+.location-heading {
+  text-align: center;
 }
-.mapFormWrapper {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    flex: 1;
+.location-heading h2 {
+  margin: 9px 0;
+  font-family: Georgia, "Noto Serif KR", serif;
+  font-size: 2.5rem;
+  font-weight: 400;
 }
-.mapWrapper {
-    /* flex: 1; */
-    min-width: 600px;
-    height: 400px;
-    border-radius: 20px;
-    overflow: hidden;
+.location-heading > p:last-child {
+  color: #8d8388;
+  font-size: 0.75rem;
 }
-.contactForm {
-    flex: 1;
-    min-width: 300px;
-    background-color: #ffffff;
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+.location-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  min-height: 530px;
+  margin-top: 45px;
 }
-.contactForm h2 {
-    font-size: 1.8rem;
-    margin-bottom: 10px;
-    color: #333;
-    border-bottom: 2px solid #a4acb7;
-    padding-bottom: 5px;
+.location-map {
+  min-height: 500px;
+  background: #eee9e6;
 }
-.contactForm p {
-    font-size: 1rem;
-    margin-bottom: 20px;
-    color: #555;
+.location-map iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  border: 0;
+  filter: saturate(0.75) contrast(0.95);
 }
-.inputGroup {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
+.location-info {
+  padding: 35px 40px;
+  background: #332c30;
+  color: #fff;
 }
-.inputGroup input,
-textarea {
-    flex: 1;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    font-size: 0.9rem;
+.location-info article {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  gap: 12px;
+  padding: 18px 0;
+  border-bottom: 1px solid #50454a;
 }
-textarea {
-    width: 100%;
-    height: 100px;
+.location-info article > span {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  color: #d1a4ac;
+  background: #40373b;
 }
-.submitButton {
-    background-color: #cc8a94;
-    color: #fff;
-    padding: 15px 30px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    width: 100%;
-    font-size: 1rem;
-    font-weight: bold;
+.location-info small,
+.location-info strong,
+.location-info article p,
+.location-info article a {
+  display: block;
 }
-.submitButton:hover {
-    background-color: #ca717f;
+.location-info small {
+  color: #a99da2;
+  font-size: 0.52rem;
+  letter-spacing: 0.13em;
 }
-.contactInfoWrapper {
-    display: flex;
-    width: 100%;
-    margin-top: 20px;
-    justify-content: space-between;
+.location-info strong,
+.location-info article a {
+  margin-top: 4px;
+  color: #fff;
+  font-size: 0.76rem;
 }
-.contactInfo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 20px;
-    color: white;
-    border-radius: 10px;
-    font-size: 1rem;
-    font-weight: bold;
-    min-width: 200px;
-    width: 32%;
+.location-info article p {
+  margin-top: 2px;
+  color: #a99fa3;
+  font-size: 0.64rem;
 }
-
-.iconWhite {
-    color: white;
-    font-size: 1.2rem;
+.map-link {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+  padding: 13px 16px;
+  color: #fff;
+  background: var(--color-brand);
+  font-size: 0.7rem;
 }
-.contactInfo > div {
-    margin-right: 8px;
-}
-
-@media (max-width: 1200px) {
-    .mapFormWrapper {
-        flex-direction: column;
-    }
-
-    .contactForm {
-        width: 100%;
-    }
-
-    .contactInfoWrapper {
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        margin-top: 30px;
-    }
-
-    .contactInfo {
-        font-size: 0.85rem;
-        width: 90%; /* 좌우 공간 좁히기 */
-        padding: 15px;
-    }
-    .mapWrapper {
-        /* flex: 1; */
-        min-width: 300px;
-        height: 400px;
-        border-radius: 20px;
-        /* overflow: hidden; */
-    }
-}
-
-@media (max-width: 600px) {
-    .navigateContainer {
-        padding: 40px 10px;
-        width: 100%;
-        /* max-width: 100%; */
-        box-sizing: border-box;
-        /* overflow: hidden; */
-    }
-
-    .storyContent h1 {
-        font-size: 1.6rem;
-    }
-
-    .storyContent p {
-        font-size: 0.9rem;
-    }
-    .navigateContent {
-        padding: 20px;
-    }
-
-    .inputGroup {
-        flex-direction: column;
-    }
+@media (max-width: 800px) {
+  .location-hero {
+    padding: 75px 0;
+  }
+  .location-section {
+    padding-block: 70px;
+  }
+  .location-grid {
+    grid-template-columns: 1fr;
+  }
+  .location-map,
+  .location-map iframe {
+    min-height: 400px;
+  }
+  .location-info {
+    padding: 25px 22px;
+  }
 }
 </style>

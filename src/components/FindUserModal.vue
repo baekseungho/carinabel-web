@@ -1,10 +1,10 @@
 <template>
-    <div class="modalWrapper" v-if="visible">
+    <div class="modalWrapper find-user-modal" v-if="visible" role="dialog" aria-modal="true" aria-labelledby="find-user-title">
         <div class="modalOverlay"></div>
         <div class="modalContent">
             <div class="modalHeader">
-                <h2>회원/비밀번호 찾기</h2>
-                <button class="closeButton" @click="closeModal">✕</button>
+                <div><p>ACCOUNT SUPPORT</p><h2 id="find-user-title">회원정보 찾기</h2></div>
+                <button class="closeButton" aria-label="닫기" @click="closeModal"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
             <div class="tabButtons">
@@ -222,4 +222,7 @@ const handleResetPassword = () => {
     font-size: 20px;
     cursor: pointer;
 }
+</style>
+<style>
+.find-user-modal{position:fixed;inset:0;z-index:2000;display:grid;place-items:center;padding:20px}.find-user-modal .modalOverlay{position:absolute;inset:0;background:rgba(28,20,24,.65);backdrop-filter:blur(6px)}.find-user-modal .modalContent{position:relative;z-index:1;width:min(100%,480px);max-height:90vh;overflow-y:auto;padding:34px;border-radius:2px;background:#fff;box-shadow:0 25px 80px rgba(20,12,16,.3)}.find-user-modal .modalHeader{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}.find-user-modal .modalHeader p{color:var(--color-accent);font-size:.59rem;font-weight:800;letter-spacing:.15em}.find-user-modal .modalHeader h2{margin-top:5px;font-family:Georgia,"Noto Serif KR",serif;font-size:1.65rem;font-weight:400}.find-user-modal .closeButton{width:34px;height:34px;border:0;background:#f7f4f2;color:#6f6469}.find-user-modal .tabButtons{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:25px;border-bottom:1px solid #ded6d9}.find-user-modal .tabButtons button{padding:12px;border:0;background:#fff;color:#968c91;font-size:.73rem}.find-user-modal .tabButtons button.active{border-bottom:2px solid var(--color-brand);color:var(--color-brand-dark);background:#fff;font-weight:800}.find-user-modal .formGroup{margin-bottom:15px}.find-user-modal .formGroup label{display:block;margin-bottom:6px;color:#60575b;font-size:.68rem;font-weight:700}.find-user-modal .formGroup input{width:100%;height:47px;padding:0 13px;border:1px solid #ddd5d8;border-radius:0;outline:0;font-size:.76rem}.find-user-modal .formGroup input:focus{border-color:var(--color-brand)}.find-user-modal .tabContent>button{width:100%;height:49px;margin-top:8px;border:0;color:#fff;background:var(--color-brand-dark);font-size:.76rem;font-weight:700}.find-user-modal .resultBox{margin-top:18px;padding:17px;border-radius:0;color:#665c61;background:var(--color-warm);font-size:.75rem;text-align:center}.find-user-modal .resultBox strong{color:var(--color-brand-dark)}@media(max-width:520px){.find-user-modal .modalContent{padding:27px 20px}}
 </style>

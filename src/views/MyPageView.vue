@@ -1,50 +1,13 @@
 <template>
-    <div class="myPageWrapper">
-        <SideMenu :collapsed="isCollapsed" @toggle-collapse="toggleCollapse" />
-        <div :class="['myPageMain', { collapsed: isCollapsed }]">
-            <router-view />
-        </div>
+    <div class="mypage-shell">
+        <section class="mypage-hero"><div class="page-shell"><div><p class="eyebrow">MY KARINABEL</p><h1>{{ userName }}님의<br />향기로운 공간</h1></div><div class="member-card"><span class="member-avatar"><i class="fa-regular fa-user"></i></span><div><small>MEMBERSHIP</small><strong>{{ membershipLevel }}</strong><p>회원번호 {{ memberId }}</p></div><RouterLink to="/mypage/info">내 정보 <i class="fa-solid fa-arrow-right"></i></RouterLink></div></div></section>
+        <div class="mypage-layout page-shell"><SideMenu /><main class="mypage-content"><router-view /></main></div>
     </div>
 </template>
-
 <script setup>
-import { ref } from "vue";
-import SideMenu from "@/components/myPage/SideMenu.vue";
-
-const isCollapsed = ref(false);
-const toggleCollapse = () => {
-    isCollapsed.value = !isCollapsed.value;
-};
+import{computed}from"vue";import SideMenu from"@/components/myPage/SideMenu.vue";const user=computed(()=>JSON.parse(localStorage.getItem("user")||"{}"));const userName=computed(()=>user.value.fullName||user.value.name||"회원");const membershipLevel=computed(()=>user.value.membershipLevel||"일반회원");const memberId=computed(()=>user.value.memberId||"-");
 </script>
-
-<style scoped>
-.myPageWrapper {
-    display: flex;
-    min-height: 100vh;
-    background-color: #f9f9f9;
-    padding: 40px 20px;
-}
-
-.myPageMain {
-    flex: 1;
-    padding-left: 40px; /* 펼쳤을 때 사이드바 넓이만큼 */
-    overflow: hidden;
-}
-
-.myPageMain.collapsed {
-    padding-left: 40px; /* 접혔을 때 좁게 */
-}
-
-/* ✅ 모바일 (600px 이하)에서는 하단 메뉴바 고려하여 padding-bottom 설정 */
-@media (max-width: 600px) {
-    .myPageWrapper {
-        flex-direction: column; /* 필요시 세로 정렬도 가능 */
-        padding: 20px 10px 80px 10px; /* 하단 네비 높이 고려 padding-bottom */
-    }
-
-    .myPageMain,
-    .myPageMain.collapsed {
-        padding-left: 0; /* 모바일에서는 좌측 여백 제거 */
-    }
-}
+<style>
+.mypage-shell{min-height:80vh;background:#f7f4f1}.mypage-hero{padding:58px 0;background:#312a2e;color:#fff}.mypage-hero>.page-shell{display:flex;align-items:flex-end;justify-content:space-between;gap:40px}.mypage-hero h1{margin-top:10px;font-family:Georgia,"Noto Serif KR",serif;font-size:clamp(2.1rem,3.5vw,3.4rem);font-weight:400;line-height:1.3}.member-card{min-width:430px;display:grid;grid-template-columns:54px 1fr auto;align-items:center;gap:16px;padding:20px 23px;border:1px solid #54494e;background:#3a3236}.member-avatar{width:48px;height:48px;display:grid;place-items:center;border-radius:50%;color:#392f34;background:#d7b7bd}.member-card small,.member-card strong,.member-card p{display:block}.member-card small{color:#b9adb2;font-size:.55rem;letter-spacing:.13em}.member-card strong{margin:2px 0;color:#fff;font-size:.86rem}.member-card p{color:#a99da2;font-size:.65rem}.member-card>a{padding:8px 11px;border:1px solid #665a60;color:#d4c9cd;font-size:.65rem}.member-card>a i{margin-left:8px}.mypage-layout{display:grid;grid-template-columns:235px minmax(0,1fr);gap:34px;padding-block:48px 100px}.mypage-content{min-width:0}.mypage-shell .pageContainer,.mypage-shell .orderHistoryPage,.mypage-shell .orderViewContainer,.mypage-shell .addressPage,.mypage-shell .inquiriesPage,.mypage-shell .recommendTable,.mypage-shell .memberManage,.mypage-shell .withdrawContainer{padding:34px!important;border-radius:2px!important;background:#fff!important;box-shadow:0 12px 40px rgba(55,38,47,.05)!important;animation:none!important}.mypage-shell .pageHeader,.mypage-shell .page-header{padding-bottom:22px!important;margin-bottom:28px!important;border-bottom:1px solid var(--color-line)!important;text-align:left!important}.mypage-shell .pageHeader h1,.mypage-shell .pageTitle,.mypage-shell .header h2{margin-bottom:6px!important;color:var(--color-ink)!important;font-family:Georgia,"Noto Serif KR",serif!important;font-size:clamp(1.65rem,2.4vw,2.2rem)!important;font-weight:400!important}.mypage-shell .pageHeader p{color:#978d92!important;font-size:.75rem!important}.mypage-shell .tabs,.mypage-shell .statusFilters,.mypage-shell .toggleGroup{display:flex!important;gap:6px!important;margin-bottom:25px!important;border-bottom:1px solid var(--color-line)}.mypage-shell .tabs button,.mypage-shell .filterBtn,.mypage-shell .toggleGroup button{padding:10px 15px!important;margin:0!important;border:0!important;border-radius:0!important;color:#8c8287!important;background:transparent!important;font-size:.72rem!important}.mypage-shell .tabs button.active,.mypage-shell .filterBtn.active,.mypage-shell .toggleGroup button.active{border-bottom:2px solid var(--color-brand)!important;color:var(--color-brand-dark)!important;background:transparent!important;font-weight:800!important}.mypage-shell table{width:100%;border-collapse:collapse;background:#fff}.mypage-shell thead{color:#685e63!important;background:#f5f2f0!important}.mypage-shell th,.mypage-shell td{padding:13px 12px!important;border-bottom:1px solid #ece6e3!important;font-size:.72rem!important}.mypage-shell tbody tr:hover{background:#fbf8f6}.mypage-shell button:not(.mypage-nav-link){border-radius:2px}.mypage-shell .editBtn,.mypage-shell .detailBtn,.mypage-shell .addBtn,.mypage-shell .submitBtn{padding:10px 17px!important;border:0!important;border-radius:2px!important;color:#fff!important;background:var(--color-brand-dark)!important;font-size:.7rem!important}.mypage-shell .sectionTitle{margin:30px 0 0!important;padding:12px 15px!important;border-radius:0!important;color:#fff!important;background:#4a4145!important;font-size:.8rem!important}.mypage-shell .infoView{padding:0!important;border-radius:0!important;box-shadow:none!important}.mypage-shell .infoView th{width:25%;color:#776d72;background:#faf8f7}.mypage-shell .orderCard{padding:20px!important;border:1px solid var(--color-line)!important;border-radius:2px!important;box-shadow:none!important}.mypage-shell input,.mypage-shell select,.mypage-shell textarea{border-radius:2px!important;border-color:#ddd5d8!important}.mypage-shell .withdrawContainer{min-height:auto!important}.mypage-shell .withdrawCard{box-shadow:none!important}
+@media(max-width:900px){.mypage-hero>.page-shell{align-items:flex-start;flex-direction:column}.member-card{width:100%;min-width:0}.mypage-layout{grid-template-columns:1fr;gap:18px;padding-top:20px}}@media(max-width:600px){.mypage-hero{padding:42px 0}.member-card{grid-template-columns:45px 1fr}.member-card>a{grid-column:1/-1;text-align:center}.mypage-layout{width:100%;padding-bottom:70px}.mypage-content{padding:0 12px}.mypage-shell .pageContainer,.mypage-shell .orderHistoryPage,.mypage-shell .orderViewContainer,.mypage-shell .addressPage,.mypage-shell .inquiriesPage,.mypage-shell .recommendTable,.mypage-shell .memberManage,.mypage-shell .withdrawContainer{padding:22px 16px!important}.mypage-shell .tabs,.mypage-shell .statusFilters{overflow-x:auto;flex-wrap:nowrap!important}.mypage-shell .tabs button,.mypage-shell .filterBtn{flex:0 0 auto!important}.mypage-shell .infoView th{width:34%}}
 </style>

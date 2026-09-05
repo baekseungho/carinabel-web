@@ -41,7 +41,6 @@ import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import essentialOils from "../assets/data/essentialoils.js";
 import { useStore } from "vuex";
-import AuthService from "@/api/AuthService";
 
 const store = useStore();
 const route = useRoute();
@@ -61,23 +60,7 @@ function formatPrice(price) {
 
 function addToCart(product) {
     if (!product.koreanName) return;
-    console.log(product);
-    const token = localStorage.getItem("token");
-    const userId = JSON.parse(localStorage.getItem("user"))._id;
-    const data = {
-        userId: userId,
-        additionalAmount: product.memberPrice * 2,
-    };
-    console.log(data, token);
-    AuthService.updateUserProfile(data.userId, data.additionalAmount, token)
-        .then((response) => {
-            console.log(response);
-            alert(`${product.koreanName} 를 구매했습니다.`);
-        })
-        .catch((error) => {
-            console.error(error);
-            alert("구매에 실패했습니다.");
-        });
+    window.open("https://ngnmall.com/pc/product/category-list?prdCtgIdx=25", "_blank", "noopener,noreferrer");
 }
 
 function goBack() {

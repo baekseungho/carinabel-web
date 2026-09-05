@@ -1,226 +1,34 @@
 <template>
-    <div class="orderCompleteContainer" v-if="order">
-        <div class="productPreview">
-            <img
-                :src="order.product.imagePath"
-                :alt="order.product.productName"
-            />
-        </div>
-
-        <div class="completeMessage">
-            <h1>결제가 완료되었습니다</h1>
-            <p>주문이 정상적으로 완료되었습니다. 감사합니다!</p>
-        </div>
-
-        <div class="orderCard">
-            <h2>주문 정보</h2>
-            <ul>
-                <li><strong>주문번호:</strong> {{ order.orderNumber }}</li>
-                <li>
-                    <strong>주문일시:</strong> {{ formatDate(order.createdAt) }}
-                </li>
-                <li>
-                    <strong>상품명:</strong> {{ order.product.productName }}
-                </li>
-                <li><strong>수량:</strong> {{ order.product.quantity }}개</li>
-                <li>
-                    <strong>결제금액:</strong>
-                    {{ formatPrice(order.product.amount) }}원
-                </li>
-                <!-- <li><strong>결제수단:</strong> {{ order.payment.method }}</li> -->
-                <li><strong>결제상태:</strong> {{ order.status }}</li>
-            </ul>
-        </div>
-
-        <div class="orderCard">
-            <h2>배송지 정보</h2>
-            <ul>
-                <li>
-                    <strong>수령인:</strong> {{ order.delivery.recipientName }}
-                </li>
-                <li><strong>연락처:</strong> {{ order.user.phone }}</li>
-                <li><strong>우편번호:</strong> {{ order.delivery.zipCode }}</li>
-                <li>
-                    <strong>주소:</strong> {{ order.delivery.address }}
-                    {{ order.delivery.detailAddress }}
-                </li>
-                <li><strong>배송 메모:</strong> {{ order.delivery.memo }}</li>
-            </ul>
-        </div>
-
-        <button class="homeBtn" @click="goHome">홈으로 이동</button>
+    <div class="complete-page">
+        <section v-if="isLoading" class="status-state"><div class="spinner"></div><h1>주문 정보를 확인하고 있습니다.</h1><p>잠시만 기다려 주세요.</p></section>
+        <section v-else-if="errorMessage" class="status-state error"><i class="fa-solid fa-circle-exclamation"></i><h1>{{ errorMessage }}</h1><p>문제가 계속되면 고객센터로 문의해 주세요.</p><RouterLink to="/">홈으로 이동</RouterLink></section>
+        <main v-else-if="order" class="complete-container page-shell">
+            <header class="complete-header"><span class="check"><i :class="isPaymentComplete ? 'fa-solid fa-check' : 'fa-regular fa-clock'"></i></span><p class="eyebrow">{{ isPaymentComplete ? 'ORDER COMPLETE' : 'ORDER RECEIVED' }}</p><h1>{{ isPaymentComplete ? '주문이 완료되었습니다.' : '주문이 접수되었습니다.' }}</h1><p>{{ isPaymentComplete ? '카리나벨을 선택해 주셔서 감사합니다.' : '현재 결제 상태를 확인하고 있습니다.' }}<br />주문 상태는 마이페이지에서 다시 확인할 수 있습니다.</p><span class="order-number">주문번호 <strong>{{ order.orderNumber || '-' }}</strong></span></header>
+            <div class="complete-grid">
+                <div class="details">
+                    <section class="info-card"><h2>주문 상품</h2><div class="ordered-product"><div class="product-image"><img :src="product.imagePath || '/img/defalut_product.png'" :alt="product.productName || '주문 상품'" /></div><div><p>KARINABEL</p><h3>{{ product.productName || '주문 상품' }}</h3><span>수량 {{ product.quantity || 0 }}개</span></div><strong>{{ formatPrice(product.amount) }}원</strong></div></section>
+                    <section class="info-card"><h2>배송지 정보</h2><dl><div><dt>수령인</dt><dd>{{ delivery.recipientName || '-' }}</dd></div><div><dt>연락처</dt><dd>{{ order.user?.phone || '-' }}</dd></div><div><dt>주소</dt><dd><span v-if="delivery.zipCode">[{{ delivery.zipCode }}]</span> {{ delivery.address || '-' }} {{ delivery.detailAddress || '' }}</dd></div><div><dt>배송 메모</dt><dd>{{ delivery.memo || '없음' }}</dd></div></dl></section>
+                </div>
+                <aside class="payment-card"><p class="eyebrow">PAYMENT INFO</p><h2>결제 정보</h2><dl><div><dt>주문일시</dt><dd>{{ formatDate(order.createdAt) }}</dd></div><div><dt>결제상태</dt><dd class="status">{{ order.status || '-' }}</dd></div></dl><div class="paid-total"><span>총 결제 금액</span><strong>{{ formatPrice(product.amount) }}원</strong></div><RouterLink to="/mypage/order-history">주문 내역 확인</RouterLink><RouterLink to="/" class="home-link">홈으로 돌아가기</RouterLink><p><i class="fa-solid fa-circle-info"></i> 주문 관련 문의는 Q&amp;A 또는 고객센터를 이용해 주세요.</p></aside>
+            </div>
+        </main>
     </div>
 </template>
+
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { computed, onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
 import OrderService from "@/api/OrderService";
-import AuthService from "@/api/AuthService";
-import { useStore } from "vuex";
-import CartService from "@/api/CartService";
-const order = ref(null);
-const route = useRoute();
-const router = useRouter();
-const store = useStore();
-const orderId = route.params.id;
-
-const formatDate = (dateStr) => {
-    const date = new Date(dateStr);
-    return date.toLocaleString("ko-KR", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-    });
-};
-
-const formatPrice = (num) => {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-};
-
-const goHome = () => {
-    router.push("/");
-};
-
-onMounted(async () => {
-    const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    if (!orderId || !token || !user) {
-        alert("잘못된 접근입니다.");
-        router.push("/");
-        return;
-    }
-
-    try {
-        // ✅ 1. 주문 상세 가져오기
-        const res = await OrderService.getOrderDetail(orderId, token);
-        order.value = res.data;
-
-        // ✅ 2. 상태가 입금대기인 경우 → 결제완료 처리
-        if (order.value.status === "입금대기") {
-            await OrderService.updateOrderStatus(orderId, "결제완료", token);
-            order.value.status = "결제완료";
-
-            // ✅ 3. 누적 금액 업데이트 및 Vuex 반영
-            const userRes = await AuthService.updateUserProfile(
-                user._id,
-                order.value.product.amount, // ✅ order.value.product.amount → order.value.amount로 변경 권장
-                token
-            );
-            console.log("주문완료", userRes);
-            store.dispatch("login", userRes.data); // ✅ UI 업데이트
-
-            // ✅ 4. 장바구니 주문이면 장바구니 비우기
-            if (order.value.orderType === "cart") {
-                try {
-                    await CartService.clearCart(token);
-                    console.log("🛒 장바구니 비우기 완료");
-                } catch (clearErr) {
-                    console.warn("🛒 장바구니 비우기 실패:", clearErr);
-                }
-            }
-
-            localStorage.setItem("paidOrder", orderId);
-        }
-    } catch (err) {
-        console.error("❌ 주문 처리 실패:", err);
-        alert("주문 정보를 처리할 수 없습니다.");
-        router.push("/");
-    }
-});
+import { getStoredToken, getStoredUser } from "@/utils/storage";
+const route=useRoute(); const order=ref(null); const isLoading=ref(true); const errorMessage=ref("");
+const product=computed(()=>order.value?.product || {}); const delivery=computed(()=>order.value?.delivery || {});
+const isPaymentComplete=computed(()=>["결제완료","배송준비","배송중","배송완료","구매확정"].includes(order.value?.status));
+const formatPrice=(number)=>Number(number || 0).toLocaleString("ko-KR");
+const formatDate=(value)=>value ? new Date(value).toLocaleString("ko-KR",{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"}) : "-";
+onMounted(async()=>{ const token=getStoredToken(); const user=getStoredUser(); if(!route.params.id || !token || !user){ errorMessage.value="유효하지 않은 주문 접근입니다."; isLoading.value=false; return; } try{ const response=await OrderService.getOrderDetail(route.params.id,token); order.value=response.data; }catch(error){ console.error(error); errorMessage.value=error.response?.status===403?"이 주문을 확인할 권한이 없습니다.":"주문 정보를 확인할 수 없습니다."; }finally{ isLoading.value=false; } });
 </script>
 
-<style scoped>
-.orderCompleteContainer {
-    max-width: 700px;
-    margin: 60px auto;
-    padding: 24px;
-    border-radius: 16px;
-    background: #fff;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-    text-align: center;
-    animation: fadeIn 0.4s ease;
-}
-
-.productPreview img {
-    width: 100%;
-    max-height: 280px;
-    object-fit: contain;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    margin-bottom: 24px;
-}
-
-.completeMessage h1 {
-    color: #3aa14d;
-    font-size: 28px;
-    margin-bottom: 8px;
-}
-.completeMessage p {
-    font-size: 16px;
-    color: #777;
-    margin-bottom: 24px;
-}
-
-.orderCard {
-    text-align: left;
-    margin: 20px 0;
-    padding: 20px;
-    background-color: #fafafa;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
-}
-
-.orderCard h2 {
-    font-size: 20px;
-    margin-bottom: 12px;
-    color: #333;
-}
-
-.orderCard ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.orderCard li {
-    margin-bottom: 10px;
-    font-size: 15px;
-    color: #444;
-}
-
-.orderCard li strong {
-    display: inline-block;
-    width: 110px;
-    color: #555;
-}
-
-.homeBtn {
-    margin-top: 32px;
-    padding: 12px 28px;
-    background-color: #3aa14d;
-    color: white;
-    border: none;
-    border-radius: 50px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-.homeBtn:hover {
-    background-color: #2e8d3b;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+<style>
+.complete-page{min-height:70vh;padding:80px 0 120px;background:var(--color-warm)}.complete-container{max-width:1050px}.complete-header{text-align:center}.check{width:58px;height:58px;display:grid;place-items:center;margin:0 auto 20px;border-radius:50%;color:#fff;background:var(--color-brand)}.complete-header h1{margin:10px 0 12px;font-family:Georgia,"Noto Serif KR",serif;font-size:clamp(2.2rem,4vw,3.4rem);font-weight:400}.complete-header>p:not(.eyebrow){color:var(--color-muted);font-size:.85rem;line-height:1.8}.order-number{display:inline-block;margin-top:22px;padding:8px 14px;background:#eee7e4;color:#766b70;font-size:.72rem}.order-number strong{margin-left:7px;color:#3b3437}.complete-grid{display:grid;grid-template-columns:1fr 340px;gap:26px;margin-top:55px}.info-card,.payment-card{padding:30px;background:#fff}.info-card+ .info-card{margin-top:20px}.info-card>h2,.payment-card>h2{padding-bottom:17px;border-bottom:1px solid #332d30;font-size:.95rem}.ordered-product{display:grid;grid-template-columns:100px 1fr auto;gap:18px;align-items:center;padding-top:23px}.product-image{aspect-ratio:1;background:#f7f5f2}.product-image img{width:100%;height:100%;object-fit:contain}.ordered-product p{color:#a2959b;font-size:.57rem;letter-spacing:.1em}.ordered-product h3{margin:3px 0;font-size:.92rem}.ordered-product span{color:var(--color-muted);font-size:.7rem}.ordered-product>strong{font-size:.9rem}.info-card dl{padding-top:17px}.info-card dl div{display:grid;grid-template-columns:95px 1fr;padding:7px 0;font-size:.76rem}.info-card dt{color:#9a9095}.payment-card{align-self:start}.payment-card>h2{margin-top:5px}.payment-card dl{padding:18px 0;border-bottom:1px solid var(--color-line)}.payment-card dl div{display:flex;justify-content:space-between;margin:9px 0;font-size:.73rem}.payment-card dt{color:#968c91}.status{color:#9e6671;font-weight:700}.paid-total{display:flex;align-items:flex-end;justify-content:space-between;padding:24px 0}.paid-total span{font-size:.76rem;font-weight:700}.paid-total strong{color:var(--color-brand-dark);font-size:1.3rem}.payment-card>a{display:block;padding:13px;text-align:center;color:#fff;background:var(--color-brand-dark);font-size:.76rem;font-weight:700}.payment-card .home-link{margin-top:8px;border:1px solid var(--color-brand);color:var(--color-brand);background:#fff}.payment-card>p:last-child{margin-top:18px;color:#999095;font-size:.62rem;line-height:1.5}.payment-card>p i{margin-right:5px}.status-state{padding:130px 20px;text-align:center}.status-state h1{margin:20px 0 5px;font-family:Georgia,"Noto Serif KR",serif;font-size:1.7rem;font-weight:400}.status-state p{color:var(--color-muted);font-size:.8rem}.status-state>a{display:inline-block;margin-top:25px;padding:11px 20px;color:#fff;background:var(--color-brand)}.status-state.error>i{color:var(--color-accent);font-size:2.3rem}.spinner{width:46px;height:46px;margin:auto;border:3px solid #e4dcda;border-top-color:var(--color-brand);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:800px){.complete-grid{grid-template-columns:1fr}.payment-card{order:-1}}@media(max-width:560px){.complete-page{padding:55px 0 80px}.complete-grid{margin-top:40px}.info-card,.payment-card{padding:24px 20px}.ordered-product{grid-template-columns:80px 1fr}.ordered-product>strong{grid-column:2;text-align:left}.info-card dl div{grid-template-columns:75px 1fr}}
 </style>

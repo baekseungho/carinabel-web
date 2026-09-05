@@ -1,17 +1,19 @@
 import { createStore } from "vuex";
 import AuthService from "@/api/AuthService";
+import { getStoredToken, getStoredUser } from "@/utils/storage";
 
 const store = createStore({
     state: {
-        user: JSON.parse(localStorage.getItem("user")) || null,
-        token: localStorage.getItem("token") || null,
+        user: getStoredUser(),
+        token: getStoredToken(),
     },
     mutations: {
         setUser(state, userData) {
-            state.user = userData;
-            state.token = userData.token;
-            localStorage.setItem("user", JSON.stringify(userData));
-            localStorage.setItem("token", userData.token);
+            const token = userData?.token || state.token || getStoredToken();
+            state.user = { ...(state.user || {}), ...(userData || {}), ...(token ? { token } : {}) };
+            state.token = token;
+            localStorage.setItem("user", JSON.stringify(state.user));
+            if (token) localStorage.setItem("token", token);
         },
         clearUser(state) {
             state.user = null;
@@ -29,19 +31,21 @@ const store = createStore({
         },
         async fetchUserProfile({ commit }) {
             try {
-                const token = localStorage.getItem("token");
+                const token = getStoredToken();
+                if (!token) throw new Error("인증 토큰이 없습니다.");
                 const response = await AuthService.getUserProfile(token);
 
                 // 🔄 업데이트된 user 정보 저장
                 commit("setUser", response.data);
             } catch (error) {
                 console.error("사용자 정보 불러오기 실패:", error);
-                commit("clearUser");
+                if ([401, 403].includes(error.response?.status)) commit("clearUser");
+                throw error;
             }
         },
     },
     getters: {
-        isAuthenticated: (state) => !!state.token,
+        isAuthenticated: (state) => Boolean(state.token && state.user),
         userName: (state) => (state.user ? state.user.fullName : ""),
         membershipLevel: (state) => (state.user ? state.user.membershipLevel : "일반회원"),
     },
