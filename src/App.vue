@@ -32,7 +32,9 @@ const isOnline = ref(typeof navigator === "undefined" ? true : navigator.onLine)
 const updateOnlineStatus = () => { isOnline.value = navigator.onLine; };
 const handleAuthExpired = () => {
     store.dispatch("logout");
-    if (route.name !== "Login") router.replace({ name: "Login", query: { redirect: route.fullPath, reason: "expired" } });
+    const isAdminPage = route.path.startsWith("/admin");
+    const targetName = isAdminPage ? "AdminLoginView" : "Login";
+    if (route.name !== targetName) router.replace({ name: targetName, query: { redirect: route.fullPath, reason: "expired" } });
 };
 
 watch(route, (newRoute) => {

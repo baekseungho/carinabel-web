@@ -37,8 +37,8 @@
             </div>
 
             <div class="modalActions">
-                <button class="saveBtn" @click="saveAddress">주소록 저장</button>
-                <button class="closeBtn" @click="$emit('close')">닫기</button>
+                <button type="button" class="saveBtn" @click="saveAddress">주소록 저장</button>
+                <button type="button" class="closeBtn" @click="$emit('close')">닫기</button>
             </div>
         </div>
     </div>

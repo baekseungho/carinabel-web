@@ -20,7 +20,7 @@
                 </ul>
                 <p v-else>📭 수당 기록이 없습니다.</p>
             </div>
-            <button @click="close">닫기</button>
+            <button class="ui-button ui-button--secondary" type="button" @click="close">닫기</button>
         </div>
     </div>
 </template>

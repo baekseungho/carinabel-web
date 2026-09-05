@@ -16,7 +16,8 @@ function scrollToTop() {
 }
 
 onMounted(() => {
-    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
 });
 
 onBeforeUnmount(() => {

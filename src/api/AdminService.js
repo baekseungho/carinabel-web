@@ -23,8 +23,10 @@ class AdminService {
     adminLogin(data) {
         return axios.post(`${ADMIN_API_URL}/login`, data);
     }
-    adminCreate(data) {
-        return axios.post(`${ADMIN_API_URL}/create`, data);
+    adminCreate(data, token) {
+        return axios.post(`${ADMIN_API_URL}/create`, data, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
     }
     getFilteredUsers(params, token) {
         return axios.get("/admin/users", {

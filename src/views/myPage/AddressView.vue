@@ -2,7 +2,7 @@
     <div class="addressPage">
         <div class="addressHeader">
             <h2>배송지 관리</h2>
-            <button class="addBtn" @click="openModal()">+ 배송지 추가</button>
+            <button type="button" class="addBtn" @click="openModal()"><i class="fa-solid fa-plus"></i> 배송지 추가</button>
         </div>
 
         <div class="addressTableWrapper" v-if="addresses.length">
@@ -25,8 +25,8 @@
                         <td>{{ item.address }}</td>
                         <td>{{ item.isDefault ? "✔️" : "" }}</td>
                         <td>
-                            <button class="editBtn" @click="openModal(item)">수정</button>
-                            <button class="deleteBtn" @click="deleteAddress(item._id)">삭제</button>
+                            <button type="button" class="editBtn" @click="openModal(item)">수정</button>
+                            <button type="button" class="deleteBtn" @click="deleteAddress(item._id)">삭제</button>
                         </td>
                     </tr>
                 </tbody>

@@ -1,230 +1,37 @@
 <template>
-    <div class="adminOrderList">
-        <h1 class="pageTitle">주문 리스트</h1>
-
-        <div class="filterSection">
-            <div class="order-filter">
-                <input type="date" v-model="filters.fromDate" />
-                ~
-                <input type="date" v-model="filters.toDate" />
-            </div>
-            <input v-model="filters.orderNumber" placeholder="주문번호 검색" />
-            <input v-model="filters.productName" type="text" placeholder="상품명" />
-            <input v-model="filters.name" type="text" placeholder="사용자 이름" />
-
-            <button @click="fetchOrders(1)">검색</button>
-            <div class="excelButtons">
-                <button @click="downloadCurrentPageOrders">현재페이지 엑셀</button>
-                <button @click="downloadAllOrders">전체 엑셀</button>
-            </div>
-        </div>
-
-        <table class="orderTable">
-            <thead>
-                <tr>
-                    <th>주문번호</th>
-                    <th>주문일시</th>
-                    <th>이름</th>
-                    <th>회원번호</th>
-                    <th>상품명</th>
-                    <th>수량</th>
-                    <th>가격</th>
-                    <th>상태</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(order, index) in orders" :key="order._id">
-                    <td>{{ order.orderNumber ?? " - " }}</td>
-                    <td>{{ formatDate(order.createdAt) }}</td>
-                    <td>{{ order.userId.fullName }}</td>
-                    <td>{{ order.userId.memberId }}</td>
-                    <td>{{ order.productName }}</td>
-                    <td>{{ order.quantity }}</td>
-                    <td>{{ formatCurrency(order.amount) }}</td>
-                    <td>{{ order.status }}</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <Pagination
-            v-if="totalPages > 1"
-            :currentPage="currentPage"
-            :totalPages="totalPages"
-            @page-change="fetchOrders"
-        />
+  <section class="admin-data-page">
+    <header class="admin-page-head"><div><p>ORDERS</p><h1>주문 관리</h1><span>주문 내역을 조건별로 조회하고 자료를 내려받습니다.</span></div><div class="admin-count"><strong>{{ total.toLocaleString() }}</strong><span>건</span></div></header>
+    <form class="admin-filter-card" @submit.prevent="fetchOrders(1)">
+      <label><span>주문 기간</span><div class="admin-date-range"><input v-model="filters.fromDate" type="date" aria-label="주문 시작일"><i>–</i><input v-model="filters.toDate" type="date" aria-label="주문 종료일"></div></label>
+      <label><span>주문번호</span><input v-model.trim="filters.orderNumber" placeholder="주문번호"></label><label><span>상품명</span><input v-model.trim="filters.productName" placeholder="상품명"></label><label><span>주문자</span><input v-model.trim="filters.name" placeholder="회원 이름"></label>
+      <div class="admin-filter-actions"><button type="button" class="admin-btn ghost" @click="resetFilters">초기화</button><button class="admin-btn primary" :disabled="loading"><i class="fa-solid fa-magnifying-glass"></i> 검색</button></div>
+    </form>
+    <div class="admin-table-card"><div class="admin-table-toolbar"><div><strong>주문 목록</strong><span>현재 조건의 주문 {{ total.toLocaleString() }}건</span></div><div class="toolbar-actions"><button class="admin-btn ghost" :disabled="loading || !orders.length" @click="downloadCurrentPageOrders">현재 페이지</button><button class="admin-btn secondary" :disabled="loading || !total" @click="downloadAllOrders"><i class="fa-solid fa-file-arrow-down"></i> 전체 엑셀</button></div></div>
+      <div v-if="error" class="admin-state error"><i class="fa-solid fa-circle-exclamation"></i><p>{{ error }}</p><button class="admin-btn ghost" @click="fetchOrders(currentPage)">다시 시도</button></div>
+      <div v-else class="admin-table-scroll"><table class="admin-table"><thead><tr><th>주문번호</th><th>주문일시</th><th>주문자</th><th>상품</th><th>수량</th><th>결제금액</th><th>상태</th></tr></thead><tbody>
+        <tr v-if="loading"><td colspan="7"><div class="admin-state compact"><i class="fa-solid fa-spinner fa-spin"></i><p>주문을 불러오는 중입니다.</p></div></td></tr>
+        <tr v-else-if="!orders.length"><td colspan="7"><div class="admin-state compact"><i class="fa-regular fa-folder-open"></i><p>조건에 맞는 주문이 없습니다.</p></div></td></tr>
+        <tr v-for="order in orders" :key="order._id"><td class="mono"><strong>{{ order.orderNumber || '-' }}</strong></td><td>{{ formatDate(order.createdAt) }}</td><td><div class="admin-primary-cell"><strong>{{ order.userId?.fullName || '탈퇴/비회원' }}</strong><small>{{ order.userId?.memberId || '-' }}</small></div></td><td class="admin-product">{{ order.productName || '-' }}</td><td>{{ order.quantity || 0 }}</td><td><strong>{{ formatCurrency(order.amount) }}</strong></td><td><span class="admin-status" :data-status="order.status">{{ order.status || '미지정' }}</span></td></tr>
+      </tbody></table></div>
     </div>
+    <Pagination v-if="!loading && totalPages > 1" :current-page="currentPage" :total-pages="totalPages" @page-change="fetchOrders" />
+  </section>
 </template>
-
 <script setup>
-import { ref, onMounted } from "vue";
+import { onMounted, ref } from "vue";
+import * as XLSX from "xlsx";
 import AdminService from "@/api/AdminService";
 import Pagination from "@/components/common/Pagination.vue";
-import * as XLSX from "xlsx";
-
-const orders = ref([]);
-const total = ref(0);
-const currentPage = ref(1);
-const pageSize = 20;
-const totalPages = ref(1);
-const token = localStorage.getItem("token");
-
-const filters = ref({
-    productName: "",
-    name: "",
-    orderNumber: "", // 🔁 memberId → orderNumber
-    fromDate: "",
-    toDate: "",
-});
-const formatDate = (dateStr) => {
-    return new Date(dateStr).toLocaleString("ko-KR");
-};
-
-const formatCurrency = (amount) => {
-    return Number(amount).toLocaleString("ko-KR") + "원";
-};
-
-const fetchOrders = (page = 1) => {
-    currentPage.value = page;
-    AdminService.getAllOrders(token, {
-        page,
-        size: pageSize,
-        ...filters.value,
-    })
-        .then((res) => {
-            orders.value = res.data.orders;
-            total.value = res.data.total;
-            totalPages.value = Math.ceil(total.value / pageSize);
-        })
-        .catch((err) => {
-            console.error("❌ 주문 조회 실패:", err);
-        });
-};
-
-const downloadAllOrders = async () => {
-    try {
-        const res = await AdminService.getAllOrders(token, {
-            page: 1,
-            size: 10000,
-            ...filters.value,
-        });
-
-        const data = res.data.orders.map((order, idx) => ({
-            번호: idx + 1,
-            주문일시: formatDate(order.createdAt),
-            이름: order.userId.fullName,
-            회원번호: order.userId.memberId,
-            상품명: order.productName,
-            수량: order.quantity,
-            가격: order.amount,
-            상태: order.status,
-        }));
-
-        const worksheet = XLSX.utils.json_to_sheet(data);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "전체주문리스트");
-
-        const today = new Date().toISOString().slice(0, 10);
-        XLSX.writeFile(workbook, `전체주문리스트_${today}.xlsx`);
-    } catch (err) {
-        console.error("❌ 전체 주문 엑셀 다운로드 실패:", err);
-        alert("전체 주문 다운로드 중 오류가 발생했습니다.");
-    }
-};
-
-const downloadCurrentPageOrders = () => {
-    const data = orders.value.map((order, idx) => ({
-        번호: (currentPage.value - 1) * pageSize + idx + 1,
-        주문일시: formatDate(order.createdAt),
-        이름: order.userId.fullName,
-        회원번호: order.userId.memberId,
-        상품명: order.productName,
-        수량: order.quantity,
-        가격: order.amount,
-        상태: order.status,
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "주문리스트");
-
-    const today = new Date().toISOString().slice(0, 10);
-    XLSX.writeFile(workbook, `주문리스트_페이지${currentPage.value}_${today}.xlsx`);
-};
-
-onMounted(() => {
-    fetchOrders();
-});
+import { getStoredToken } from "@/utils/storage";
+const orders=ref([]),total=ref(0),currentPage=ref(1),totalPages=ref(1),loading=ref(false),error=ref(""),pageSize=20;
+const filters=ref({productName:"",name:"",orderNumber:"",fromDate:"",toDate:""});
+const formatDate=value=>{if(!value)return "-";const date=new Date(value);return Number.isNaN(date.getTime())?"-":date.toLocaleString("ko-KR")};
+const formatCurrency=value=>`${Number(value||0).toLocaleString("ko-KR")}원`;
+async function fetchOrders(page=1){currentPage.value=page;loading.value=true;error.value="";try{const{data}=await AdminService.getAllOrders(getStoredToken(),{page,size:pageSize,...filters.value});orders.value=data.orders||[];total.value=data.total||0;totalPages.value=Math.max(1,Math.ceil(total.value/pageSize))}catch(err){console.error("주문 조회 실패:",err);orders.value=[];total.value=0;error.value="주문 정보를 불러오지 못했습니다."}finally{loading.value=false}}
+function resetFilters(){filters.value={productName:"",name:"",orderNumber:"",fromDate:"",toDate:""};fetchOrders(1)}
+const excelRows=(items,offset=0)=>items.map((order,index)=>({번호:offset+index+1,주문번호:order.orderNumber||"-",주문일시:formatDate(order.createdAt),이름:order.userId?.fullName||"탈퇴/비회원",회원번호:order.userId?.memberId||"-",상품명:order.productName||"-",수량:order.quantity||0,가격:Number(order.amount||0),상태:order.status||"-"}));
+function saveExcel(rows,name){if(!rows.length)return alert("다운로드할 주문이 없습니다.");const book=XLSX.utils.book_new();XLSX.utils.book_append_sheet(book,XLSX.utils.json_to_sheet(rows),"주문목록");XLSX.writeFile(book,`${name}_${new Date().toISOString().slice(0,10)}.xlsx`)}
+function downloadCurrentPageOrders(){saveExcel(excelRows(orders.value,(currentPage.value-1)*pageSize),`주문목록_${currentPage.value}페이지`)}
+async function downloadAllOrders(){try{const{data}=await AdminService.getAllOrders(getStoredToken(),{page:1,size:10000,...filters.value});saveExcel(excelRows(data.orders||[]),"전체주문목록")}catch(err){console.error("전체 주문 다운로드 실패:",err);alert("엑셀 파일을 만들지 못했습니다.")}}
+onMounted(()=>fetchOrders());
 </script>
-<style scoped>
-.adminOrderList {
-    padding: 2rem;
-    margin-left: 220px;
-}
-
-.pageTitle {
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin-bottom: 1.5rem;
-}
-
-.filterSection {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.filterSection input {
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 0.95rem;
-}
-
-.filterSection button {
-    padding: 0.5rem 1rem;
-    background-color: #cc8a94;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-.filterSection button:hover {
-    background-color: #a0666f;
-}
-.excelButtons {
-    margin-left: auto;
-    display: flex;
-    gap: 8px;
-}
-.excelButtons button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    background: #444;
-    color: white;
-    cursor: pointer;
-}
-.excelButtons button:hover {
-    background-color: #333;
-}
-.orderTable {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #fff;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
-}
-
-.orderTable th,
-.orderTable td {
-    padding: 0.8rem 1rem;
-    border: 1px solid #ddd;
-    text-align: center;
-    font-size: 0.95rem;
-}
-
-.orderTable th {
-    background-color: #f2f2f2;
-    color: #333;
-    font-weight: 600;
-}
-</style>

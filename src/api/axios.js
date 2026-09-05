@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getStoredToken } from "@/utils/storage";
 
 // const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 const API_URL = import.meta.env.VITE_API_URL || "/api";
@@ -14,7 +15,7 @@ const instance = axios.create({
 // 요청 인터셉터
 instance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = getStoredToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -31,7 +32,9 @@ instance.interceptors.response.use(
       error.response && error.response.data.message
         ? error.response.data.message
         : error.message;
-    if (error.response?.status === 401 && localStorage.getItem("token")) {
+    const requestUrl = error.config?.url || "";
+    const isLoginRequest = requestUrl.endsWith("/login");
+    if (error.response?.status === 401 && !isLoginRequest && localStorage.getItem("token")) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       window.dispatchEvent(new CustomEvent("auth-expired"));

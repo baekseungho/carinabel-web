@@ -1,7 +1,9 @@
 <template>
     <div class="pagination">
         <button
+            type="button"
             class="pageBtn"
+            aria-label="첫 페이지"
             :disabled="props.currentPage === 1"
             @click="goToFirstGroup"
         >
@@ -9,7 +11,9 @@
         </button>
 
         <button
+            type="button"
             class="pageBtn"
+            aria-label="이전 페이지"
             :disabled="props.currentPage === 1"
             @click="goToPrevPage"
         >
@@ -17,16 +21,21 @@
         </button>
 
         <button
+            type="button"
             v-for="page in visiblePages"
             :key="page"
             :class="['pageBtn', { active: page === currentPage }]"
+            :aria-label="`${page}페이지`"
+            :aria-current="page === currentPage ? 'page' : undefined"
             @click="$emit('page-change', page)"
         >
             {{ page }}
         </button>
 
         <button
+            type="button"
             class="pageBtn"
+            aria-label="다음 페이지"
             :disabled="props.currentPage === props.totalPages"
             @click="goToNextPage"
         >
@@ -34,7 +43,9 @@
         </button>
 
         <button
+            type="button"
             class="pageBtn"
+            aria-label="마지막 페이지"
             :disabled="props.currentPage === props.totalPages"
             @click="goToLastGroup"
         >

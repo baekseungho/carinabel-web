@@ -11,6 +11,10 @@
     --color-warm: #f8f5f1;
     --page-width: 1240px;
     --shadow-soft: 0 18px 50px rgba(62, 43, 52, 0.09);
+    --button-height: 44px;
+    --button-radius: 2px;
+    --button-danger: #a75f68;
+    --button-danger-soft: #fbf2f3;
 }
 
 * {
@@ -23,6 +27,9 @@ html { scroll-behavior: smooth; }
 body { min-width: 320px; color: var(--color-ink); background: var(--color-surface); font-family: "Pretendard", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.6; -webkit-font-smoothing: antialiased; }
 button, input, textarea, select { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
+button { transition: color .2s ease, background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
+button:not(:disabled) { cursor: pointer; }
+button:disabled { opacity: .48; }
 a { color: inherit; text-decoration: none; }
 img { display: block; max-width: 100%; }
 button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
@@ -30,6 +37,22 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 ::selection { color: #fff; background: var(--color-brand); }
 .page-shell { width: min(calc(100% - 48px), var(--page-width)); margin-inline: auto; }
 .eyebrow { color: var(--color-accent); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
+.ui-button { min-height:var(--button-height)!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;padding:0 20px!important;border:1px solid transparent!important;border-radius:var(--button-radius)!important;font-size:.76rem!important;font-weight:700!important;line-height:1.2!important; }
+.ui-button--primary { color:#fff!important;background:var(--color-brand-dark)!important; }
+.ui-button--primary:hover:not(:disabled) { background:#46333d!important;box-shadow:0 8px 20px rgba(68,47,57,.16)!important;transform:translateY(-1px); }
+.ui-button--secondary { color:var(--color-brand-dark)!important;background:#fff!important;border-color:#cfc3c8!important; }
+.ui-button--secondary:hover:not(:disabled) { border-color:var(--color-brand)!important;background:var(--color-warm)!important; }
+.ui-button--danger { color:var(--button-danger)!important;background:var(--button-danger-soft)!important;border-color:#e5cbd0!important; }
+
+/* Legacy public action kept for the static product detail route. */
+.addToCartButton { min-height:var(--button-height)!important;padding:0 22px!important;border:1px solid var(--color-brand-dark)!important;border-radius:var(--button-radius)!important;color:#fff!important;background:var(--color-brand-dark)!important;font-size:.76rem!important;font-weight:700!important;box-shadow:none!important; }
+.addToCartButton:hover:not(:disabled) { background:#46333d!important;box-shadow:0 8px 20px rgba(68,47,57,.16)!important;transform:translateY(-1px); }
+.ui-button--danger:hover:not(:disabled) { color:#fff!important;background:var(--button-danger)!important;border-color:var(--button-danger)!important; }
+
+/* Shared back navigation for notice and Q&A detail/write screens. */
+.article-back { min-height:40px!important;display:inline-flex!important;align-items:center!important;gap:9px!important;margin-bottom:24px!important;padding:0 15px!important;border:1px solid #ddd3d7!important;border-radius:var(--button-radius)!important;color:var(--color-brand-dark)!important;background:#fff!important;font-size:.72rem!important;font-weight:700!important;box-shadow:none!important; }
+.article-back:hover:not(:disabled) { border-color:var(--color-brand)!important;background:var(--color-warm)!important;transform:translateX(-2px); }
+.article-back i { color:var(--color-accent);font-size:.7rem; }
 @media (max-width: 640px) { .page-shell { width: min(calc(100% - 32px), var(--page-width)); } }
 
 /* Keep the signup headline in two intentional lines on narrow side panels. */

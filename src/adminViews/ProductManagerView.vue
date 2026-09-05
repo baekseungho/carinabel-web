@@ -1,255 +1,43 @@
 <template>
-    <div class="productManagerContainer">
-        <div style="width: 20%">
-            <h2>상품 관리</h2>
-            <div class="productForm">
-                <input v-model="category" placeholder="카테고리" />
-                <input v-model="productName" placeholder="상품명 (영문)" />
-                <input v-model="koreanName" placeholder="상품명 (한글)" />
-                <input v-model="volume" type="number" placeholder="용량 (ml)" />
-                <input v-model="consumerPrice" type="number" placeholder="소비자가격 (원)" />
-                <input v-model="stock" type="number" placeholder="재고 수량" />
-                <input v-model="imagePath" placeholder="리스트 이미지 경로" />
-                <input v-model="detailImage" placeholder="상세 이미지 경로" />
-                <button @click="addProduct">상품 추가</button>
-            </div>
-        </div>
-
-        <div style="width: 79%">
-            <h2>상품 목록</h2>
-            <div v-if="editMode" class="productEditForm">
-                <h2>상품 수정</h2>
-                <input v-model="editForm.category" placeholder="카테고리" />
-                <input v-model="editForm.productName" placeholder="상품명 (영문)" />
-                <input v-model="editForm.koreanName" placeholder="상품명 (한글)" />
-                <input v-model="editForm.volume" type="number" placeholder="용량 (ml)" />
-                <input v-model="editForm.consumerPrice" type="number" placeholder="소비자가격 (원)" />
-                <input v-model="editForm.stock" type="number" placeholder="재고 수량" />
-                <input v-model="editForm.imagePath" placeholder="리스트 이미지 경로" />
-                <input v-model="editForm.detailImage" placeholder="상세 이미지 경로" />
-                <button @click="updateProduct">수정 완료</button>
-                <button @click="cancelEdit">취소</button>
-            </div>
-            <ul>
-                <li style="display: flex; align-items: center" v-for="product in products" :key="product._id">
-                    <img
-                        style="width: 60px; height: 80px"
-                        :src="product.imagePath"
-                        alt="상품 이미지"
-                        class="productThumbnail"
-                    />
-                    <strong>{{ product.koreanName }}</strong> ({{ product.category }}) - {{ product.volume }}ml /
-                    {{ product.consumerPrice }}원 / 회원가 {{ product.memberPrice }}원 / 재고 {{ product.stock }}개
-                    <!-- <button @click="deleteProduct(product._id)">삭제</button> -->
-                    <button @click="editProduct(product)">수정</button>
-                </li>
-            </ul>
-        </div>
+  <section class="admin-data-page">
+    <header class="admin-page-head"><div><p>CATALOG</p><h1>상품 관리</h1><span>판매 상품의 정보와 가격, 재고를 관리합니다.</span></div><div class="admin-count"><strong>{{ filteredProducts.length }}</strong><span>개</span></div></header>
+    <div class="catalog-layout">
+      <aside class="catalog-form-card">
+        <div class="catalog-card-head"><div><small>{{ editMode ? 'EDIT PRODUCT' : 'NEW PRODUCT' }}</small><h2>{{ editMode ? '상품 수정' : '상품 등록' }}</h2></div><button v-if="editMode" class="admin-btn small ghost" @click="cancelEdit">취소</button></div>
+        <form @submit.prevent="saveProduct">
+          <label><span>카테고리 *</span><input v-model.trim="form.category" placeholder="예: 에센셜 오일" required></label>
+          <div class="form-pair"><label><span>상품명(영문) *</span><input v-model.trim="form.productName" placeholder="Lavender" required></label><label><span>상품명(한글) *</span><input v-model.trim="form.koreanName" placeholder="라벤더" required></label></div>
+          <div class="form-pair"><label><span>용량(ml) *</span><input v-model.number="form.volume" type="number" min="1" required></label><label><span>소비자가(원) *</span><input v-model.number="form.consumerPrice" type="number" min="0" required></label></div>
+          <label><span>재고 수량 *</span><input v-model.number="form.stock" type="number" min="0" required><small>0개로 저장하면 고객 화면에 품절로 표시됩니다.</small></label>
+          <label><span>목록 이미지 경로</span><input v-model.trim="form.imagePath" placeholder="/products/lavender.png"></label><label><span>상세 이미지 경로</span><input v-model.trim="form.detailImage" placeholder="/products/detail/lavender.jpg"></label>
+          <div class="catalog-preview"><span>이미지 미리보기</span><div><img :src="form.imagePath || fallbackImage" alt="상품 미리보기" @error="handleImageError"></div></div>
+          <button class="admin-btn primary form-submit" :disabled="saving"><i :class="editMode ? 'fa-solid fa-check' : 'fa-solid fa-plus'"></i> {{ saving ? '저장 중' : editMode ? '수정 내용 저장' : '상품 등록' }}</button>
+        </form>
+      </aside>
+      <div class="admin-table-card catalog-list">
+        <div class="admin-table-toolbar"><div><strong>상품 목록</strong><span>상품명 또는 카테고리로 빠르게 찾을 수 있습니다.</span></div><label class="catalog-search"><i class="fa-solid fa-magnifying-glass"></i><input v-model.trim="keyword" type="search" placeholder="상품 검색"></label></div>
+        <div v-if="error" class="admin-state error"><i class="fa-solid fa-circle-exclamation"></i><p>{{ error }}</p><button class="admin-btn ghost" @click="fetchProducts">다시 시도</button></div>
+        <div v-else class="admin-table-scroll"><table class="admin-table"><thead><tr><th>상품</th><th>카테고리</th><th>용량</th><th>소비자가</th><th>회원가</th><th>재고</th><th>관리</th></tr></thead><tbody>
+          <tr v-if="loading"><td colspan="7"><div class="admin-state compact"><i class="fa-solid fa-spinner fa-spin"></i><p>상품을 불러오는 중입니다.</p></div></td></tr><tr v-else-if="!filteredProducts.length"><td colspan="7"><div class="admin-state compact"><i class="fa-regular fa-folder-open"></i><p>조건에 맞는 상품이 없습니다.</p></div></td></tr>
+          <tr v-for="product in filteredProducts" :key="product._id" :class="{selected:editFormId===product._id}"><td><div class="admin-product-cell"><img :src="product.imagePath || fallbackImage" :alt="product.koreanName" @error="handleImageError"><div><strong>{{ product.koreanName || '-' }}</strong><small>{{ product.productName || '-' }}</small></div></div></td><td><span class="admin-chip muted">{{ product.category || '-' }}</span></td><td>{{ product.volume || 0 }}ml</td><td>{{ formatPrice(product.consumerPrice) }}</td><td><strong>{{ formatPrice(product.memberPrice) }}</strong></td><td><span class="stock-chip" :class="stockClass(product.stock)">{{ Number(product.stock||0).toLocaleString() }}개</span></td><td><button class="admin-btn small ghost" @click="editProduct(product)"><i class="fa-regular fa-pen-to-square"></i> 수정</button></td></tr>
+        </tbody></table></div>
+      </div>
     </div>
+  </section>
 </template>
-
 <script setup>
-import { ref, onMounted } from "vue";
-import AdminService from "@/api/AdminService";
-
-const products = ref([]);
-const category = ref("");
-const productName = ref("");
-const koreanName = ref("");
-const volume = ref("");
-const stock = ref("");
-const consumerPrice = ref("");
-const imagePath = ref("");
-const detailImage = ref("");
-const editMode = ref(false);
-const editForm = ref({
-    _id: "",
-    category: "",
-    productName: "",
-    koreanName: "",
-    volume: "",
-    consumerPrice: "",
-    stock: 0,
-    imagePath: "",
-    detailImage: "",
-});
-
-const token = localStorage.getItem("token");
-
-// 상품 목록 불러오기
-const fetchProducts = () => {
-    AdminService.getAllProducts(token)
-        .then((res) => {
-            products.value = res.data;
-        })
-        .catch((err) => {
-            console.error("❌ 상품 목록 로딩 실패:", err.response || err);
-            alert("상품 목록을 불러오는 데 실패했습니다.");
-        });
-};
-
-// 상품 추가
-const addProduct = () => {
-    const productData = {
-        category: category.value || "에센셜 오일",
-        productName: productName.value,
-        koreanName: koreanName.value,
-        volume: volume.value,
-        consumerPrice: consumerPrice.value,
-        stock: stock.value,
-        imagePath: imagePath.value || "/img/default.jpg",
-        detailImage: detailImage.value || "/products/라벤더상세.jpg",
-    };
-
-    AdminService.addProduct(productData, token)
-        .then((res) => {
-            products.value.push(res.data.product);
-            category.value = "";
-            productName.value = "";
-            koreanName.value = "";
-            volume.value = "";
-            consumerPrice.value = "";
-            stock.value = "";
-
-            imagePath.value = "";
-            detailImage.value = "";
-            alert("상품이 성공적으로 추가되었습니다.");
-        })
-        .catch((err) => {
-            console.error("❌ 상품 추가 실패:", err.response || err);
-            alert("상품 추가에 실패했습니다.");
-        });
-};
-
-// 상품 삭제
-const deleteProduct = (productId) => {
-    AdminService.deleteProduct(productId, token)
-        .then(() => {
-            products.value = products.value.filter((p) => p._id !== productId);
-            alert("상품이 성공적으로 삭제되었습니다.");
-        })
-        .catch((err) => {
-            console.error("❌ 상품 삭제 실패:", err.response || err);
-            alert("상품 삭제에 실패했습니다.");
-        });
-};
-
-// 상품 수정 시작
-const editProduct = (product) => {
-    editMode.value = true;
-    editForm.value = { ...product };
-};
-
-// 상품 수정 완료
-const updateProduct = () => {
-    const updatedData = {
-        category: editForm.value.category,
-        productName: editForm.value.productName,
-        koreanName: editForm.value.koreanName,
-        volume: editForm.value.volume,
-        consumerPrice: editForm.value.consumerPrice,
-        stock: editForm.value.stock,
-        imagePath: editForm.value.imagePath,
-        detailImage: editForm.value.detailImage,
-    };
-
-    AdminService.updateProduct(editForm.value._id, updatedData, token)
-        .then((res) => {
-            const index = products.value.findIndex((p) => p._id === editForm.value._id);
-            if (index !== -1) {
-                products.value[index] = res.data.product;
-            }
-            editMode.value = false;
-            alert("상품이 성공적으로 수정되었습니다.");
-        })
-        .catch((err) => {
-            console.error("❌ 상품 수정 실패:", err.response || err);
-            alert("상품 수정에 실패했습니다.");
-        });
-};
-
-// 수정 취소
-const cancelEdit = () => {
-    editMode.value = false;
-    editForm.value = {
-        _id: "",
-        category: "",
-        productName: "",
-        koreanName: "",
-        volume: "",
-        consumerPrice: "",
-        stock: "",
-        imagePath: "",
-        detailImage: "",
-    };
-};
-
-// 초기 로딩 시 상품 목록 불러오기
-onMounted(() => {
-    fetchProducts();
-});
+import { computed, onMounted, ref } from "vue";
+import AdminService from "@/api/AdminService";import { getStoredToken } from "@/utils/storage";
+const fallbackImage="/img/defalut_product.png";const emptyForm=()=>({category:"에센셜 오일",productName:"",koreanName:"",volume:"",consumerPrice:"",stock:0,imagePath:"",detailImage:""});
+const products=ref([]),form=ref(emptyForm()),editMode=ref(false),editFormId=ref(""),keyword=ref(""),loading=ref(false),saving=ref(false),error=ref("");
+const filteredProducts=computed(()=>{const word=keyword.value.toLowerCase();return products.value.filter(p=>!word||[p.koreanName,p.productName,p.category].some(v=>String(v||"").toLowerCase().includes(word)))});
+const formatPrice=value=>`${Number(value||0).toLocaleString("ko-KR")}원`;const stockClass=value=>Number(value)<=0?"out":Number(value)<=5?"low":"good";const handleImageError=event=>{event.target.onerror=null;event.target.src=fallbackImage};
+async function fetchProducts(){loading.value=true;error.value="";try{const{data}=await AdminService.getAllProducts(getStoredToken());products.value=Array.isArray(data)?data:[]}catch(err){console.error("상품 목록 조회 실패:",err);products.value=[];error.value="상품 목록을 불러오지 못했습니다."}finally{loading.value=false}}
+function validate(){if(!form.value.productName||!form.value.koreanName||!form.value.category)return "필수 상품 정보를 입력해 주세요.";if(Number(form.value.volume)<=0)return "용량은 1ml 이상 입력해 주세요.";if(Number(form.value.consumerPrice)<0||Number(form.value.stock)<0)return "가격과 재고에는 음수를 입력할 수 없습니다.";return ""}
+async function saveProduct(){const message=validate();if(message)return alert(message);saving.value=true;const payload={...form.value,volume:Number(form.value.volume),consumerPrice:Number(form.value.consumerPrice),stock:Number(form.value.stock),imagePath:form.value.imagePath||fallbackImage,detailImage:form.value.detailImage||""};try{if(editMode.value){await AdminService.updateProduct(editFormId.value,payload,getStoredToken());alert("상품 정보가 수정되었습니다.")}else{await AdminService.addProduct(payload,getStoredToken());alert("새 상품이 등록되었습니다.")}cancelEdit();await fetchProducts()}catch(err){console.error("상품 저장 실패:",err);alert(err.response?.data?.message||"상품을 저장하지 못했습니다.")}finally{saving.value=false}}
+function editProduct(product){editMode.value=true;editFormId.value=product._id;form.value={...emptyForm(),...product};window.scrollTo({top:0,behavior:"smooth"})}function cancelEdit(){editMode.value=false;editFormId.value="";form.value=emptyForm()}
+onMounted(fetchProducts);
 </script>
-
 <style scoped>
-.productManagerContainer {
-    width: 90%;
-    margin-left: 180px;
-    padding: 20px;
-    border-radius: 10px;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: space-between;
-}
-
-.productForm,
-.productEditForm {
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.productForm input,
-.productEditForm input {
-    width: calc(100% - 20px);
-    margin: 10px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-button {
-    margin: 10px;
-    padding: 10px 20px;
-    background-color: #cc8a94;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #a0666f;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-li {
-    margin-bottom: 10px;
-    background-color: #ffffff;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-h2 {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 20px;
-}
+.catalog-layout{display:grid;grid-template-columns:minmax(310px,380px) minmax(0,1fr);gap:18px;align-items:start}.catalog-form-card{padding:20px;border:1px solid #e3dcda;background:#fff}.catalog-card-head{display:flex;justify-content:space-between;align-items:start;margin-bottom:18px}.catalog-card-head small{color:#aa7c87;font-size:.57rem;font-weight:800;letter-spacing:.16em}.catalog-card-head h2{margin:4px 0 0;font-family:Georgia,"Noto Serif KR",serif;font-size:1.25rem;font-weight:400}.catalog-form-card form,.catalog-form-card label{display:grid;gap:7px}.catalog-form-card form{gap:13px}.catalog-form-card label>span,.catalog-preview>span{color:#6f6569;font-size:.66rem;font-weight:700}.catalog-form-card label>small{color:#9b9195;font-size:.58rem}.catalog-form-card input{height:40px;padding:0 11px;border:1px solid #ded6d3;outline:none;font-size:.72rem}.catalog-form-card input:focus{border-color:#916c79;box-shadow:0 0 0 3px rgba(145,108,121,.1)}.form-pair{display:grid;grid-template-columns:1fr 1fr;gap:9px}.catalog-preview{display:grid;gap:7px}.catalog-preview div{height:150px;display:grid;place-items:center;background:#f7f4f2}.catalog-preview img{width:100%;height:100%;object-fit:contain}.form-submit{width:100%;margin-top:3px}.catalog-list{min-width:0}.catalog-search{height:39px;display:flex;align-items:center;gap:8px;padding:0 11px;border:1px solid #ddd4d1}.catalog-search i{color:#9b9094}.catalog-search input{width:180px;border:0;outline:0;font-size:.7rem}.admin-product-cell{display:flex;align-items:center;gap:11px;min-width:180px}.admin-product-cell img{width:48px;height:58px;object-fit:contain;background:#f7f4f2}.admin-product-cell>div{display:grid;gap:3px}.admin-product-cell small{color:#9a9094;font-size:.6rem}.stock-chip{font-size:.64rem;font-weight:700}.stock-chip.good{color:#47755f}.stock-chip.low{color:#a27332}.stock-chip.out{color:#ab4f4b}.admin-table tr.selected{background:#faf3f5}@media(max-width:1100px){.catalog-layout{grid-template-columns:1fr}.catalog-form-card{max-width:none}}@media(max-width:600px){.form-pair{grid-template-columns:1fr}.catalog-search{width:100%}.catalog-search input{width:100%}}
 </style>

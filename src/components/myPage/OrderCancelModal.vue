@@ -5,7 +5,7 @@
             <textarea v-model="reason" placeholder="취소 사유를 입력해주세요."></textarea>
             <div class="modalButtons">
                 <button class="cancelBtn" @click="close">닫기</button>
-                <button class="confirmBtn" @click="submitCancel">주문취소신청하기</button>
+                <button class="confirmBtn danger-action" @click="submitCancel">주문취소 신청</button>
             </div>
         </div>
     </div>

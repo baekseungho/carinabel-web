@@ -22,15 +22,15 @@ const AdminLayout = adminView("AdminLayout"); const AdminLoginView = adminView("
 const AdminCreateView = adminView("AdminCreateView"); const AdminDashboardView = adminView("AdminDashboardView");
 const AdminMemberManageView = adminView("AdminMemberManageView");
 const AdminWithdrawnMemberManageView = adminView("AdminWithdrawnMemberManageView");
-const AdminOrderManageView = adminView("AdminOrderManageView"); const DeliveryStatusView = adminView("DeliveryStatusView");
+const AdminOrderManageView = adminView("AdminOrderManageView");
 const ProductManageView = adminView("ProductManagerView"); const KitManageView = adminView("AdminKitManageView");
 const AnswerManagerView = adminView("AnswerManagerView"); const AdminShippingView = adminView("AdminShippingView");
-const NoticeManagerView = adminView("AdminNoticeView"); const AdminQnaView = adminView("AdminQnaView");
-const AdminManualInputView = adminView("AdminManualInputView"); const AdminManualOrderView = AdminManualInputView;
+const NoticeManagerView = adminView("AdminNoticeView");
+const AdminOrderCancleView = adminView("AdminOrderCancleView"); const AdminManualInputView = adminView("AdminManualInputView");
 const AdminReferralView = adminView("AdminReferralEarningsView");
 
 import store from "@/store";
-import { getStoredToken } from "@/utils/storage";
+import { getStoredToken, getStoredUser } from "@/utils/storage";
 
 const routes = [
     { path: "/", name: "Home", component: HomeView },
@@ -94,7 +94,7 @@ const routes = [
             requiresAuth: true,
         },
     },
-    { path: "/cart", name: "Cart", component: Cart },
+    { path: "/cart", name: "Cart", component: Cart, meta: { requiresAuth: true } },
     {
         path: "/mypage",
         component: MyPageView, // 여기에 SideMenu 항상 존재
@@ -153,7 +153,7 @@ const routes = [
         component: QnA,
     },
     { path: "/qna/create", name: "QnACreate", component: QnACreate, meta: { requiresAuth: true } },
-    { path: "/qna/:id", name: "QnADetail", component: QnADetail },
+    { path: "/qna/:id", name: "QnADetail", component: QnADetail, meta: { requiresAuth: true } },
     {
         path: "/notices",
         name: "Notices",
@@ -178,7 +178,7 @@ const routes = [
         path: "/admin/create",
         name: "AdminCreateView",
         component: AdminCreateView,
-        meta: { hideFromGuard: true, hideHeaderFooter: true }, // 👉 관리자만 내부용으로 접근 가능하게
+        meta: { requiresAdmin: true, hideHeaderFooter: true },
     },
 
     {
@@ -213,9 +213,7 @@ const routes = [
             },
             {
                 path: "delivery",
-                name: "DeliveryStatusView",
-                component: DeliveryStatusView,
-                meta: { requiresAdmin: true, hideHeaderFooter: true },
+                redirect: "/admin/shipping",
             },
             {
                 path: "products",
@@ -255,20 +253,18 @@ const routes = [
             },
             {
                 path: "qna",
-                name: "AdminQnaView",
-                component: AdminQnaView,
-                meta: { requiresAdmin: true, hideHeaderFooter: true },
+                redirect: "/admin/answer",
             },
             {
                 path: "cancle",
-                name: "AdminManualInputView",
-                component: AdminManualInputView,
+                name: "AdminOrderCancleView",
+                component: AdminOrderCancleView,
                 meta: { requiresAdmin: true, hideHeaderFooter: true },
             },
             {
                 path: "menual",
                 name: "AdminManualOrderView",
-                component: AdminManualOrderView,
+                component: AdminManualInputView,
                 meta: { requiresAdmin: true, hideHeaderFooter: true },
             },
         ],
@@ -303,8 +299,9 @@ router.beforeEach((to, from, next) => {
 
     // 관리자 전용 접근
     if (to.meta.requiresAdmin) {
-        const user = store.state.user;
-        if (!user || user.role !== "admin") {
+        const user = store.state.user || getStoredUser();
+        const token = getStoredToken();
+        if (!token || !user || user.role !== "admin") {
             alert("관리자만 접근할 수 있는 페이지입니다.");
             return next("/admin/login");
         }
@@ -335,6 +332,20 @@ const pageTitles = {
     QnA: "Q&A",
     QnACreate: "문의 작성",
     QnADetail: "문의 상세",
+    AdminLoginView: "관리자 로그인",
+    AdminCreateView: "관리자 계정 생성",
+    AdminDashboardView: "관리자 대시보드",
+    AdminMemberManageView: "회원 관리",
+    AdminWithdrawnMemberManageView: "탈퇴 회원 관리",
+    AdminOrderManageView: "주문 관리",
+    AdminShippingView: "배송 관리",
+    AdminOrderCancleView: "주문 취소 관리",
+    AdminManualOrderView: "수기 등록",
+    ProductManageView: "상품 관리",
+    KitManageView: "키트 관리",
+    AdminReferralView: "추천 수당 관리",
+    NoticeManagerView: "공지사항 관리",
+    AnswerManagerView: "Q&A 답변 관리",
     ServicePreparing: "서비스 준비 중",
     NotFound: "페이지를 찾을 수 없습니다",
 };
